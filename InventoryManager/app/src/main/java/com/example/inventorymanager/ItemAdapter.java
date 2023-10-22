@@ -20,37 +20,35 @@ public class ItemAdapter extends ArrayAdapter{
     private ArrayList<Item> items;
 
     public ItemAdapter(Context context, ArrayList<Item> cities) {
-            super(context, 0, cities);
-            this.items = cities;
-            this.context = context;
+        super(context, 0, cities);
+        this.items = cities;
+        this.context = context;
+    }
+
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        View view = convertView;
+
+        if (view == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.item_cell, parent, false);
         }
 
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View view = convertView;
+        Item item = items.get(position);
+        TextView itemName = view.findViewById(R.id.itemNameTextView);
+        TextView description = view.findViewById(R.id.descriptionTextView);
+        TextView estimateValue = view.findViewById(R.id.estimateValueTextView);
+        TextView purchaseDate = view.findViewById(R.id.purchaseDateTextView);
 
-            if (view == null) {
-                view = LayoutInflater.from(context).inflate(R.layout.content, parent, false);
-            }
-
-            Item item = items.get(position);
-            TextView itemName = view.findViewById(R.id.itemNameTextView);
-            TextView description = view.findViewById(R.id.descriptionTextView);
-            TextView estimateValue = view.findViewById(R.id.estimateValueTextView);
-            TextView purchaseDate = view.findViewById(R.id.purchaseDateTextView);
-
-            String formattedValue = String.format(Locale.US, "%.2f", item.getEstimateValue());
-            itemName.setText(item.getItemName());
-            description.setText(item.getDescription());
-            estimateValue.setText("$" + formattedValue);
-            purchaseDate.setText(item.getPurchaseDate());
-            return view;
-        }
+        String formattedValue = String.format(Locale.US, "%.2f", item.getEstimateValue());
+        itemName.setText(item.getItemName());
+        description.setText(item.getDescription());
+        estimateValue.setText("$" + formattedValue);
+        purchaseDate.setText(item.getPurchaseDate());
+        return view;
+    }
 
 
 
 }
-
-
 

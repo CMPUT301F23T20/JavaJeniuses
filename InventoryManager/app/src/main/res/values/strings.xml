@@ -4,8 +4,32 @@
     <string name="title_add_item">Add Item</string>
     <string name="title_profile">Profile</string>
     <string name="font">sans-serif-black</string>
+
     <string name="item_name">Item Name</string>
-    <string name="description">Description</string>
-    <string name="estimateValue">Estimate Value</string>
+    <string name="item_name_hint">Enter name of item</string>
+
     <string name="purchase_date">DD/MM/YYYY</string>
+    <string name="purchase_date_label">Date of Purchase or Acquisition"</string>
+    <string name="purchase_date_hint">Enter date</string>
+
+    <string name="description">Brief Description</string>
+    <string name="description_hint">Enter name of item</string>
+
+    <string name="make_label">Make</string>
+    <string name="make_hint">Enter Make</string>
+
+    <string name="model_label">Model</string>
+    <string name="model_hint">Enter Model</string>
+
+    <string name="serial_number">Serial Number (if applicable)</string>
+    <string name="serial_number_hint">Enter serial number</string>
+
+    <string name="estimate_value">Estimate Value</string>
+    <string name="estimate_value_hint">Enter estimated value</string>
+
+    <string name="comment_label">Comment</string>
+    <string name="comment_hint">Enter Comment</string>
+
+    <string name="add_item">Add Item</string>
+
 </resources>

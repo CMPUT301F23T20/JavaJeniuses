@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">InventoryManager</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_add_item">Add Item</string>
+    <string name="title_profile">Profile</string>
+    <string name="font">sans-serif-black</string>
+    <string name="item_name">Item Name</string>
+    <string name="description">Description</string>
+    <string name="estimateValue">Estimate Value</string>
+    <string name="purchase_date">DD/MM/YYYY</string>
 </resources>

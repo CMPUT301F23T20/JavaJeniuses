@@ -31,5 +31,7 @@
     <string name="comment_hint">Enter Comment</string>
 
     <string name="add_item">Add Item</string>
+    <string name="delete_button">Delete</string>
+    <string name="add_tag_button">Add Tag</string>
 
 </resources>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
+import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
 
 import java.util.ArrayList;
@@ -34,6 +36,12 @@ public class HomeFragment extends Fragment {
 
         // Bind the listview
         ListView itemList = binding.itemList;
+
+        Button deleteButton = root.findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(); // Show a selection box that is on every single item
+
+        Button addTagButton = root.findViewById(R.id.addTag);
+        addTagButton.setOnClickListener();
 
         // Create a new ArrayList to store the data that will be displayed in the ListView
         items = new ArrayList<>();

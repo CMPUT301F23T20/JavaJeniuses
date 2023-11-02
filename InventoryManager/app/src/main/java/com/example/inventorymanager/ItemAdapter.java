@@ -19,8 +19,8 @@ public class ItemAdapter extends ArrayAdapter{
     private final Context context;
     private ArrayList<Item> items;
 
-    public ItemAdapter(Context context, ArrayList<Item> cities) {
-        super(context, 0, cities);
+    public ItemAdapter(Context context, int value,ArrayList<Item> cities) {
+        super(context, value, cities);
         this.items = cities;
         this.context = context;
     }

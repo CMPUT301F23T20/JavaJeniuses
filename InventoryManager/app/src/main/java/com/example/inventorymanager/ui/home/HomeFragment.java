@@ -38,20 +38,25 @@ public class HomeFragment extends Fragment {
         ListView itemList = binding.itemList;
 
         Button deleteButton = root.findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener(); // Show a selection box that is on every single item
+        deleteButton.setOnClickListener({
+            for(int i = items.size()-1; i >= 0; i--){
+                if(itemList.getChildAt(i).findViewById(R.id.checkBox).isChecked())
+            }
+        });
 
         Button addTagButton = root.findViewById(R.id.addTag);
-        addTagButton.setOnClickListener();
+        //addTagButton.setOnClickListener();
 
         // Create a new ArrayList to store the data that will be displayed in the ListView
         items = new ArrayList<>();
 
         // Create an adapter to bind the data from the ArrayList to the ListView
-        adapter = new ItemAdapter(requireContext(), items);
+        adapter = new ItemAdapter(requireContext(), 0, items);
 
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
+        itemList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         // Set the adapter for the ListView, allowing it to display the data
         itemList.setAdapter(adapter);
 

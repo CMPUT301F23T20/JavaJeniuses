@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/purchase_date_hint"
             android:imeOptions="actionNext"
-            android:inputType="date" />
+            android:focusable="false"/>
 
         <TextView
             android:id="@+id/addDescriptionTextView"

@@ -1,6 +1,7 @@
 package com.example.inventorymanager.ui.addItem;
 
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,13 +27,15 @@ import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 
 public class addItemFragment extends Fragment {
 
     private FragmentAddItemBinding binding;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -71,6 +74,24 @@ public class addItemFragment extends Fragment {
             }
             return false;
         });
+        purchaseDateInput.setOnClickListener(v -> {
+            Calendar selectedDate = Calendar.getInstance(); // Create a Calendar instance for the current date
+            int year = selectedDate.get(Calendar.YEAR);
+            int month = selectedDate.get(Calendar.MONTH);
+            int dayOfMonth = selectedDate.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, selectedYear, selectedMonth, selectedDayOfMonth) -> {
+                selectedDate.set(selectedYear, selectedMonth, selectedDayOfMonth); // Set the date the user selected
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()); // Format the date to only show month and year
+                purchaseDateInput.setText(dateFormat.format(selectedDate.getTime()));
+                purchaseDateInput.setError(null); // Clear any previous errors on the EditText view
+            },
+                    year, month, dayOfMonth
+            );
+
+            datePickerDialog.show();
+        });
+
 
 
         addItemButton.setOnClickListener(v -> {

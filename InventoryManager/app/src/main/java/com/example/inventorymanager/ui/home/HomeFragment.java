@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,14 +39,31 @@ public class HomeFragment extends Fragment {
         ListView itemList = binding.itemList;
 
         Button deleteButton = root.findViewById(R.id.deleteButton);
-        deleteButton.setOnClickListener({
+        deleteButton.setOnClickListener( v-> {
             for(int i = items.size()-1; i >= 0; i--){
-                if(itemList.getChildAt(i).findViewById(R.id.checkBox).isChecked())
+                if(((CheckBox)itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()){
+                    // Replace with delete for Firestore
+                    adapter.remove(items.get(i));
+                }
+            }
+            for(int i = 0; i < items.size(); i++){
+                CheckBox chkBox = itemList.getChildAt(i).findViewById(R.id.checkBox);
+                chkBox.setChecked(false);
             }
         });
 
         Button addTagButton = root.findViewById(R.id.addTag);
-        //addTagButton.setOnClickListener();
+        addTagButton.setOnClickListener( v-> {
+            for(int i = items.size()-1; i >= 0; i--){
+                if(((CheckBox)itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()){
+                    // Replace with tagging
+                }
+            }
+            for(int i = 0; i < items.size(); i++){
+                CheckBox chkBox = itemList.getChildAt(i).findViewById(R.id.checkBox);
+                chkBox.setChecked(false);
+            }
+        });
 
         // Create a new ArrayList to store the data that will be displayed in the ListView
         items = new ArrayList<>();

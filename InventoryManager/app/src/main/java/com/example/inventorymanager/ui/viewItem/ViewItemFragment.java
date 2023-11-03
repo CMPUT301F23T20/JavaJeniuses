@@ -58,8 +58,9 @@ public class ViewItemFragment extends Fragment {
         TextView serialNumberValue = binding.serialNumberValue;
         TextView estimatedValueValue = binding.estimatedValueValue;
         TextView commentValue = binding.commentValue;
-        Button homeButton = binding.homeButton;
         Button editButton = binding.editButton;
+        Button deleteButton = binding.deleteButton;
+        Button homeButton = binding.homeButton;
 
         itemNameValue.setText("Car");
         purchaseDateValue.setText("2021-01-01");
@@ -70,14 +71,19 @@ public class ViewItemFragment extends Fragment {
         estimatedValueValue.setText("500,000.00");
         commentValue.setText("I like my car");
 
-        homeButton.setOnClickListener(v -> {
+        editButton.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.navigation_editItem);
+        });
+
+        deleteButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_home);
         });
 
-        editButton.setOnClickListener(v -> {
+        homeButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.navigation_editItem);
+            navController.navigate(R.id.navigation_home);
         });
 
         return root;

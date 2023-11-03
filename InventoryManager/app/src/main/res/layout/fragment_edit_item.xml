@@ -188,6 +188,30 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/saveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="150dp"
+                android:height="60dp"
+                android:text="@string/save_button_text"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/cancelButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/deleteButton"
+                app:layout_goneMarginTop="50dp" />
+            <Button
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="150dp"
+                android:height="60dp"
+                android:text="@string/delete_button_text"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/cancelButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/saveButton"
+                app:layout_goneMarginTop="50dp" />
+            <Button
                 android:id="@+id/cancelButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -196,21 +220,8 @@
                 android:text="@string/cancel_button_text"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/saveButton"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_goneMarginTop="50dp" />
-
-            <Button
-                android:id="@+id/saveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:width="150dp"
-                android:height="60dp"
-                android:text="@string/save_button_text"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cancelButton"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_goneMarginTop="50dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -35,6 +35,7 @@
     <string name="edit_button_text">Edit</string>
     <string name="cancel_button_text">Cancel</string>
     <string name="save_button_text">Save</string>
+    <string name="delete_button_text">Delete</string>
     <string name="title_view_item">View Item</string>
     <string name="title_edit_item">Edit Item</string>
 

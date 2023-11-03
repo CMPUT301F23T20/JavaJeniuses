@@ -57,8 +57,9 @@ public class EditItemFragment extends Fragment {
         EditText serialNumberInput = binding.serialNumberInput;
         EditText estimatedValueInput = binding.estimatedValueInput;
         EditText commentInput = binding.commentInput;
-        Button cancelButton = binding.cancelButton;
         Button saveButton = binding.saveButton;
+        Button deleteButton = binding.deleteButton;
+        Button cancelButton = binding.cancelButton;
 
         itemNameInput.setText("Assume this is the value already entered");
         purchaseDateInput.setText("Assume this is the value already entered");
@@ -69,12 +70,17 @@ public class EditItemFragment extends Fragment {
         estimatedValueInput.setText("Assume this is the value already entered");
         commentInput.setText("Assume this is the value already entered");
 
-        cancelButton.setOnClickListener(v -> {
+        saveButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_home);
         });
 
-        saveButton.setOnClickListener(v -> {
+        deleteButton.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.navigation_home);
+        });
+
+        cancelButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_home);
         });

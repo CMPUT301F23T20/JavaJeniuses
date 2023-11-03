@@ -1,5 +1,7 @@
 package com.example.inventorymanager;
 
+import java.util.HashMap;
+
 public class Item {
     private String itemName;
     private String purchaseDate;
@@ -84,5 +86,18 @@ public class Item {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public HashMap<String, String> getDocument() {
+        HashMap<String, String> doc = new HashMap<>();
+        doc.put("name", this.getItemName());
+        doc.put("date", this.getPurchaseDate());
+        doc.put("description", this.getDescription());
+        doc.put("model", this.getModel());
+        doc.put("make", this.getMake());
+        doc.put("number", Double.toString(this.getSerialNumber()));
+        doc.put("value", Double.toString(this.getEstimateValue()));
+        doc.put("comment", this.getComment());
+        return doc;
     }
 }

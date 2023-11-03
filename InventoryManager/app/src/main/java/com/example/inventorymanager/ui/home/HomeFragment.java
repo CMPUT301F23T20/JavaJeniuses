@@ -20,6 +20,12 @@ import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -28,29 +34,21 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private ItemAdapter adapter;
     private ArrayList<Item> items;
+//    private FirebaseFirestore db;
+//    private CollectionReference itemsDB;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
         // Bind the listview
         ListView itemList = binding.itemList;
 
-        // Create a new ArrayList to store the data that will be displayed in the ListView
-        items = new ArrayList<>();
+//        db = FirebaseFirestore.getInstance();
+//        itemsDB = db.collection("items");
 
-        // Create an adapter to bind the data from the ArrayList to the ListView
-        adapter = new ItemAdapter(requireContext(), items);
-
-        // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
-
-        // Set the adapter for the ListView, allowing it to display the data
-        itemList.setAdapter(adapter);
 
         // Add the "Car" item to the ViewModel if it's empty (This is just the initial item that
         // will be on the listview when app is booted, this is also a test to ensure the listview is
@@ -58,20 +56,31 @@ public class HomeFragment extends Fragment {
         if (itemViewModel.getItemsLiveData().getValue() == null) {
             Item item = new Item("Car", "2023/10/21", "fast car", "Aventador", "Lambo", 0.0, 0.0, "");
             itemViewModel.addItem(item);
+//            itemsDB.document(item.getItemName()).set(item.getDocument());
         }
+        // Create a new ArrayList to store the data that will be displayed in the ListView
+        items = itemViewModel.getItemsLiveData().getValue();
+        // Create an adapter to bind the data from the ArrayList to the ListView
+        adapter = new ItemAdapter(requireContext(), items);
+
+        // Create an instance of the shared ViewModel that manages the list of items
+//        ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+
+        // Set the adapter for the ListView, allowing it to display the data
+        itemList.setAdapter(adapter);
 
 
-        // Observe changes in the LiveData provided by the shared ViewModel (itemViewModel)
-        itemViewModel.getItemsLiveData().observe(getViewLifecycleOwner(), items -> {
-            // Clear the current data in the adapter to accurately represent the current state
-            adapter.clear();
-
-            // Add all the new items from the observed LiveData to the adapter
-            adapter.addAll(items);
-
-            // Notify the adapter that the data set has changed, triggering a UI update
-            adapter.notifyDataSetChanged();
-        });
+//        // Observe changes in the LiveData provided by the shared ViewModel (itemViewModel)
+//        itemViewModel.getItemsLiveData().observe(getViewLifecycleOwner(), items -> {
+//            // Clear the current data in the adapter to accurately represent the current state
+//            adapter.clear();
+//
+//            // Add all the new items from the observed LiveData to the adapter
+//            adapter.addAll(items);
+//
+//            // Notify the adapter that the data set has changed, triggering a UI update
+//            adapter.notifyDataSetChanged();
+//        });
 
         itemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

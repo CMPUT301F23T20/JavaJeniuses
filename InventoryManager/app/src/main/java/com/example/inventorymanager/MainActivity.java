@@ -1,5 +1,6 @@
 package com.example.inventorymanager;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;

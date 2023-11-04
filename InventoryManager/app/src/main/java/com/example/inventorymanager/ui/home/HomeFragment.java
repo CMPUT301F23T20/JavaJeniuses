@@ -51,12 +51,10 @@ public class HomeFragment extends Fragment {
         // Create a new ArrayList to store the data that will be displayed in the ListView
         items = itemViewModel.getItemsLiveData().getValue();
         // Create an adapter to bind the data from the ArrayList to the ListView
-        adapter = new ItemAdapter(requireContext(), 0, items);
+        adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
 
         // Set the adapter for the ListView, allowing it to display the data
         itemList.setAdapter(adapter);
-        // set up mutli-select ability of items being displayed
-        itemList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         // add effect of clicking on an delete button (delete all highlighted items)
         Button deleteButton = root.findViewById(R.id.deleteButton);

@@ -83,7 +83,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:buttonTint="@color/purple_200"/>
+                android:buttonTint="@color/purple_200"
+                android:focusable="false"
+                android:focusableInTouchMode="false"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

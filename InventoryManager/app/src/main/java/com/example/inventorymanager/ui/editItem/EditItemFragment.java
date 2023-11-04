@@ -47,7 +47,9 @@ public class EditItemFragment extends Fragment {
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
+        // get the argument passed representing the item of interest
         String key = getArguments().getString("key");
+        // fetch the full item from the database
         Item item = itemViewModel.getItem(key);
 
         // Bind UI elements to variables
@@ -62,8 +64,8 @@ public class EditItemFragment extends Fragment {
         EditText commentInput = binding.commentInput;
         Button saveButton = binding.saveButton;
         Button deleteButton = binding.deleteButton;
-        Button cancelButton = binding.cancelButton;
 
+        // set the text fields to default to the text that item already has
         itemNameInput.setText(item.getItemName());
         purchaseDateInput.setText(item.getPurchaseDate());
         descriptionInput.setText(item.getDescription());
@@ -73,17 +75,9 @@ public class EditItemFragment extends Fragment {
         estimatedValueInput.setText(Double.toString(item.getEstimateValue()));
         commentInput.setText(item.getComment());
 
-//        itemNameInput.setText("Assume this is the value already entered");
-//        purchaseDateInput.setText("Assume this is the value already entered");
-//        descriptionInput.setText("Assume this is the value already entered");
-//        makeInput.setText("Assume this is the value already entered");
-//        modelInput.setText("Assume this is the value already entered");
-//        serialNumberInput.setText("Assume this is the value already entered");
-//        estimatedValueInput.setText("Assume this is the value already entered");
-//        commentInput.setText("Assume this is the value already entered");
-
+        // add effect of the save button when pressed (save changes)
         saveButton.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            // make a new item with the data currently present in the fields
             Item newItem = new Item(itemNameInput.getText().toString(),
                     purchaseDateInput.getText().toString(),
                     descriptionInput.getText().toString(),
@@ -92,17 +86,20 @@ public class EditItemFragment extends Fragment {
                     Double.valueOf(serialNumberInput.getText().toString()),
                     Double.valueOf(estimatedValueInput.getText().toString()),
                     commentInput.getText().toString());
+            // update the value of this item in the database
             itemViewModel.editItem(key, newItem);
-            navController.navigate(R.id.navigation_home);
-        });
 
-        deleteButton.setOnClickListener(v -> {
+            // navigate back to the app home screen (item list)
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            itemViewModel.deleteItem(key);
             navController.navigate(R.id.navigation_home);
         });
 
-        cancelButton.setOnClickListener(v -> {
+        // add effect of the delete button when pressed (delete this item)
+        deleteButton.setOnClickListener(v -> {
+            // delete this item from the database
+            itemViewModel.deleteItem(key);
+
+            // navigate back to the app home screen (item list)
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_home);
         });

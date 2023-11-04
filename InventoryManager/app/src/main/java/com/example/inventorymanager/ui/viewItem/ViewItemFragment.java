@@ -54,10 +54,10 @@ public class ViewItemFragment extends Fragment {
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
+        // get the argument passed representing the item of interest
         String key = getArguments().getString("key");
-//        Log.d("test", key + "1");
+        // fetch the full item from the database
         Item item = itemViewModel.getItem(key);
-//        Log.d("test", key);
 
         // Bind UI elements to variables
         ScrollView viewItemScrollView = binding.ViewItemScrollView;
@@ -71,8 +71,8 @@ public class ViewItemFragment extends Fragment {
         TextView commentValue = binding.commentValue;
         Button editButton = binding.editButton;
         Button deleteButton = binding.deleteButton;
-        Button homeButton = binding.homeButton;
 
+        // set the text view to show the values that item already has
         itemNameValue.setText(item.getItemName());
         purchaseDateValue.setText(item.getPurchaseDate());
         descriptionValue.setText(item.getDescription());
@@ -82,65 +82,33 @@ public class ViewItemFragment extends Fragment {
         estimatedValueValue.setText(Double.toString(item.getEstimateValue()));
         commentValue.setText(item.getComment());
 
+        // add effect of the edit button when pressed (edit details)
         editButton.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            // send bundle with the item name, which is the database key
             Bundle bundle = new Bundle();
             bundle.putString("key", item.getItemName());
+
+            // navigate to the edit item screen (edit details), sending data
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_editItem, bundle);
         });
 
+        // add effect of the delete button when pressed (delete this item)
         deleteButton.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            // delete this item from the database
             itemViewModel.deleteItem(key);
-            navController.navigate(R.id.navigation_home);
-        });
 
-        homeButton.setOnClickListener(v -> {
+            // navigate back to the app home screen (item list)
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_home);
         });
-
-//        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-//            @Override
-//            public void handleOnBackPressed() {
-//                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-//                navController.navigate(R.id.navigation_home);
-//            }
-//        };
-//        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         return root;
     }
-
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-//        navController.navigate(R.id.navigation_home);
-//    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
-//    private ViewItemViewModel mViewModel;
-//
-//    public static ViewItemFragment newInstance() {
-//        return new ViewItemFragment();
-//    }
-//
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-//                             @Nullable Bundle savedInstanceState) {
-//        return inflater.inflate(R.layout.fragment_view_item, container, false);
-//    }
-//
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        mViewModel = new ViewModelProvider(this).get(ViewItemViewModel.class);
-//        // TODO: Use the ViewModel
-//    }
-
 }

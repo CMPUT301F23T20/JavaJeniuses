@@ -29,68 +29,35 @@ public class ItemViewModel extends ViewModel {
     private static MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference itemsDB = db.collection("items");
-//    private Item currentItem;
 
     public ItemViewModel() {
+        // create default empty list on first time creating
+        ArrayList<Item> items = new ArrayList<>();
+        itemsLiveData.setValue(items);
+        // get the current system state from the database
         fetchItems();
-//        itemsDB.get()
-//            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                    if (task.isSuccessful()) {
-//                        QuerySnapshot rawData = task.getResult();
-//                        List<DocumentSnapshot> cleanedData = rawData.getDocuments();
-//                        ArrayList<Item> items = new ArrayList<Item>();
-//                        for (int i = 0; i < cleanedData.size(); i++) {
-//                            DocumentSnapshot rawItem = cleanedData.get(i);
-//                            Item cleanedItem = new Item(
-//                                    (String) rawItem.get("name"),
-//                                    (String) rawItem.get("date"),
-//                                    (String) rawItem.get("description"),
-//                                    (String) rawItem.get("model"),
-//                                    (String) rawItem.get("make"),
-//                                    Double.valueOf((String) rawItem.get("number")),
-//                                    Double.valueOf((String) rawItem.get("value")),
-//                                    (String) rawItem.get("comment"));
-//                            items.add(cleanedItem);
-//                        }
-//                        itemsLiveData.setValue(items);
-//                    }
-//                }
-//            });
-//        QuerySnapshot rawData = itemsDB.get().getResult();
-//        List<HashMap> cleanedData = rawData.toObjects(HashMap.class);
-//        ArrayList<Item> items = new ArrayList<Item>();
-//        for (int i = 0; i < cleanedData.size(); i++) {
-//            HashMap<String, String> rawItem = cleanedData.get(i);
-//            Item cleanedItem = new Item(rawItem.get("name"),
-//                    rawItem.get("date"),
-//                    rawItem.get("description"),
-//                    rawItem.get("model"),
-//                    rawItem.get("make"),
-//                    Double.valueOf(rawItem.get("number")),
-//                    Double.valueOf(rawItem.get("value")),
-//                    rawItem.get("comment"));
-//            items.add(cleanedItem);
-//        }
-//        itemsLiveData.setValue(items);
     }
 
     public LiveData<ArrayList<Item>> getItemsLiveData() {
         return itemsLiveData;
     }
 
+    // fetch the whole list of items
     public void fetchItems() {
+        // query database to get all items indiscriminately
         itemsDB.get()
             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
+                        // fetch the results of the blank query
                         QuerySnapshot rawData = task.getResult();
                         List<DocumentSnapshot> cleanedData = rawData.getDocuments();
-                        ArrayList<Item> items = new ArrayList<Item>();
+                        // iterate through fetched documents and make an item for each
+                        ArrayList<Item> items = new ArrayList<>();
                         for (int i = 0; i < cleanedData.size(); i++) {
                             DocumentSnapshot rawItem = cleanedData.get(i);
+                            // translate database format to the Item class
                             Item cleanedItem = new Item(
                                     (String) rawItem.get("name"),
                                     (String) rawItem.get("date"),
@@ -102,98 +69,54 @@ public class ItemViewModel extends ViewModel {
                                     (String) rawItem.get("comment"));
                             items.add(cleanedItem);
                         }
+                        // update the items being shown to the what was fetched
                         itemsLiveData.setValue(items);
                     }
                 }
             });
     }
 
+    // get a single item matching a certain key
     public Item getItem(String key) {
+        // get the current items being tracked
         ArrayList<Item> items = getItemsLiveData().getValue();
+        // check which item corresponds to the given key and return it
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getItemName().equals(key)) {
                 return items.get(i);
             }
         }
+
+        // should never ever be reached
         return new Item("Error", "", "", "", "", 0.0, 0.0, "");
-//        Item item = new Item("", "", "", "", "", 0.0, 0.0, "");
-//        Log.d("test", key + "2");
-//        Log.d("test", key + "3");
-//        itemsDB.get()
-//            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                    Log.d("test", key + "3");
-//                    if (task.isSuccessful()) {
-//                        Log.d("test", key + "4");
-//                        QuerySnapshot rawData = task.getResult();
-//                        List<DocumentSnapshot> cleanedData = rawData.getDocuments();
-//                        for (int i = 0; i < cleanedData.size(); i++) {
-//                            DocumentSnapshot rawItem = cleanedData.get(i);
-//                            if (((String) rawItem.get("name")).equals(key)) {
-//                                currentItem = new Item(
-//                                        (String) rawItem.get("name"),
-//                                        (String) rawItem.get("date"),
-//                                        (String) rawItem.get("description"),
-//                                        (String) rawItem.get("model"),
-//                                        (String) rawItem.get("make"),
-//                                        Double.valueOf((String) rawItem.get("number")),
-//                                        Double.valueOf((String) rawItem.get("value")),
-//                                        (String) rawItem.get("comment"));
-//                            }
-//                        }
-//                    }
-//                }
-//            });
-//        itemsDB.whereEqualTo("name", key).get()
-//            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-////                    Log.d("test", "here");
-//                    if (task.isSuccessful()) {
-//                        QuerySnapshot rawData = task.getResult();
-//                        List<DocumentSnapshot> cleanedData = rawData.getDocuments();
-//                        DocumentSnapshot rawItem = cleanedData.get(0);
-//                        currentItem = new Item(
-//                                (String) rawItem.get("name"),
-//                                (String) rawItem.get("date"),
-//                                (String) rawItem.get("description"),
-//                                (String) rawItem.get("model"),
-//                                (String) rawItem.get("make"),
-//                                Double.valueOf((String) rawItem.get("number")),
-//                                Double.valueOf((String) rawItem.get("value")),
-//                                (String) rawItem.get("comment"));
-//                    }
-//                }
-//            });
-//        try {
-//            Thread.sleep(3000);
-//        } catch (Exception e) {
-//            Log.d("test", "sleep error");
-//        }
-//        return currentItem;
     }
 
+    // add an item to the database and what is being shown
     public void addItem(Item item) {
-        ArrayList<Item> items = itemsLiveData.getValue();
-        if (items == null) {
-            items = new ArrayList<>();
-        }
+        // get the current items being tracked
+        ArrayList<Item> items = getItemsLiveData().getValue();
+        // add the new item locally and to the database
         items.add(item);
         itemsDB.document(item.getItemName()).set(item.getDocument());
+        // save the new state of items being tracked
         itemsLiveData.setValue(items);
-        itemsDB.document(item.getItemName()).set(item.getDocument());
-//        fetchItems();
+        fetchItems();
     }
 
+    // edit an existing item in the database and what is shown
     public void editItem(String key, Item item) {
+        // get the current items being tracked
         ArrayList<Item> items = getItemsLiveData().getValue();
+        // find and update the item corresponding to the given search key
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getItemName().equals(key)) {
+                // remove item locally and from the database
                 items.remove(i);
                 itemsDB.document(key).delete();
+                // add the new item back locally and to the database
                 items.add(item);
                 itemsDB.document(item.getItemName()).set(item.getDocument());
+                // save the new state of items being tracked
                 itemsLiveData.setValue(items);
                 fetchItems();
                 return;
@@ -201,12 +124,17 @@ public class ItemViewModel extends ViewModel {
         }
     }
 
+    // delete an exitsing item in the database and from what is shown
     public void deleteItem(String key) {
+        // get the current items being tracked
         ArrayList<Item> items = getItemsLiveData().getValue();
+        // find and delete the item corresponding to the given search key
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getItemName().equals(key)) {
+                // remove item locally and from the database
                 items.remove(i);
                 itemsDB.document(key).delete();
+                // save the new state of items being tracked
                 itemsLiveData.setValue(items);
                 fetchItems();
                 return;

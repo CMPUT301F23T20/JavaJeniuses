@@ -88,8 +88,11 @@ public class Item {
         this.comment = comment;
     }
 
+    // converts the original item into the proper format for the database
     public HashMap<String, String> getDocument() {
+        // data should be key-value mapping of String to String
         HashMap<String, String> doc = new HashMap<>();
+        // add fields one by one
         doc.put("name", this.getItemName());
         doc.put("date", this.getPurchaseDate());
         doc.put("description", this.getDescription());

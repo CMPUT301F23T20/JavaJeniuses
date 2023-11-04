@@ -34,32 +34,12 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.tool)
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-//        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
-//            @Override
-//            public void handleOnBackPressed() {
-//                NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_activity_main);
-//                navController.navigate(R.id.navigation_home);
-//                // Handle the back button event
-//            }
-//        };
-//        this.getOnBackPressedDispatcher().addCallback(this, callback);
-
-//        getSupportActionBar().setHomeActionContentDescription(R.id.navigation_home);
-//                .setDisplayHomeAsUpEnabled(true);
     }
-//    @Override
-//    public void onBackPressed() {
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-//        navController.navigate(R.id.navigation_home);
-//        super.onBackPressed();
-//    }
+
+    // enable the back button to have an effect
     @Override
     public boolean onSupportNavigateUp() {
+        // always just navigate back to the home screen when pressed
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         navController.navigate(R.id.navigation_home);
         return true;

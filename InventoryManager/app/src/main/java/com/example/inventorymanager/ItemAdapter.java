@@ -19,9 +19,9 @@ public class ItemAdapter extends ArrayAdapter{
     private final Context context;
     private ArrayList<Item> items;
 
-    public ItemAdapter(Context context, int value,ArrayList<Item> cities) {
-        super(context, value, cities);
-        this.items = cities;
+    public ItemAdapter(Context context, int value,ArrayList<Item> items) {
+        super(context, value, items);
+        this.items = items;
         this.context = context;
     }
 
@@ -40,10 +40,9 @@ public class ItemAdapter extends ArrayAdapter{
         TextView estimateValue = view.findViewById(R.id.estimateValueTextView);
         TextView purchaseDate = view.findViewById(R.id.purchaseDateTextView);
 
-        String formattedValue = String.format(Locale.US, "%.2f", item.getEstimateValue());
         itemName.setText(item.getItemName());
         description.setText(item.getDescription());
-        estimateValue.setText("$" + formattedValue);
+        estimateValue.setText(item.getEstimatedValue());
         purchaseDate.setText(item.getPurchaseDate());
         return view;
     }

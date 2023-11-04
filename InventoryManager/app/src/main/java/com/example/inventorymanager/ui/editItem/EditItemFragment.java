@@ -71,8 +71,8 @@ public class EditItemFragment extends Fragment {
         descriptionInput.setText(item.getDescription());
         makeInput.setText(item.getMake());
         modelInput.setText(item.getModel());
-        serialNumberInput.setText(Double.toString(item.getSerialNumber()));
-        estimatedValueInput.setText(Double.toString(item.getEstimateValue()));
+        serialNumberInput.setText(item.getSerialNumber());
+        estimatedValueInput.setText(item.getEstimatedValue());
         commentInput.setText(item.getComment());
 
         // add effect of the save button when pressed (save changes)
@@ -83,8 +83,8 @@ public class EditItemFragment extends Fragment {
                     descriptionInput.getText().toString(),
                     makeInput.getText().toString(),
                     modelInput.getText().toString(),
-                    Double.valueOf(serialNumberInput.getText().toString()),
-                    Double.valueOf(estimatedValueInput.getText().toString()),
+                    serialNumberInput.getText().toString(),
+                    estimatedValueInput.getText().toString(),
                     commentInput.getText().toString());
             // update the value of this item in the database
             itemViewModel.editItem(key, newItem);

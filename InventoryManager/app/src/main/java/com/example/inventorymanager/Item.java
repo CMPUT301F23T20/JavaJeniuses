@@ -1,6 +1,9 @@
 package com.example.inventorymanager;
 
+import android.util.Log;
+
 import java.util.HashMap;
+import java.util.Locale;
 
 public class Item {
     private String itemName;
@@ -8,20 +11,20 @@ public class Item {
     private String description;
     private String model;
     private String make;
-    private double serialNumber;
-    private double estimateValue;
+    private String serialNumber;
+    private double estimatedValue;
     private String comment;
 
 
-    public Item(String itemName, String purchaseDate, String description, String model, String make, double serialNumber, double estimateValue, String comment) {
-        this.itemName = itemName;
-        this.purchaseDate = purchaseDate;
-        this.description = description;
-        this.model = model;
-        this.make = make;
-        this.serialNumber = serialNumber;
-        this.estimateValue = estimateValue;
-        this.comment = comment;
+    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment) {
+        this.setItemName(itemName);
+        this.setPurchaseDate(purchaseDate);
+        this.setDescription(description);
+        this.setModel(model);
+        this.setMake(make);
+        this.setSerialNumber(serialNumber);
+        this.setEstimatedValue(estimatedValue);
+        this.setComment(comment);
     }
 
     public String getItemName() {
@@ -64,20 +67,25 @@ public class Item {
         this.make = make;
     }
 
-    public double getSerialNumber() {
+    public String getSerialNumber() {
         return serialNumber;
     }
 
-    public void setSerialNumber(double serialNumber) {
+    public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
 
-    public double getEstimateValue() {
-        return estimateValue;
+    public String getEstimatedValue() {
+        return String.format(Locale.US, "$%.2f", this.estimatedValue);
     }
 
-    public void setEstimateValue(double estimateValue) {
-        this.estimateValue = estimateValue;
+    public void setEstimatedValue(String estimatedValue) {
+        Log.d("test", estimatedValue);
+        Log.d("test", Double.toString(Double.valueOf(estimatedValue.substring(1))));
+        if (estimatedValue.charAt(0) == '$') {
+            estimatedValue = estimatedValue.substring(1);
+        }
+        this.estimatedValue = Double.valueOf(estimatedValue);
     }
 
     public String getComment() {
@@ -98,8 +106,8 @@ public class Item {
         doc.put("description", this.getDescription());
         doc.put("model", this.getModel());
         doc.put("make", this.getMake());
-        doc.put("number", Double.toString(this.getSerialNumber()));
-        doc.put("value", Double.toString(this.getEstimateValue()));
+        doc.put("number", this.getSerialNumber());
+        doc.put("value", this.getEstimatedValue());
         doc.put("comment", this.getComment());
         return doc;
     }

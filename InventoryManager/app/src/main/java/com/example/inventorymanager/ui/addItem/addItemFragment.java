@@ -100,13 +100,13 @@ public class addItemFragment extends Fragment {
             String make = makeInput.getText().toString();
             String model = modelInput.getText().toString();
             String serialNumber = serialNumberInput.getText().toString();
-            String estimateValue = estimatedValueInput.getText().toString();
+            String estimatedValue = estimatedValueInput.getText().toString();
             String comment = commentInput.getText().toString();
 
             // Check if required fields are not empty (This is just a brief validation check, needs to be adjusted for future specifications
-            if (!itemName.isEmpty() && !purchaseDate.isEmpty() && !description.isEmpty() && !make.isEmpty() && !model.isEmpty() && !serialNumber.isEmpty() && !estimateValue.isEmpty() && !comment.isEmpty()) {
+            if (!itemName.isEmpty() && !purchaseDate.isEmpty() && !description.isEmpty() && !make.isEmpty() && !model.isEmpty() && !serialNumber.isEmpty() && !estimatedValue.isEmpty() && !comment.isEmpty()) {
                 // Create a new item using the filled out fields
-                Item newItem = new Item(itemName, purchaseDate, description,model, make, Double.parseDouble(serialNumber), Double.parseDouble(estimateValue), comment);
+                Item newItem = new Item(itemName, purchaseDate, description,model, make, serialNumber, estimatedValue, comment);
 
                 // Add the new item to the shared ViewModel
                 itemViewModel.addItem(newItem);

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,10 +51,26 @@ public class HomeFragment extends Fragment {
         // Create a new ArrayList to store the data that will be displayed in the ListView
         items = itemViewModel.getItemsLiveData().getValue();
         // Create an adapter to bind the data from the ArrayList to the ListView
-        adapter = new ItemAdapter(requireContext(), items);
+        adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
 
         // Set the adapter for the ListView, allowing it to display the data
         itemList.setAdapter(adapter);
+
+        // add effect of clicking on an delete button (delete all highlighted items)
+        Button deleteButton = root.findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener( v-> {
+            // delete all those items that are currently checked off
+            // go backwards so we can delete in-place
+            for (int i = items.size()-1; i >= 0; i--) {
+                if (((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()) {
+                    itemViewModel.deleteItem(items.get(i).getItemName());
+                    // unselect each box that was previously checked
+                    ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
+                }
+            }
+            // update list so that the deleted item is gone
+            adapter.notifyDataSetChanged();
+        });
 
         // add effect of clicking on an existing item (view item details)
         itemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

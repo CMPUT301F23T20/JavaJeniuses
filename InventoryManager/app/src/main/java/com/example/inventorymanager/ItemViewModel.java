@@ -64,8 +64,8 @@ public class ItemViewModel extends ViewModel {
                                     (String) rawItem.get("description"),
                                     (String) rawItem.get("model"),
                                     (String) rawItem.get("make"),
-                                    Double.valueOf((String) rawItem.get("number")),
-                                    Double.valueOf((String) rawItem.get("value")),
+                                    (String) rawItem.get("number"),
+                                    (String) rawItem.get("value"),
                                     (String) rawItem.get("comment"));
                             items.add(cleanedItem);
                         }
@@ -88,7 +88,7 @@ public class ItemViewModel extends ViewModel {
         }
 
         // should never ever be reached
-        return new Item("Error", "", "", "", "", 0.0, 0.0, "");
+        return new Item("Error", "", "", "", "", "", "", "");
     }
 
     // add an item to the database and what is being shown

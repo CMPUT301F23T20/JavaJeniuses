@@ -46,12 +46,6 @@ public class HomeFragment extends Fragment {
         // instantiate the shared view model which manages the database
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
-        // add default item -- need to solve startup problem so we can remove this
-        if (itemViewModel.getItemsLiveData().getValue() == null) {
-            Item item = new Item("Sample Item", "0000-00-00", "Delete this once you've added new items.", "", "", 0.0, 0.0, "");
-            itemViewModel.addItem(item);
-        }
-
         // Create a new ArrayList to store the data that will be displayed in the ListView
         items = itemViewModel.getItemsLiveData().getValue();
         // Create an adapter to bind the data from the ArrayList to the ListView

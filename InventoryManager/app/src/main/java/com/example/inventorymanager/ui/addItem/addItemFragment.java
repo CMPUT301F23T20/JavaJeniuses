@@ -37,12 +37,10 @@ public class addItemFragment extends Fragment {
 
     private FragmentAddItemBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Create an instance of the ViewModel for adding items
-        addItemViewModel addItemViewModel =
-                new ViewModelProvider(this).get(addItemViewModel.class);
+        addItemViewModel addItemViewModel = new ViewModelProvider(this).get(addItemViewModel.class);
 
         // Inflate the layout for this fragment
         binding = FragmentAddItemBinding.inflate(inflater, container, false);
@@ -106,10 +104,7 @@ public class addItemFragment extends Fragment {
             String comment = commentInput.getText().toString();
 
             // Check if required fields are not empty (This is just a brief validation check, needs to be adjusted for future specifications
-
-            if (!itemName.isEmpty() && !purchaseDate.isEmpty() && !description.isEmpty() && !make.isEmpty()
-                    && !model.isEmpty() && !serialNumber.isEmpty() && !estimateValue.isEmpty() && !comment.isEmpty()) {
-
+            if (!itemName.isEmpty() && !purchaseDate.isEmpty() && !description.isEmpty() && !make.isEmpty() && !model.isEmpty() && !serialNumber.isEmpty() && !estimateValue.isEmpty() && !comment.isEmpty()) {
                 // Create a new item using the filled out fields
                 Item newItem = new Item(itemName, purchaseDate, description,model, make, Double.parseDouble(serialNumber), Double.parseDouble(estimateValue), comment);
 
@@ -129,18 +124,9 @@ public class addItemFragment extends Fragment {
                 serialNumberInput.setText("");
                 estimatedValueInput.setText("");
                 commentInput.setText("");
-
-
             }
-
         });
 
-
-
-
-        // I'm not quite sure what this is for so I just commented it out
-        //final TextView textView = binding.textAddItem;
-        //addItemViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

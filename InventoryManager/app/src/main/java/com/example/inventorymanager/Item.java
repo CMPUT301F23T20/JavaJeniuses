@@ -76,15 +76,16 @@ public class Item {
     }
 
     public String getEstimatedValue() {
+        // format string into two decimal places to represent money
         return String.format(Locale.US, "$%.2f", this.estimatedValue);
     }
 
     public void setEstimatedValue(String estimatedValue) {
-        Log.d("test", estimatedValue);
-        Log.d("test", Double.toString(Double.valueOf(estimatedValue.substring(1))));
+        // remove leading dollar sign if necessary
         if (estimatedValue.charAt(0) == '$') {
             estimatedValue = estimatedValue.substring(1);
         }
+        // cast back to String from double
         this.estimatedValue = Double.valueOf(estimatedValue);
     }
 

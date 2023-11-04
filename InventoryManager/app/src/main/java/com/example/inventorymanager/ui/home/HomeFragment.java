@@ -49,12 +49,13 @@ public class HomeFragment extends Fragment {
 //        itemsDB = db.collection("items");
 
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+//        itemViewModel.fetchItems();
 
         // Add the "Car" item to the ViewModel if it's empty (This is just the initial item that
         // will be on the listview when app is booted, this is also a test to ensure the listview is
         // not getting overwritten when an item is added
         if (itemViewModel.getItemsLiveData().getValue() == null) {
-            Item item = new Item("Car", "2023/10/21", "fast car", "Aventador", "Lambo", 0.0, 0.0, "");
+            Item item = new Item("Sample Item", "0000-00-00", "Delete this once you've added new items.", "", "", 0.0, 0.0, "");
             itemViewModel.addItem(item);
 //            itemsDB.document(item.getItemName()).set(item.getDocument());
         }
@@ -86,7 +87,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                navController.navigate(R.id.navigation_viewItem);
+                Bundle bundle = new Bundle();
+                bundle.putString("key", items.get(i).getItemName());
+                navController.navigate(R.id.navigation_viewItem, bundle);
             }
         });
 

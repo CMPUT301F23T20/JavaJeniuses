@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -33,6 +34,34 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-    }
 
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.tool)
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_activity_main);
+//                navController.navigate(R.id.navigation_home);
+//                // Handle the back button event
+//            }
+//        };
+//        this.getOnBackPressedDispatcher().addCallback(this, callback);
+
+//        getSupportActionBar().setHomeActionContentDescription(R.id.navigation_home);
+//                .setDisplayHomeAsUpEnabled(true);
+    }
+//    @Override
+//    public void onBackPressed() {
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+//        navController.navigate(R.id.navigation_home);
+//        super.onBackPressed();
+//    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController.navigate(R.id.navigation_home);
+        return true;
+    }
 }

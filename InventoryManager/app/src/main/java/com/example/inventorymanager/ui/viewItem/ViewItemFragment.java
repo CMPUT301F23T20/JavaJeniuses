@@ -1,5 +1,8 @@
 package com.example.inventorymanager.ui.viewItem;
 
+import static java.lang.Thread.sleep;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.ActionBar;
@@ -13,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +29,7 @@ import android.widget.TextView;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemViewModel;
+import com.example.inventorymanager.MainActivity;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.databinding.FragmentViewItemBinding;
@@ -49,6 +54,11 @@ public class ViewItemFragment extends Fragment {
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
+        String key = getArguments().getString("key");
+//        Log.d("test", key + "1");
+        Item item = itemViewModel.getItem(key);
+//        Log.d("test", key);
+
         // Bind UI elements to variables
         ScrollView viewItemScrollView = binding.ViewItemScrollView;
         TextView itemNameValue = binding.itemNameValue;
@@ -63,22 +73,25 @@ public class ViewItemFragment extends Fragment {
         Button deleteButton = binding.deleteButton;
         Button homeButton = binding.homeButton;
 
-        itemNameValue.setText("Car");
-        purchaseDateValue.setText("2021-01-01");
-        descriptionValue.setText("This is my car");
-        makeValue.setText("Lamborghini");
-        modelValue.setText("blah blah blah");
-        serialNumberValue.setText("341343254214237");
-        estimatedValueValue.setText("500,000.00");
-        commentValue.setText("I like my car");
+        itemNameValue.setText(item.getItemName());
+        purchaseDateValue.setText(item.getPurchaseDate());
+        descriptionValue.setText(item.getDescription());
+        makeValue.setText(item.getMake());
+        modelValue.setText(item.getModel());
+        serialNumberValue.setText(Double.toString(item.getSerialNumber()));
+        estimatedValueValue.setText(Double.toString(item.getEstimateValue()));
+        commentValue.setText(item.getComment());
 
         editButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.navigation_editItem);
+            Bundle bundle = new Bundle();
+            bundle.putString("key", item.getItemName());
+            navController.navigate(R.id.navigation_editItem, bundle);
         });
 
         deleteButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            itemViewModel.deleteItem(key);
             navController.navigate(R.id.navigation_home);
         });
 
@@ -87,8 +100,23 @@ public class ViewItemFragment extends Fragment {
             navController.navigate(R.id.navigation_home);
         });
 
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+//                navController.navigate(R.id.navigation_home);
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
+
         return root;
     }
+
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+//        navController.navigate(R.id.navigation_home);
+//    }
 
     @Override
     public void onDestroyView() {

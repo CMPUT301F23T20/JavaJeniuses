@@ -47,6 +47,9 @@ public class EditItemFragment extends Fragment {
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
+        String key = getArguments().getString("key");
+        Item item = itemViewModel.getItem(key);
+
         // Bind UI elements to variables
         ScrollView editItemScrollView = binding.editItemScrollView;
         EditText itemNameInput = binding.itemNameInput;
@@ -61,22 +64,41 @@ public class EditItemFragment extends Fragment {
         Button deleteButton = binding.deleteButton;
         Button cancelButton = binding.cancelButton;
 
-        itemNameInput.setText("Assume this is the value already entered");
-        purchaseDateInput.setText("Assume this is the value already entered");
-        descriptionInput.setText("Assume this is the value already entered");
-        makeInput.setText("Assume this is the value already entered");
-        modelInput.setText("Assume this is the value already entered");
-        serialNumberInput.setText("Assume this is the value already entered");
-        estimatedValueInput.setText("Assume this is the value already entered");
-        commentInput.setText("Assume this is the value already entered");
+        itemNameInput.setText(item.getItemName());
+        purchaseDateInput.setText(item.getPurchaseDate());
+        descriptionInput.setText(item.getDescription());
+        makeInput.setText(item.getMake());
+        modelInput.setText(item.getModel());
+        serialNumberInput.setText(Double.toString(item.getSerialNumber()));
+        estimatedValueInput.setText(Double.toString(item.getEstimateValue()));
+        commentInput.setText(item.getComment());
+
+//        itemNameInput.setText("Assume this is the value already entered");
+//        purchaseDateInput.setText("Assume this is the value already entered");
+//        descriptionInput.setText("Assume this is the value already entered");
+//        makeInput.setText("Assume this is the value already entered");
+//        modelInput.setText("Assume this is the value already entered");
+//        serialNumberInput.setText("Assume this is the value already entered");
+//        estimatedValueInput.setText("Assume this is the value already entered");
+//        commentInput.setText("Assume this is the value already entered");
 
         saveButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            Item newItem = new Item(itemNameInput.getText().toString(),
+                    purchaseDateInput.getText().toString(),
+                    descriptionInput.getText().toString(),
+                    makeInput.getText().toString(),
+                    modelInput.getText().toString(),
+                    Double.valueOf(serialNumberInput.getText().toString()),
+                    Double.valueOf(estimatedValueInput.getText().toString()),
+                    commentInput.getText().toString());
+            itemViewModel.editItem(key, newItem);
             navController.navigate(R.id.navigation_home);
         });
 
         deleteButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            itemViewModel.deleteItem(key);
             navController.navigate(R.id.navigation_home);
         });
 

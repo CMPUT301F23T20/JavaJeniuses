@@ -1,11 +1,10 @@
 package com.example.inventorymanager;
 
-import android.widget.Button;
 import android.widget.EditText;
 
 public class ItemUtility {
-    public static boolean validateExpenseFields(EditText itemNameInput, EditText purchaseDateInput, EditText descriptionInput,
-                                                EditText makeInput, EditText modelInput,EditText serialNumberInput, EditText estimatedValueInput, EditText commentInput) {
+    public static boolean validateItemFields(EditText itemNameInput, EditText purchaseDateInput, EditText descriptionInput,
+                                             EditText makeInput, EditText modelInput, EditText serialNumberInput, EditText estimatedValueInput, EditText commentInput) {
 
         String itemName = itemNameInput.getText().toString();
         String purchaseDate = purchaseDateInput.getText().toString();
@@ -17,10 +16,9 @@ public class ItemUtility {
         String comment = commentInput.getText().toString();
 
         boolean isAllFieldsChecked = true;
-        // Mandatory Fields: Name, Date, Make, Model, Value
-        // Optional Fields: Description, Serial number, comment
 
-        // ITEM NAME CHECKS
+        // ----------- OPTIONAL FIELDS ------------
+        // Item Name CHECKS
         if (itemName.isEmpty()) {
             itemNameInput.setError("This field is required");
             isAllFieldsChecked = false;
@@ -30,18 +28,46 @@ public class ItemUtility {
             isAllFieldsChecked = false;
         }
 
-        // PURCHASE DATE CHECKS
+        // Purchase Date Checks
         if (purchaseDate.isEmpty()) {
             purchaseDateInput.setError("This field is required");
             isAllFieldsChecked = false;
         }
 
-        // DESCRIPTION CHECKS
-        if (description.isEmpty()) {
-            descriptionInput.setError("This field is required");
+        // Make Checks
+        if (make.isEmpty()) {
+            makeInput.setError("This field is required");
             isAllFieldsChecked = false;
         }
 
+        // Model Checks
+        if (model.isEmpty()) {
+            modelInput.setError("This field is required");
+            isAllFieldsChecked = false;
+        }
+
+        // Estimated Value Checks
+        if (estimatedValue.isEmpty()) {
+            estimatedValueInput.setError("This field is required");
+            isAllFieldsChecked = false;
+        }
+
+
+        // ----------- OPTIONAL FIELDS ------------
+
+        // Description Checks
+        if (description.length() >= 21) {
+            descriptionInput.setError("Up to 20 characters");
+            isAllFieldsChecked = false;
+        }
+
+        // Serial Number Checks
+        if (serialNumber.length() >= 21) {
+            serialNumberInput.setError("Up to 20 characters");
+            isAllFieldsChecked = false;
+        }
+
+        // Comment Checks
         if (comment.length() >= 21) {
             commentInput.setError("Up to 20 characters");
             isAllFieldsChecked = false;
@@ -50,10 +76,17 @@ public class ItemUtility {
         return isAllFieldsChecked;
     }
 
-    public static void clearTextFields(EditText expenseInput,EditText dateInput,EditText chargeInput,EditText commentInput ){
-        expenseInput.getText().clear();
-        dateInput.getText().clear();
-        chargeInput.getText().clear();
+    public static void clearTextFields(EditText itemNameInput, EditText purchaseDateInput, EditText descriptionInput,
+    EditText makeInput, EditText modelInput, EditText serialNumberInput, EditText estimatedValueInput, EditText commentInput){
+
+
+        itemNameInput.getText().clear();
+        purchaseDateInput.getText().clear();
+        descriptionInput.getText().clear();
+        makeInput.getText().clear();
+        modelInput.getText().clear();
+        serialNumberInput.getText().clear();
+        estimatedValueInput.getText().clear();
         commentInput.getText().clear();
     }
 

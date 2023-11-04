@@ -75,6 +75,24 @@ public class EditItemFragment extends Fragment {
         estimatedValueInput.setText(Double.toString(item.getEstimateValue()));
         commentInput.setText(item.getComment());
 
+        purchaseDateInput.setOnClickListener(v -> {
+            Calendar selectedDate = Calendar.getInstance(); // Create a Calendar instance for the current date
+            int year = selectedDate.get(Calendar.YEAR);
+            int month = selectedDate.get(Calendar.MONTH);
+            int dayOfMonth = selectedDate.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, selectedYear, selectedMonth, selectedDayOfMonth) -> {
+                selectedDate.set(selectedYear, selectedMonth, selectedDayOfMonth); // Set the date the user selected
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()); // Format the date to only show month and year
+                purchaseDateInput.setText(dateFormat.format(selectedDate.getTime()));
+                purchaseDateInput.setError(null); // Clear any previous errors on the EditText view
+            },
+                    year, month, dayOfMonth
+            );
+
+            datePickerDialog.show();
+        });
+
         // add effect of the save button when pressed (save changes)
         saveButton.setOnClickListener(v -> {
             // make a new item with the data currently present in the fields

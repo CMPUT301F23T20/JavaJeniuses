@@ -78,8 +78,8 @@ public class ViewItemFragment extends Fragment {
         descriptionValue.setText(item.getDescription());
         makeValue.setText(item.getMake());
         modelValue.setText(item.getModel());
-        serialNumberValue.setText(Double.toString(item.getSerialNumber()));
-        estimatedValueValue.setText(Double.toString(item.getEstimateValue()));
+        serialNumberValue.setText(item.getSerialNumber());
+        estimatedValueValue.setText(item.getEstimatedValue());
         commentValue.setText(item.getComment());
 
         // add effect of the edit button when pressed (edit details)

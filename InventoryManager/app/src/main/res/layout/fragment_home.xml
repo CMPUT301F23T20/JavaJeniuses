@@ -7,11 +7,13 @@
     tools:context=".ui.home.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbar_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
-
+        tools:layout_editor_absoluteY="0dp"
+        app:layout_constraintBottom_toTopOf="@id/item_list_constraint_layout"
+        app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/deleteButton"
@@ -21,7 +23,8 @@
             android:layout_marginTop="4dp"
             android:text="@string/delete_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <Button
             android:id="@+id/tag_button"
@@ -31,7 +34,8 @@
             android:layout_marginTop="4dp"
             android:text="@string/add_tag_button"
             app:layout_constraintStart_toEndOf="@+id/deleteButton"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <Button
             android:id="@+id/sort_button"
@@ -41,7 +45,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="4dp"
             android:background="@drawable/baseline_sort_24"
-            app:layout_constraintBottom_toTopOf="@+id/item_list"
+
             app:layout_constraintEnd_toStartOf="@+id/filter_button"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/tag_button"
@@ -56,21 +60,78 @@
             android:layout_marginEnd="12dp"
             android:background="@drawable/baseline_filter_alt_24"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <ListView
-            android:id="@+id/item_list"
-            android:layout_width="409dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="56dp"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="10.0sp"
-            android:paddingTop="10dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_list_constraint_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp"
+            app:layout_constraintBottom_toTopOf="@id/totals_constraint_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tag_button"
-            tools:listitem="@layout/item_cell" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_constraint_layout">
+
+            <ListView
+                android:id="@+id/item_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="10.0sp"
+                android:paddingTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/item_cell"></ListView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/totals_constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_list_constraint_layout">
+
+        <TextView
+            android:id="@+id/total_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/total"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.079"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/total_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/total_value"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.902"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.75" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 

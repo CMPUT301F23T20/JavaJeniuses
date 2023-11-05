@@ -52,6 +52,8 @@ public class ItemUtility {
             isAllFieldsChecked = false;
         } else {
             try {
+                // Implemented with the help of: https://www.geeksforgeeks.org/double-parsedouble-method-in-java-with-examples/
+                // Article by: gopaldave, GeeksForGeeks. Last updated: 26 Oct, 2018
                 double estimatedValueNumeric = Double.parseDouble(estimatedValue);
                 if (estimatedValueNumeric < 0) {
                     estimatedValueInput.setError("Value must be non-negative");

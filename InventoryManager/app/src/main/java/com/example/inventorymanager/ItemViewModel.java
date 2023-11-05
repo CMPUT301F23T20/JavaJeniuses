@@ -1,10 +1,5 @@
 package com.example.inventorymanager;
 
-import static android.content.ContentValues.TAG;
-
-import android.util.Log;
-import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -15,14 +10,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ItemViewModel extends ViewModel {
     // static variables make it so one copy of this variable exists across the whole app, synchronization
@@ -79,6 +70,7 @@ public class ItemViewModel extends ViewModel {
     // get a single item matching a certain key
     public Item getItem(String key) {
         // get the current items being tracked
+        fetchItems();
         ArrayList<Item> items = getItemsLiveData().getValue();
         // check which item corresponds to the given key and return it
         for (int i = 0; i < items.size(); i++) {
@@ -94,6 +86,7 @@ public class ItemViewModel extends ViewModel {
     // add an item to the database and what is being shown
     public void addItem(Item item) {
         // get the current items being tracked
+        fetchItems();
         ArrayList<Item> items = getItemsLiveData().getValue();
         // add the new item locally and to the database
         items.add(item);
@@ -104,15 +97,16 @@ public class ItemViewModel extends ViewModel {
     }
 
     // edit an existing item in the database and what is shown
-    public void editItem(Item item) {
+    public void editItem(String key, Item item) {
         // get the current items being tracked
+        fetchItems();
         ArrayList<Item> items = getItemsLiveData().getValue();
         // find and update the item corresponding to the given search key
         for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getItemName().equals(item.getItemName())) {
+            if (items.get(i).getItemName().equals(key)) {
                 // remove item locally and from the database
                 items.remove(i);
-                itemsDB.document(item.getItemName()).delete();
+                itemsDB.document(key).delete();
                 // add the new item back locally and to the database
                 items.add(item);
                 itemsDB.document(item.getItemName()).set(item.getDocument());
@@ -127,6 +121,7 @@ public class ItemViewModel extends ViewModel {
     // delete an existing item in the database and from what is shown
     public void deleteItem(String key) {
         // get the current items being tracked
+        fetchItems();
         ArrayList<Item> items = getItemsLiveData().getValue();
         // find and delete the item corresponding to the given search key
         for (int i = 0; i < items.size(); i++) {
@@ -140,6 +135,25 @@ public class ItemViewModel extends ViewModel {
                 return;
             }
         }
+    }
+
+    // checks if a name change is illegal
+    public boolean isIllegalNameChange(String oldName, String newName) {
+        // if editing an item and names match, that is ok
+        if (oldName.equals(newName)) {
+            return false;
+        }
+        // get the current items being tracked
+        fetchItems();
+        ArrayList<Item> items = getItemsLiveData().getValue();
+        // check if the item name is already taken
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).getItemName().equals(newName)) {
+                return true;
+            }
+        }
+        // no match found, so the name must be new and therefore legal
+        return false;
     }
 }
 

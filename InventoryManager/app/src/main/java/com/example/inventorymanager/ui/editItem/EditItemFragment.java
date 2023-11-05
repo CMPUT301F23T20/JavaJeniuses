@@ -139,7 +139,7 @@ public class EditItemFragment extends Fragment {
         // add effect of the save button when pressed (save changes)
         saveButton.setOnClickListener(v -> {
             if (ItemUtility.validateItemFields(itemNameInput, purchaseDateInput ,descriptionInput,
-                    makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput)) {
+                    makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput, key, itemViewModel)) {
                 // Get data from input fields
                 String itemName = itemNameInput.getText().toString();
                 String purchaseDate = purchaseDateInput.getText().toString();
@@ -153,7 +153,7 @@ public class EditItemFragment extends Fragment {
                 Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment);
 
                 // Add the new item to the shared ViewModel
-                itemViewModel.editItem(newItem);
+                itemViewModel.editItem(key, newItem);
 
                 // Navigate back to the home fragment
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);

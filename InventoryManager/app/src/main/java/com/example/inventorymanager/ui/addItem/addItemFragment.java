@@ -137,7 +137,7 @@ public class addItemFragment extends Fragment {
         // add effect of the add button when pressed (add this item to the list)
         addItemButton.setOnClickListener(v -> {
             if (ItemUtility.validateItemFields(itemNameInput, purchaseDateInput ,descriptionInput,
-                    makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput)) {
+                    makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput, "", itemViewModel)) {
                 // Get data from input fields
                 String itemName = itemNameInput.getText().toString();
                 String purchaseDate = purchaseDateInput.getText().toString();

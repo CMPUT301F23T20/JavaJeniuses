@@ -92,6 +92,8 @@ public class EditItemFragment extends Fragment {
                     year, month, dayOfMonth
             );
 
+            // Set the maximum date to the current date to prevent future dates
+            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
             datePickerDialog.show();
         });
 

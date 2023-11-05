@@ -50,6 +50,17 @@ public class ItemUtility {
         if (estimatedValue.isEmpty()) {
             estimatedValueInput.setError("This field is required");
             isAllFieldsChecked = false;
+        } else {
+            try {
+                double estimatedValueNumeric = Double.parseDouble(estimatedValue);
+                if (estimatedValueNumeric < 0) {
+                    estimatedValueInput.setError("Value must be non-negative");
+                    isAllFieldsChecked = false;
+                }
+            } catch (NumberFormatException e) {
+                estimatedValueInput.setError("Invalid number format");
+                isAllFieldsChecked = false;
+            }
         }
 
 
@@ -89,5 +100,6 @@ public class ItemUtility {
         estimatedValueInput.getText().clear();
         commentInput.getText().clear();
     }
+
 
 }

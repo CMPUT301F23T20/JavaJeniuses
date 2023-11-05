@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.databinding.FragmentEditItemBinding;
 import com.example.inventorymanager.ui.addItem.addItemViewModel;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -74,6 +77,42 @@ public class EditItemFragment extends Fragment {
         serialNumberInput.setText(item.getSerialNumber());
         estimatedValueInput.setText(item.getEstimatedValue());
         commentInput.setText(item.getComment());
+
+        // set up the estimated value field to only accept monetary values
+            // based on code from Stack Overflow, License: Attribution-ShareAlike 4.0 International
+            // published August 2016, accessed November 2023
+            // https://stackoverflow.com/questions/5107901/better-way-to-format-currency-input-edittext
+        estimatedValueInput.addTextChangedListener(new TextWatcher() {
+            private String current = "";
+            @Override
+            public void afterTextChanged(Editable charSequence) {
+                // nothing to do
+            }
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+                // nothing to do
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // only need to operate if changes have been made
+                if (!charSequence.toString().equals(current)) {
+                    // prevent listener from activating during these changes
+                    estimatedValueInput.removeTextChangedListener(this);
+
+                    // remove dollar signs, commas, and decimals to get numerical value of string
+                    String cleanString = charSequence.toString().replaceAll("[$,.]", "");
+                    // convert raw number to a dollar value
+                    double parsed = Double.parseDouble(cleanString);
+                    String formatted = NumberFormat.getCurrencyInstance().format(parsed/100);
+                    // update the view on the screen to contain the properly formatted value
+                    estimatedValueInput.setText(formatted);
+                    estimatedValueInput.setSelection(formatted.length());
+
+                    // changes finalized, so reactivate the listener for the future
+                    estimatedValueInput.addTextChangedListener(this);
+                }
+            }
+        });
 
         // add effect of the save button when pressed (save changes)
         saveButton.setOnClickListener(v -> {

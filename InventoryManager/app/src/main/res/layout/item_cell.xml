@@ -13,9 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:cardCornerRadius="20dp"
-        app:cardBackgroundColor="@color/celadon"
-
-        >
+        app:cardBackgroundColor="@color/celadon" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -75,6 +73,10 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.687" />
 
+            <!-- focusable fields allow checkbox and entire item to remain clickable -->
+                <!-- based on code from Stack Overflow, License: Attribution-ShareAlike 4.0 International -->
+                <!-- published April 2013, accessed November 2023 -->
+                <!-- https://stackoverflow.com/questions/15859134/listitem-click-doesnt-work-with-checkboxes-android -->
             <CheckBox
                 android:id="@+id/checkBox"
                 android:layout_width="wrap_content"

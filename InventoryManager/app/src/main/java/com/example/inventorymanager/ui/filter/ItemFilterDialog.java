@@ -21,6 +21,8 @@ public class ItemFilterDialog {
 
     private String startDate;
     private String endDate;
+    private String keyword;
+    private String make;
 
     public void showFilterDialog(Context context) {
 
@@ -38,9 +40,11 @@ public class ItemFilterDialog {
             @Override
             public void onClick(DialogInterface dialogInterface, int i, boolean b) {
                 // if user chooses to filter by date range, date input field pops up
-                if (filterOptions[i].equals("Date Range")) {
-                    showCustomDateRangeFields(context);
-                }}
+                if (filterOptions[i].equals("Date Range")) { showCustomDateRangeFields(context); }
+
+                // if user chooses to filter by keyword or make, user input field pops up
+                else { collectUserInput(context, filterOptions[i]); }
+            }
         });
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -69,13 +73,14 @@ public class ItemFilterDialog {
         // initialize alert dialog
         AlertDialog.Builder customDialogBuilder = new AlertDialog.Builder(context);
         customDialogBuilder.setTitle("Select Date Range");
+        customDialogBuilder.setCancelable(false); // doesn't cancel when user touches outside bounds
 
         // inflate custom layout
         LayoutInflater inflater = LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.custom_date_range, null);
         customDialogBuilder.setView(dialogView);
 
-        // set start and end date to be with calendar
+        // set start and end date with calendar
         EditText startDateEditText = dialogView.findViewById(R.id.start_date_edittext);
         EditText endDateEditText = dialogView.findViewById(R.id.end_date_edittext);
 
@@ -116,5 +121,34 @@ public class ItemFilterDialog {
         );
 
         datePickerDialog.show();
+    }
+
+    private void collectUserInput(Context context, String filterOption) {
+        // create a custom dialog for collecting user input
+        AlertDialog.Builder customDialogBuilder = new AlertDialog.Builder(context);
+        customDialogBuilder.setTitle("Enter " + filterOption);
+        customDialogBuilder.setCancelable(false); // doesn't cancel when user touches outside bounds
+
+        // create an EditText to allow the user to enter input
+        final EditText editText = new EditText(context);
+        customDialogBuilder.setView(editText);
+
+        // handle ok button click and store the entered input in variable
+        customDialogBuilder.setPositiveButton("OK", (dialogInterface, i) -> {
+            // store in keyword if user wants to filter by keyword
+            if (filterOption.equals("Description Keyword")) {
+                keyword = editText.getText().toString();
+            }
+
+            // store in make if user wants to filter by make
+            else if (filterOption.equals("Make")) {
+            make = editText.getText().toString();
+        }});
+
+        customDialogBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+        });
+
+        customDialogBuilder.show();
     }
 }

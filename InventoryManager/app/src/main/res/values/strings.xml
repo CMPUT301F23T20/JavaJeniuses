@@ -30,6 +30,15 @@
     <string name="comment_label">Comment</string>
     <string name="comment_hint">Enter Comment</string>
 
+    <string name="default_text">None provided</string>
+    <string name="home_button_text">Home</string>
+    <string name="edit_button_text">Edit</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="save_button_text">Save</string>
+    <string name="delete_button_text">Delete</string>
+    <string name="title_view_item">View Item</string>
+    <string name="title_edit_item">Edit Item</string>
+
     <string name="add_item">Add Item</string>
     <string name="delete_button">Delete</string>
     <string name="add_tag_button">Add Tag</string>

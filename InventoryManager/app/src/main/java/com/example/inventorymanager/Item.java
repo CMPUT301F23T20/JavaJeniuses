@@ -1,25 +1,30 @@
 package com.example.inventorymanager;
 
+import android.util.Log;
+
+import java.util.HashMap;
+import java.util.Locale;
+
 public class Item {
     private String itemName;
     private String purchaseDate;
     private String description;
     private String model;
     private String make;
-    private double serialNumber;
-    private double estimateValue;
+    private String serialNumber;
+    private double estimatedValue;
     private String comment;
 
 
-    public Item(String itemName, String purchaseDate, String description, String model, String make, double serialNumber, double estimateValue, String comment) {
-        this.itemName = itemName;
-        this.purchaseDate = purchaseDate;
-        this.description = description;
-        this.model = model;
-        this.make = make;
-        this.serialNumber = serialNumber;
-        this.estimateValue = estimateValue;
-        this.comment = comment;
+    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment) {
+        this.setItemName(itemName);
+        this.setPurchaseDate(purchaseDate);
+        this.setDescription(description);
+        this.setModel(model);
+        this.setMake(make);
+        this.setSerialNumber(serialNumber);
+        this.setEstimatedValue(estimatedValue);
+        this.setComment(comment);
     }
 
     public String getItemName() {
@@ -62,20 +67,26 @@ public class Item {
         this.make = make;
     }
 
-    public double getSerialNumber() {
+    public String getSerialNumber() {
         return serialNumber;
     }
 
-    public void setSerialNumber(double serialNumber) {
+    public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
 
-    public double getEstimateValue() {
-        return estimateValue;
+    public String getEstimatedValue() {
+        // format string into two decimal places to represent money
+        return String.format(Locale.US, "$%.2f", this.estimatedValue);
     }
 
-    public void setEstimateValue(double estimateValue) {
-        this.estimateValue = estimateValue;
+    public void setEstimatedValue(String estimatedValue) {
+        // remove leading dollar sign if necessary
+        if (estimatedValue.charAt(0) == '$') {
+            estimatedValue = estimatedValue.substring(1);
+        }
+        // cast back to String from double
+        this.estimatedValue = Double.valueOf(estimatedValue);
     }
 
     public String getComment() {
@@ -84,5 +95,21 @@ public class Item {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    // converts the original item into the proper format for the database
+    public HashMap<String, String> getDocument() {
+        // data should be key-value mapping of String to String
+        HashMap<String, String> doc = new HashMap<>();
+        // add fields one by one
+        doc.put("name", this.getItemName());
+        doc.put("date", this.getPurchaseDate());
+        doc.put("description", this.getDescription());
+        doc.put("model", this.getModel());
+        doc.put("make", this.getMake());
+        doc.put("number", this.getSerialNumber());
+        doc.put("value", this.getEstimatedValue());
+        doc.put("comment", this.getComment());
+        return doc;
     }
 }

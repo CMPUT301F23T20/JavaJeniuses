@@ -1,9 +1,11 @@
 package com.example.inventorymanager;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -34,4 +36,12 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
+    // enable the back button to have an effect
+    @Override
+    public boolean onSupportNavigateUp() {
+        // always just navigate back to the home screen when pressed
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController.navigate(R.id.navigation_home);
+        return true;
+    }
 }

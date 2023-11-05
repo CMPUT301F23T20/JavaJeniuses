@@ -1,5 +1,7 @@
 package com.example.inventorymanager.ui.home;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +23,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
+import com.example.inventorymanager.MainActivity;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
 import com.google.firebase.firestore.CollectionReference;
@@ -30,6 +34,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class HomeFragment extends Fragment {
 
@@ -56,7 +61,7 @@ public class HomeFragment extends Fragment {
         // Set the adapter for the ListView, allowing it to display the data
         itemList.setAdapter(adapter);
 
-        // add effect of clicking on an delete button (delete all highlighted items)
+        // add effect of clicking on a delete button (delete all highlighted items)
         Button deleteButton = root.findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener( v-> {
             // delete all those items that are currently checked off
@@ -84,6 +89,48 @@ public class HomeFragment extends Fragment {
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
                 navController.navigate(R.id.navigation_viewItem, bundle);
             }
+        });
+
+        // add effect of clicking on a filter button
+        Button filterButton = root.findViewById(R.id.filter_button);
+        String[] filterOptions = {"Date Range", "Description Keyword", "Make"};
+        boolean[] selectedOption = new boolean[filterOptions.length];
+
+        filterButton.setOnClickListener( v-> {
+            // Initialize alert dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+
+            // set title
+            builder.setTitle("Filter Items By: ");
+
+            // set dialog non cancelable
+            builder.setCancelable(false);
+
+            builder.setMultiChoiceItems(filterOptions, selectedOption, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i, boolean b) {
+                    // skip
+                    System.out.println("Good.");
+                }
+            });
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // skip
+                    System.out.println("Yay.");
+                }
+            });
+
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // dismiss dialog
+                    dialogInterface.dismiss();
+                }
+            });
+
+            builder.show();
         });
 
         return root;

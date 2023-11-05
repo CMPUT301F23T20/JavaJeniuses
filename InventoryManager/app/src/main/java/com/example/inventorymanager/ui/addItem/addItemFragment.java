@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -22,6 +23,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.inventorymanager.ItemAdapter;
+import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
@@ -93,20 +95,20 @@ public class addItemFragment extends Fragment {
 
 
         addItemButton.setOnClickListener(v -> {
-            // Get data from input fields
-            String itemName = itemNameInput.getText().toString();
-            String purchaseDate = purchaseDateInput.getText().toString();
-            String description = descriptionInput.getText().toString();
-            String make = makeInput.getText().toString();
-            String model = modelInput.getText().toString();
-            String serialNumber = serialNumberInput.getText().toString();
-            String estimatedValue = estimatedValueInput.getText().toString();
-            String comment = commentInput.getText().toString();
 
-            // Check if required fields are not empty (This is just a brief validation check, needs to be adjusted for future specifications
-            if (!itemName.isEmpty() && !purchaseDate.isEmpty() && !description.isEmpty() && !make.isEmpty() && !model.isEmpty() && !serialNumber.isEmpty() && !estimatedValue.isEmpty() && !comment.isEmpty()) {
-                // Create a new item using the filled out fields
-                Item newItem = new Item(itemName, purchaseDate, description,model, make, serialNumber, estimatedValue, comment);
+            if (ItemUtility.validateItemFields(itemNameInput, purchaseDateInput ,descriptionInput,
+                    makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput)) {
+                // Get data from input fields
+                String itemName = itemNameInput.getText().toString();
+                String purchaseDate = purchaseDateInput.getText().toString();
+                String description = descriptionInput.getText().toString();
+                String make = makeInput.getText().toString();
+                String model = modelInput.getText().toString();
+                String serialNumber = serialNumberInput.getText().toString();
+                String estimateValue = estimatedValueInput.getText().toString();
+                String comment = commentInput.getText().toString();
+
+                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment);
 
                 // Add the new item to the shared ViewModel
                 itemViewModel.addItem(newItem);
@@ -115,15 +117,11 @@ public class addItemFragment extends Fragment {
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
                 navController.navigate(R.id.navigation_home);
 
-                // Clear the EditText fields
-                itemNameInput.setText("");
-                purchaseDateInput.setText("");
-                descriptionInput.setText("");
-                makeInput.setText("");
-                modelInput.setText("");
-                serialNumberInput.setText("");
-                estimatedValueInput.setText("");
-                commentInput.setText("");
+                ItemUtility.clearTextFields(itemNameInput, purchaseDateInput ,descriptionInput,
+                        makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+            }
+            else{
+                Toast.makeText(requireContext(), "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show(); // A pop-up message to ensure validity of input
             }
         });
 

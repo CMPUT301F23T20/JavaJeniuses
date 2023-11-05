@@ -17,8 +17,8 @@ public class ItemUtility {
 
         boolean isAllFieldsChecked = true;
 
-        // ----------- OPTIONAL FIELDS ------------
-        // Item Name CHECKS
+        // ----------- MANDATORY FIELDS ------------
+        // Item Name Checks
         if (itemName.isEmpty()) {
             itemNameInput.setError("This field is required");
             isAllFieldsChecked = false;

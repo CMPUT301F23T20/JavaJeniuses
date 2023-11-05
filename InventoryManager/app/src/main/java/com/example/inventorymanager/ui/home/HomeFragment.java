@@ -47,7 +47,6 @@ public class HomeFragment extends Fragment {
         View root = binding.getRoot();
         // Bind the listview
         ListView itemList = binding.itemList;
-        TextView totalTextView = binding.totalValue;
 
         // instantiate the shared view model which manages the database
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
@@ -97,6 +96,7 @@ public class HomeFragment extends Fragment {
         }
 
         // update the text view with the total estimated value
+        TextView totalTextView = binding.totalValue;
         totalTextView = root.findViewById(R.id.total_value);
         totalTextView.setText(Double.toString(total));
 

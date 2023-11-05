@@ -1,8 +1,5 @@
 package com.example.inventorymanager.ui.home;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,42 +8,28 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
-import com.example.inventorymanager.ItemFilter;
+import com.example.inventorymanager.ui.filter.ItemFilterDialog;
 import com.example.inventorymanager.ItemViewModel;
-import com.example.inventorymanager.MainActivity;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private ItemAdapter adapter;
     private ArrayList<Item> items;
-    private ItemFilter itemFilter;
+    private ItemFilterDialog itemFilterDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
@@ -99,11 +82,11 @@ public class HomeFragment extends Fragment {
 
         // add effect of clicking on a filter icon
         Button filterButton = root.findViewById(R.id.filter_button);
-        itemFilter = new ItemFilter();
+        itemFilterDialog = new ItemFilterDialog();
 
         // show filter dialog when filter icon clicked
         filterButton.setOnClickListener( v-> {
-            itemFilter.showFilterDialog(requireContext());
+            itemFilterDialog.showFilterDialog(requireContext());
         });
 
         return root;

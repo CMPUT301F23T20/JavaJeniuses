@@ -45,9 +45,6 @@ public class HomeFragment extends Fragment {
         // Bind the listview
         ListView itemList = binding.itemList;
 
-        // Create a new ArrayList to store the data that will be displayed in the ListView
-        items = new ArrayList<>();
-
         // instantiate the shared view model which manages the database
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 

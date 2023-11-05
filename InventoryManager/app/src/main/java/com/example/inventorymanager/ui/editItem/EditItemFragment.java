@@ -20,8 +20,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import com.example.inventorymanager.Item;
+import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
@@ -75,23 +77,55 @@ public class EditItemFragment extends Fragment {
         estimatedValueInput.setText(item.getEstimatedValue());
         commentInput.setText(item.getComment());
 
+        purchaseDateInput.setOnClickListener(v -> {
+            Calendar selectedDate = Calendar.getInstance(); // Create a Calendar instance for the current date
+            int year = selectedDate.get(Calendar.YEAR);
+            int month = selectedDate.get(Calendar.MONTH);
+            int dayOfMonth = selectedDate.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, selectedYear, selectedMonth, selectedDayOfMonth) -> {
+                selectedDate.set(selectedYear, selectedMonth, selectedDayOfMonth); // Set the date the user selected
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()); // Format the date to only show month and year
+                purchaseDateInput.setText(dateFormat.format(selectedDate.getTime()));
+                purchaseDateInput.setError(null); // Clear any previous errors on the EditText view
+            },
+                    year, month, dayOfMonth
+            );
+
+            // Set the maximum date to the current date to prevent future dates
+            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+            datePickerDialog.show();
+        });
+
         // add effect of the save button when pressed (save changes)
         saveButton.setOnClickListener(v -> {
-            // make a new item with the data currently present in the fields
-            Item newItem = new Item(itemNameInput.getText().toString(),
-                    purchaseDateInput.getText().toString(),
-                    descriptionInput.getText().toString(),
-                    makeInput.getText().toString(),
-                    modelInput.getText().toString(),
-                    serialNumberInput.getText().toString(),
-                    estimatedValueInput.getText().toString(),
-                    commentInput.getText().toString());
-            // update the value of this item in the database
-            itemViewModel.editItem(key, newItem);
+            if (ItemUtility.validateItemFields(itemNameInput, purchaseDateInput ,descriptionInput,
+                    makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput)) {
+                // Get data from input fields
+                String itemName = itemNameInput.getText().toString();
+                String purchaseDate = purchaseDateInput.getText().toString();
+                String description = descriptionInput.getText().toString();
+                String make = makeInput.getText().toString();
+                String model = modelInput.getText().toString();
+                String serialNumber = serialNumberInput.getText().toString();
+                String estimateValue = estimatedValueInput.getText().toString();
+                String comment = commentInput.getText().toString();
 
-            // navigate back to the app home screen (item list)
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.navigation_home);
+                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment);
+
+                // Add the new item to the shared ViewModel
+                itemViewModel.editItem(key, newItem);
+
+                // Navigate back to the home fragment
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                navController.navigate(R.id.navigation_home);
+
+                ItemUtility.clearTextFields(itemNameInput, purchaseDateInput ,descriptionInput,
+                        makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+            }
+            else{
+                Toast.makeText(requireContext(), "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show(); // A pop-up message to ensure validity of input
+            }
         });
 
         // add effect of the delete button when pressed (delete this item)

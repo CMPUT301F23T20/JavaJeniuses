@@ -86,7 +86,7 @@ public class Item {
             estimatedValue = estimatedValue.substring(1);
         }
         // remove any commas that are present in the number for visual appeal
-        estimatedValue.replace(",", "");
+        estimatedValue = estimatedValue.replace(",", "");
         // cast back to String from double
         this.estimatedValue = Double.valueOf(estimatedValue);
     }

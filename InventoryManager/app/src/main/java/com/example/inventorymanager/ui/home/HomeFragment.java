@@ -1,6 +1,7 @@
 package com.example.inventorymanager.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,19 +16,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -37,12 +31,9 @@ public class HomeFragment extends Fragment {
     private ItemAdapter adapter;
     private ArrayList<Item> items;
 
-    TextView totalTextView;
-    private double total;
-
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // basic setup functionality to set up view
         HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         // Bind the listview
@@ -58,6 +49,8 @@ public class HomeFragment extends Fragment {
 
         // Set the adapter for the ListView, allowing it to display the data
         itemList.setAdapter(adapter);
+        // display the current total estimated value of items being displayed
+        updateTotal();
 
         // add effect of clicking on an delete button (delete all highlighted items)
         Button deleteButton = root.findViewById(R.id.deleteButton);
@@ -71,8 +64,9 @@ public class HomeFragment extends Fragment {
                     ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
                 }
             }
-            // update list so that the deleted item is gone
+            // update list so that the deleted item is gone and price reflects this
             adapter.notifyDataSetChanged();
+            updateTotal();
         });
 
         // add effect of clicking on an existing item (view item details)
@@ -89,19 +83,20 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        return root;
+    }
+
+    // updates the total estimated value being displayed on the screen
+    public void updateTotal() {
         // calculate total estimated value
-        total = 0;
+        double total = 0;
         for (Item item : items){
             total += Double.parseDouble(item.getEstimatedValue().substring(1));
         }
 
-        // update the text view with the total estimated value
-        TextView totalTextView = binding.totalValue;
-        totalTextView = root.findViewById(R.id.total_value);
-        totalTextView.setText(Double.toString(total));
-
-
-        return root;
+        // update the text view with the total estimated value formatted as money
+        TextView totalTextView = binding.getRoot().findViewById(R.id.total_value);
+        totalTextView.setText(String.format("$%.2f", total));
     }
 
     @Override

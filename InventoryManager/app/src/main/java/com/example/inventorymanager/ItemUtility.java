@@ -21,7 +21,8 @@ public class ItemUtility {
      * @return True if all fields are valid; false otherwise.
      */
     public static boolean validateItemFields(EditText itemNameInput, EditText purchaseDateInput, EditText descriptionInput,
-                                             EditText makeInput, EditText modelInput, EditText serialNumberInput, EditText estimatedValueInput, EditText commentInput) {
+                                             EditText makeInput, EditText modelInput, EditText serialNumberInput,
+                                             EditText estimatedValueInput, EditText commentInput, String oldName, ItemViewModel itemViewModel) {
 
         String itemName = itemNameInput.getText().toString();
         String purchaseDate = purchaseDateInput.getText().toString();
@@ -39,9 +40,11 @@ public class ItemUtility {
         if (itemName.isEmpty()) {
             itemNameInput.setError("This field is required");
             isAllFieldsChecked = false;
-
         } else if (itemName.length() >= 16) {
             itemNameInput.setError("Up to 15 characters");
+            isAllFieldsChecked = false;
+        } else if (itemViewModel.isIllegalNameChange(oldName, itemName)) {
+            itemNameInput.setError("Item name must be unique");
             isAllFieldsChecked = false;
         }
 
@@ -67,24 +70,9 @@ public class ItemUtility {
         if (estimatedValue.isEmpty()) {
             estimatedValueInput.setError("This field is required");
             isAllFieldsChecked = false;
-        } else {
-            try {
-                // Implemented with the help of: https://www.geeksforgeeks.org/double-parsedouble-method-in-java-with-examples/
-                // Article by: gopaldave, GeeksForGeeks. Last updated: 26 Oct, 2018
-                double estimatedValueNumeric = Double.parseDouble(estimatedValue);
-                if (estimatedValueNumeric < 0) {
-                    estimatedValueInput.setError("Value must be non-negative");
-                    isAllFieldsChecked = false;
-                }
-            } catch (NumberFormatException e) {
-                estimatedValueInput.setError("Invalid number format");
-                isAllFieldsChecked = false;
-            }
         }
 
-
         // ----------- OPTIONAL FIELDS ------------
-
         // Description Checks
         if (description.length() >= 21) {
             descriptionInput.setError("Up to 20 characters");
@@ -120,8 +108,6 @@ public class ItemUtility {
      */
     public static void clearTextFields(EditText itemNameInput, EditText purchaseDateInput, EditText descriptionInput,
     EditText makeInput, EditText modelInput, EditText serialNumberInput, EditText estimatedValueInput, EditText commentInput){
-
-
         itemNameInput.getText().clear();
         purchaseDateInput.getText().clear();
         descriptionInput.getText().clear();
@@ -131,6 +117,4 @@ public class ItemUtility {
         estimatedValueInput.getText().clear();
         commentInput.getText().clear();
     }
-
-
 }

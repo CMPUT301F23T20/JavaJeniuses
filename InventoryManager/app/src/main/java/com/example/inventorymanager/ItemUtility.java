@@ -2,7 +2,24 @@ package com.example.inventorymanager;
 
 import android.widget.EditText;
 
+
+/**
+ * This is a utility class that contains helpful methods for handling item-related operations and validations.
+ */
 public class ItemUtility {
+    /**
+     * Validates the input fields for an item, ensuring that mandatory and optional fields meet specific criteria.
+     *
+     * @param itemNameInput       The EditText for the item name.
+     * @param purchaseDateInput   The EditText for the purchase date.
+     * @param descriptionInput    The EditText for the item description.
+     * @param makeInput           The EditText for the item's make.
+     * @param modelInput          The EditText for the item's model.
+     * @param serialNumberInput   The EditText for the item's serial number.
+     * @param estimatedValueInput The EditText for the item's estimated value.
+     * @param commentInput        The EditText for additional comments.
+     * @return True if all fields are valid; false otherwise.
+     */
     public static boolean validateItemFields(EditText itemNameInput, EditText purchaseDateInput, EditText descriptionInput,
                                              EditText makeInput, EditText modelInput, EditText serialNumberInput, EditText estimatedValueInput, EditText commentInput) {
 
@@ -89,6 +106,18 @@ public class ItemUtility {
         return isAllFieldsChecked;
     }
 
+    /**
+     * Clears the text fields for an item, making them empty.
+     *
+     * @param itemNameInput       The EditText for the item name.
+     * @param purchaseDateInput   The EditText for the purchase date.
+     * @param descriptionInput    The EditText for the item description.
+     * @param makeInput           The EditText for the item's make.
+     * @param modelInput          The EditText for the item's model.
+     * @param serialNumberInput   The EditText for the item's serial number.
+     * @param estimatedValueInput The EditText for the item's estimated value.
+     * @param commentInput        The EditText for additional comments.
+     */
     public static void clearTextFields(EditText itemNameInput, EditText purchaseDateInput, EditText descriptionInput,
     EditText makeInput, EditText modelInput, EditText serialNumberInput, EditText estimatedValueInput, EditText commentInput){
 

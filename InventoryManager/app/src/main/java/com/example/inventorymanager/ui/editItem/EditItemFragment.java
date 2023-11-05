@@ -87,7 +87,7 @@ public class EditItemFragment extends Fragment {
                     estimatedValueInput.getText().toString(),
                     commentInput.getText().toString());
             // update the value of this item in the database
-            itemViewModel.editItem(key, newItem);
+            itemViewModel.editItem(newItem);
 
             // navigate back to the app home screen (item list)
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);

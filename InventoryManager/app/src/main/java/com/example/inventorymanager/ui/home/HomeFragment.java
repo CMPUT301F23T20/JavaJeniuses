@@ -37,6 +37,9 @@ public class HomeFragment extends Fragment {
     private ItemAdapter adapter;
     private ArrayList<Item> items;
 
+    TextView totalTextView;
+    private double total;
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
@@ -44,6 +47,7 @@ public class HomeFragment extends Fragment {
         View root = binding.getRoot();
         // Bind the listview
         ListView itemList = binding.itemList;
+        TextView totalTextView = binding.totalValue;
 
         // instantiate the shared view model which manages the database
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
@@ -85,6 +89,17 @@ public class HomeFragment extends Fragment {
                 navController.navigate(R.id.navigation_viewItem, bundle);
             }
         });
+
+        // calculate total estimated value
+        total = 0;
+        for (Item item : items){
+            total += Double.parseDouble(item.getEstimatedValue().substring(1));
+        }
+
+        // update the text view with the total estimated value
+        totalTextView = root.findViewById(R.id.total_value);
+        totalTextView.setText(Double.toString(total));
+
 
         return root;
     }

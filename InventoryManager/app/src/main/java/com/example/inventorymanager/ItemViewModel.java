@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ItemViewModel extends ViewModel {
-
+    // static variables make it so one copy of this variable exists across the whole app, synchronization
     private static MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference itemsDB = db.collection("items");
@@ -104,15 +104,15 @@ public class ItemViewModel extends ViewModel {
     }
 
     // edit an existing item in the database and what is shown
-    public void editItem(String key, Item item) {
+    public void editItem(Item item) {
         // get the current items being tracked
         ArrayList<Item> items = getItemsLiveData().getValue();
         // find and update the item corresponding to the given search key
         for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getItemName().equals(key)) {
+            if (items.get(i).getItemName().equals(item.getItemName())) {
                 // remove item locally and from the database
                 items.remove(i);
-                itemsDB.document(key).delete();
+                itemsDB.document(item.getItemName()).delete();
                 // add the new item back locally and to the database
                 items.add(item);
                 itemsDB.document(item.getItemName()).set(item.getDocument());
@@ -124,7 +124,7 @@ public class ItemViewModel extends ViewModel {
         }
     }
 
-    // delete an exitsing item in the database and from what is shown
+    // delete an existing item in the database and from what is shown
     public void deleteItem(String key) {
         // get the current items being tracked
         ArrayList<Item> items = getItemsLiveData().getValue();

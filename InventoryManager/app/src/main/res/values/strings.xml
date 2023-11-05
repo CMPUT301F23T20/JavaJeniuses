@@ -43,7 +43,7 @@
     <string name="delete_button">Delete</string>
     <string name="add_tag_button">Add Tag</string>
 
-    <string name="total">Total:</string>
-    <string name="total_value">$0</string>
+    <string name="total">Total Estimated Value:</string>
+    <string name="total_value">$0.00</string>
 
 </resources>

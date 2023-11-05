@@ -4,6 +4,8 @@ package com.example.inventorymanager.ui.addItem;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +31,7 @@ import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,17 +66,7 @@ public class addItemFragment extends Fragment {
         EditText commentInput = binding.commentInput;
         Button addItemButton = binding.addItemButton;
 
-        // Set up behavior to scroll once the commentInput EditText is filled out to scroll and reveal button
-        // Close keyboard as we've reached the end of input fields
-        commentInput.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                addItemScrollView.post(() -> addItemScrollView.scrollTo(0, addItemButton.getBottom()));
-                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                return true;
-            }
-            return false;
-        });
+        // Set up calendar to pop up and allow user to choose date
         purchaseDateInput.setOnClickListener(v -> {
             Calendar selectedDate = Calendar.getInstance(); // Create a Calendar instance for the current date
             int year = selectedDate.get(Calendar.YEAR);
@@ -93,10 +86,56 @@ public class addItemFragment extends Fragment {
             datePickerDialog.show();
         });
 
+        // set up the estimated value field to only accept monetary values
+            // based on code from Stack Overflow, License: Attribution-ShareAlike 4.0 International
+            // published August 2016, accessed November 2023
+            // https://stackoverflow.com/questions/5107901/better-way-to-format-currency-input-edittext
+        estimatedValueInput.addTextChangedListener(new TextWatcher() {
+            private String current = "";
+            @Override
+            public void afterTextChanged(Editable charSequence) {
+                // nothing to do
+            }
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+                // nothing to do
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // only need to operate if changes have been made
+                if (!charSequence.toString().equals(current)) {
+                    // prevent listener from activating during these changes
+                    estimatedValueInput.removeTextChangedListener(this);
 
+                    // remove dollar signs, commas, and decimals to get numerical value of string
+                    String cleanString = charSequence.toString().replaceAll("[$,.]", "");
+                    // convert raw number to a dollar value
+                    double parsed = Double.parseDouble(cleanString);
+                    String formatted = NumberFormat.getCurrencyInstance().format(parsed/100);
+                    // update the view on the screen to contain the properly formatted value
+                    estimatedValueInput.setText(formatted);
+                    estimatedValueInput.setSelection(formatted.length());
 
+                    // changes finalized, so reactivate the listener for the future
+                    estimatedValueInput.addTextChangedListener(this);
+                }
+            }
+        });
+
+        // Set up behavior to scroll once the commentInput EditText is filled out to scroll and reveal button
+        // Close keyboard as we've reached the end of input fields
+        commentInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addItemScrollView.post(() -> addItemScrollView.scrollTo(0, addItemButton.getBottom()));
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        });
+
+        // add effect of the add button when pressed (add this item to the list)
         addItemButton.setOnClickListener(v -> {
-
             if (ItemUtility.validateItemFields(itemNameInput, purchaseDateInput ,descriptionInput,
                     makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput)) {
                 // Get data from input fields
@@ -120,8 +159,7 @@ public class addItemFragment extends Fragment {
 
                 ItemUtility.clearTextFields(itemNameInput, purchaseDateInput ,descriptionInput,
                         makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
-            }
-            else{
+            } else {
                 Toast.makeText(requireContext(), "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show(); // A pop-up message to ensure validity of input
             }
         });

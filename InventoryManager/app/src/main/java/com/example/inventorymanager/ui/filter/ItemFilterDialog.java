@@ -124,7 +124,9 @@ public class ItemFilterDialog {
     }
 
     private void collectUserInput(Context context, String filterOption) {
-        // create a custom dialog for collecting user input
+        // Creates a custom dialog for collecting user input
+
+        // initialize alert dialog
         AlertDialog.Builder customDialogBuilder = new AlertDialog.Builder(context);
         customDialogBuilder.setTitle("Enter " + filterOption);
         customDialogBuilder.setCancelable(false); // doesn't cancel when user touches outside bounds
@@ -133,7 +135,7 @@ public class ItemFilterDialog {
         final EditText editText = new EditText(context);
         customDialogBuilder.setView(editText);
 
-        // handle ok button click and store the entered input in variable
+        // handle ok button click and store the input in variable
         customDialogBuilder.setPositiveButton("OK", (dialogInterface, i) -> {
             // store in keyword if user wants to filter by keyword
             if (filterOption.equals("Description Keyword")) {

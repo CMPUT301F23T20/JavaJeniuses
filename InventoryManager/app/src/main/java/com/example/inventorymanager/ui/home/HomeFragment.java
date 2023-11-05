@@ -1,6 +1,7 @@
 package com.example.inventorymanager.ui.home;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
+import com.example.inventorymanager.ItemFilter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.MainActivity;
 import com.example.inventorymanager.R;
@@ -33,14 +35,18 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private ItemAdapter adapter;
     private ArrayList<Item> items;
+    private ItemFilter itemFilter;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
@@ -91,46 +97,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // add effect of clicking on a filter button
+        // add effect of clicking on a filter icon
         Button filterButton = root.findViewById(R.id.filter_button);
-        String[] filterOptions = {"Date Range", "Description Keyword", "Make"};
-        boolean[] selectedOption = new boolean[filterOptions.length];
+        itemFilter = new ItemFilter();
 
+        // show filter dialog when filter icon clicked
         filterButton.setOnClickListener( v-> {
-            // Initialize alert dialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-
-            // set title
-            builder.setTitle("Filter Items By: ");
-
-            // set dialog non cancelable
-            builder.setCancelable(false);
-
-            builder.setMultiChoiceItems(filterOptions, selectedOption, new DialogInterface.OnMultiChoiceClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                    // skip
-                    System.out.println("Good.");
-                }
-            });
-
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // skip
-                    System.out.println("Yay.");
-                }
-            });
-
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // dismiss dialog
-                    dialogInterface.dismiss();
-                }
-            });
-
-            builder.show();
+            itemFilter.showFilterDialog(requireContext());
         });
 
         return root;

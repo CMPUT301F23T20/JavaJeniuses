@@ -11,9 +11,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -23,8 +25,11 @@ public class ItemFilterDialog {
     private String endDate;
     private String keyword;
     private String make;
+    private ItemFilter itemFilter;
 
-    public void showFilterDialog(Context context) {
+    public void showFilterDialog(Context context, ArrayList<Item> items) {
+
+        itemFilter = new ItemFilter();
 
         // array that holds user options for filtering the items
         String[] filterOptions = {"Date Range", "Description Keyword", "Make"};
@@ -40,7 +45,10 @@ public class ItemFilterDialog {
             @Override
             public void onClick(DialogInterface dialogInterface, int i, boolean b) {
                 // if user chooses to filter by date range, date input field pops up
-                if (filterOptions[i].equals("Date Range")) { showCustomDateRangeFields(context); }
+                if (filterOptions[i].equals("Date Range")) {
+                    showCustomDateRangeFields(context);
+                    itemFilter.filterByDateRange(items, startDate, endDate);
+                }
 
                 // if user chooses to filter by keyword or make, user input field pops up
                 else { collectUserInput(context, filterOptions[i]); }

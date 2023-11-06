@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,6 +24,14 @@ import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
 
+import com.example.inventorymanager.ui.sort.ItemSortDialog;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
@@ -30,6 +39,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private ItemAdapter adapter;
     private ArrayList<Item> items;
+    private ItemSortDialog itemSortDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // basic setup functionality to set up view
@@ -81,6 +91,14 @@ public class HomeFragment extends Fragment {
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
                 navController.navigate(R.id.navigation_viewItem, bundle);
             }
+        });
+
+        // add effect of clicking on a filter icon
+        Button sortButton = root.findViewById(R.id.sort_button);
+        itemSortDialog = new ItemSortDialog();
+        sortButton.setOnClickListener( v-> {
+            // show filter dialog when filter icon clicked
+            itemSortDialog.showSortDialog(requireContext(), items);
         });
 
         return root;

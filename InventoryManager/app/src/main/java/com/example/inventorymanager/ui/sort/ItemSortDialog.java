@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -20,17 +21,18 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class ItemSortDialog {
-    private boolean ascending;
     private ItemSort itemSort;
+    private String[] sortOptions;
+    private boolean ascending;
+    private boolean[] selectedOption;
 
     public void showSortDialog(Context context, ArrayList<Item> items, ItemAdapter adapter) {
 
         itemSort = new ItemSort();
 
         // array that holds user options for sorting the items
-        String[] sortOptions = {"Date", "Description", "Make", "Estimated Value"};
-        boolean[] selectedOption = new boolean[sortOptions.length];
-        ascending = true;
+        sortOptions = new String[]{"Date", "Description", "Make", "Estimated Value"};
+        selectedOption = new boolean[sortOptions.length];
 
         // initialize alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -47,7 +49,9 @@ public class ItemSortDialog {
 
         // set up listeners to handle button click
         arrowUpButton.setOnClickListener(v-> { ascending = true; });
+        Log.d("MyTag", "ascending is " + ascending);
         arrowDownButton.setOnClickListener(v-> { ascending = false; });
+        Log.d("MyTag", "ascending is " + ascending);
 
         // set dialog w options the user can choose from
         builder.setMultiChoiceItems(sortOptions, selectedOption, new DialogInterface.OnMultiChoiceClickListener() {
@@ -55,6 +59,7 @@ public class ItemSortDialog {
             public void onClick(DialogInterface dialogInterface, int i, boolean b) {
                 if (b) {
                     itemSort.sortItems(items, sortOptions[i], ascending);
+                    Log.d("MyTag", "Item sorted");
                 }
             }
         });
@@ -63,7 +68,10 @@ public class ItemSortDialog {
             // handle ok button click and sort the list
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                Log.d("MyTag", "OK clicked");
                 adapter.notifyDataSetChanged();
+                Log.d("MyTag", "adapter notified");
+                Log.d("MyTag", "items list " + items);
             }
         });
 

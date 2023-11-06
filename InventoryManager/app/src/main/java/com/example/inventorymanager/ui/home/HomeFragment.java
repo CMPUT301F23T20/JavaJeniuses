@@ -93,13 +93,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // add effect of clicking on a filter icon
+        // add effect of clicking on a sort icon
         Button sortButton = root.findViewById(R.id.sort_button);
         itemSortDialog = new ItemSortDialog();
         sortButton.setOnClickListener( v-> {
-            // show filter dialog when filter icon clicked
-            itemSortDialog.showSortDialog(requireContext(), items);
+            // show sort dialog when sort icon clicked
+            itemSortDialog.showSortDialog(requireContext(), items, adapter);
         });
+
 
         return root;
     }

@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // enable the back button to have an effect
+        // based on code from Stack Overflow, License: Attribution-ShareAlike 4.0 International
+        // published April 2019, accessed November 2023
+        // https://stackoverflow.com/questions/24032956/action-bar-back-button-not-working
     @Override
     public boolean onSupportNavigateUp() {
         // always just navigate back to the home screen when pressed

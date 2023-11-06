@@ -86,7 +86,7 @@ public class HomeFragment extends Fragment {
 
         // show filter dialog when filter icon clicked
         filterButton.setOnClickListener( v-> {
-            itemFilterDialog.showFilterDialog(requireContext());
+            itemFilterDialog.showFilterDialog(requireContext(), items);
         });
 
         return root;

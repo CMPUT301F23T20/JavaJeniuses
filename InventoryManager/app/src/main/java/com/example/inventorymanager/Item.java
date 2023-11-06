@@ -2,20 +2,23 @@ package com.example.inventorymanager;
 
 import android.util.Log;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 
 /**
  * A representation of an item within the context of an inventory management system.
- * Stores relevant information about an item (alongside access functions), including:<br>
- *  - the item's name,<br>
- *  - a brief description of the item,<br>
- *  - the date the item was purchased,<br>
- *  - the model of the item,<br>
- *  - the make of the item,<br>
- *  - the serial number of the item,<br>
- *  - the estimated monetary value of the item,<br>
- *  - and a comment about the item.
+ * Stores relevant information about an item (alongside access functions), including:
+ * <ul>
+ *     <li>the item's name,</li>
+ *     <li>a brief description of the item,</li>
+ *     <li>the date the item was purchased,</li>
+ *     <li>the model of the item,</li>
+ *     <li>the make of the item,</li>
+ *     <li>the serial number of the item,</li>
+ *     <li>the estimated monetary value of the item,</li>
+ *     <li>and a comment about the item.</li>
+ * </ul>
  */
 public class Item {
     private String itemName;

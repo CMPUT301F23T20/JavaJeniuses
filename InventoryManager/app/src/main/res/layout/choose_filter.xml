@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.filter.chooseFilterFragment">
+
+    <TextView
+        android:id="@+id/type_description_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30sp"
+        android:text="Type Description Keyword"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/description_keyword_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30sp"
+        android:hint="item description..." />
+
+    <TextView
+        android:id="@+id/type_make_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type Make Keyword"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/make_keyword_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30sp"
+        android:hint="item make..." />
+
+
+    <TextView
+        android:id="@+id/start_date_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose Dates"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/start_date_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30sp"
+        android:hint="Start Date" />
+
+    <EditText
+        android:id="@+id/end_date_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30sp"
+        android:hint="End Date" />
+
+
+    <Button
+        android:id="@+id/searchButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="Search" />
+</LinearLayout>

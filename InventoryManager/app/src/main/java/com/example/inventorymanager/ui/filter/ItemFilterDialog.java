@@ -2,27 +2,46 @@ package com.example.inventorymanager.ui.filter;
 
 import static androidx.core.content.ContentProviderCompat.requireContext;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.inventorymanager.R;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import com.example.inventorymanager.R;
+import com.example.inventorymanager.Item;
+import com.example.inventorymanager.ui.home.HomeFragment;
+
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class ItemFilterDialog {
+/**
+ * This class is now DEFUNCT - will be deleted when doing final refactoring because there could be useful functions in here
+ */
+
+public class ItemFilterDialog extends Fragment {
 
     private String startDate;
     private String endDate;
     private String keyword;
     private String make;
+    private ArrayList<Item> existingItems;
+
+    public ArrayList<Item> itemsByFilter = new ArrayList<>();
 
     public void showFilterDialog(Context context) {
 
@@ -138,12 +157,33 @@ public class ItemFilterDialog {
             // store in keyword if user wants to filter by keyword
             if (filterOption.equals("Description Keyword")) {
                 keyword = editText.getText().toString();
+                this.itemsByFilter = findItemsWithDescriptionKeyword(keyword);
+
+//                // send bundle with the item name, which is the database key
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList("items", this.itemsByFilter);
+//
+//                // Create a new instance of the TargetFragment
+//                filteredItemsFragment fif = new filteredItemsFragment();
+//                fif.setArguments(bundle); // Set the data bundle
+//
+//                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+//                navController.navigate(R.id.filteredItemsFragment, bundle);
+
+
+
+                // check if items are fetched correctly - OK
+//                for (Item item : itemsByFilter){
+//                    System.out.println(item.getDescription());
+//                }
             }
 
             // store in make if user wants to filter by make
             else if (filterOption.equals("Make")) {
-            make = editText.getText().toString();
-        }});
+                make = editText.getText().toString();
+//                findItemsWithMake(make);
+            }
+        });
 
         customDialogBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> {
             dialogInterface.dismiss();
@@ -151,4 +191,20 @@ public class ItemFilterDialog {
 
         customDialogBuilder.show();
     }
+
+    ArrayList<Item> itemsWithKeyword = new ArrayList<Item>();
+    private ArrayList<Item> findItemsWithDescriptionKeyword(String descriptionKeyword){
+        for (Item item : existingItems){
+            if (item.getDescription().contains(descriptionKeyword)) {
+                itemsWithKeyword.add(item);
+            }
+        }
+        return itemsWithKeyword;
+    }
+
+    // fetches list of items from the home page
+    public void getExistingItems(ArrayList<Item> existingItems){
+        this.existingItems = existingItems;
+    }
+
 }

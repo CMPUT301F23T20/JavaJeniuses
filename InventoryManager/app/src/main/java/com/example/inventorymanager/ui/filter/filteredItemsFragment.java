@@ -1,7 +1,6 @@
-package com.example.inventorymanager.ui.home;
+package com.example.inventorymanager.ui.filter;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,37 +18,35 @@ import androidx.navigation.Navigation;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
-import com.example.inventorymanager.ui.filter.ItemFilterDialog;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
-import com.example.inventorymanager.databinding.FragmentHomeBinding;
+import com.example.inventorymanager.databinding.FragmentFilteredItemsBinding;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment {
+/**
+ * This class manages the page(fragment_filtered_items) that displays the list of items with the selected filter queries
+ */
+public class filteredItemsFragment extends Fragment {
 
-    private FragmentHomeBinding binding;
+    private FragmentFilteredItemsBinding binding;
     private ItemAdapter adapter;
-
-    // No accessors and modifier methods. If you want to get items, instantiate itemViewModel and pull from database (same results)
     private ArrayList<Item> items;
-    private ItemFilterDialog itemFilterDialog;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // basic setup functionality to set up view
-        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+
+        binding = FragmentFilteredItemsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        // Bind the listview
+        // Bind the listview that displays our items
         ListView itemList = binding.itemList;
 
-        // instantiate the shared view model which manages the database
+        // instantiate the shared view model which manages the database in case of any modifications to list i.e. deleting an item
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
-        // Create a new ArrayList to store the data that will be displayed in the ListView
-        items = itemViewModel.getItemsLiveData().getValue();
-        // Create an adapter to bind the data from the ArrayList to the ListView
+        // unpack our list of filtered items
+        items = getArguments().getParcelableArrayList("items");
+
+        // bind our list to the listView
         adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
 
         // Set the adapter for the ListView, allowing it to display the data
@@ -70,11 +67,12 @@ public class HomeFragment extends Fragment {
                 }
             }
             // update list so that the deleted item is gone and price reflects this
+            // TODO:  BUG:: doesn't update list
             adapter.notifyDataSetChanged();
             updateTotal();
         });
 
-        // add effect of clicking on an existing item (view item details)
+        // view item details when item clicked
         itemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -86,23 +84,6 @@ public class HomeFragment extends Fragment {
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
                 navController.navigate(R.id.navigation_viewItem, bundle);
             }
-        });
-
-        // add effect of clicking on a filter icon
-        Button filterButton = root.findViewById(R.id.filter_button);
-        itemFilterDialog = new ItemFilterDialog();
-
-        // show filter dialog when filter icon clicked
-        filterButton.setOnClickListener( v-> {
-
-            // send bundle with the list of items
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList("items", items);
-
-            // navigate to the choose filter fragment
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.chooseFilterFragment, bundle);
-
         });
 
         return root;

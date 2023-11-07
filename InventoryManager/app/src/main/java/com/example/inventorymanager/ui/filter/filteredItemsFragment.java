@@ -62,12 +62,13 @@ public class filteredItemsFragment extends Fragment {
             for (int i = items.size()-1; i >= 0; i--) {
                 if (((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()) {
                     itemViewModel.deleteItem(items.get(i).getItemName());
+                    // remove the checked items from our displaying listview too
+                    items.remove(i);
                     // unselect each box that was previously checked
                     ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
                 }
             }
-            // update list so that the deleted item is gone and price reflects this
-            // TODO:  BUG:: doesn't update list
+            // update listView adapter so that the deleted item is gone and price reflects this
             adapter.notifyDataSetChanged();
             updateTotal();
         });

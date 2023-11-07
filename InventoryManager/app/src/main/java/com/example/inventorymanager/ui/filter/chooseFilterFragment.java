@@ -68,21 +68,21 @@ public class chooseFilterFragment extends Fragment {
 
             // if user entered description and make, filter by both
             if (!description.isEmpty() && !make.isEmpty()){
-                filteredItems = findItemsWithDescriptionKeyword(description);
-                filteredItems = findItemsWithMake(make);
+                filteredItems = findItemsWithDescriptionKeyword(description, items);
+                filteredItems = findItemsWithMake(make, filteredItems);
             }
             // if user entered make but not description, filter by make
             else if (!make.isEmpty() && description.isEmpty()){
-                filteredItems = findItemsWithMake(make);
+                filteredItems = findItemsWithMake(make, items);
             }
             // if user entered description but not make, filter by description
             else if (!description.isEmpty() && make.isEmpty()){
-                filteredItems = findItemsWithDescriptionKeyword(description);
+                filteredItems = findItemsWithDescriptionKeyword(description, items);
             }
 
             System.out.println(filteredItems.size());
 
-            if (filteredItems.size() <= 0){
+            if (filteredItems.size() == 0){
                 // take user to a page that says: "No items matching your search query"
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
                 navController.navigate(R.id.keywordNotFoundFragment);
@@ -106,8 +106,8 @@ public class chooseFilterFragment extends Fragment {
      * Populates a new list with all items containing our desired keyword
      */
     ArrayList<Item> itemsWithKeyword = new ArrayList<Item>();
-    private ArrayList<Item> findItemsWithDescriptionKeyword(String description){
-        for (Item item : items){
+    private ArrayList<Item> findItemsWithDescriptionKeyword(String description, ArrayList<Item> itemsToFilter){
+        for (Item item : itemsToFilter){
             if (item.getDescription().toLowerCase().contains(description)) {
                 itemsWithKeyword.add(item);
             }
@@ -119,8 +119,8 @@ public class chooseFilterFragment extends Fragment {
      * Populate a new list with all items containing our desired make
      */
     ArrayList<Item> itemsWithMake = new ArrayList<Item>();
-    private ArrayList<Item> findItemsWithMake(String make){
-        for (Item item : items){
+    private ArrayList<Item> findItemsWithMake(String make, ArrayList<Item> itemsToFilter){
+        for (Item item : itemsToFilter){
             if (item.getMake().toLowerCase().contains(make)) {
                 itemsWithMake.add(item);
             }

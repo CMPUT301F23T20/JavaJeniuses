@@ -9,7 +9,7 @@
     tools:context=".ui.filter.keywordNotFoundFragment">
 
     <TextView
-        android:id="@+id/type_description_textView"
+        android:id="@+id/keywordNotFoundMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="15dp"

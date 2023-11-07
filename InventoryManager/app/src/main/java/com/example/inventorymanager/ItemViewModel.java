@@ -15,12 +15,26 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The means by which the system interacts with the backend database.
+ * This class essentially provides an API to access Firestore.
+ * All database-related queries are completed via this class, which provides an API for basic CRUD operations.
+ * Create operations are completed through addItem().
+ * Read operations are completed through getItem() and fetchItems().
+ * Update operations are completed through editItem().
+ * Delete operations are completed through deleteItem().
+ * This class utilizes static variables to share global access to the same database, which is required to provide basic application functionality.
+ * The database key is the name of the item.
+ */
 public class ItemViewModel extends ViewModel {
     // static variables make it so one copy of this variable exists across the whole app, synchronization
     private static MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference itemsDB = db.collection("items");
 
+    /**
+     * Creates an ItemViewModel() object synced to the global application database.
+     */
     public ItemViewModel() {
         // create default empty list on first time creating
         ArrayList<Item> items = new ArrayList<>();
@@ -29,11 +43,18 @@ public class ItemViewModel extends ViewModel {
         fetchItems();
     }
 
+    /**
+     * Retrieves the data from the database that is currently being stored locally.
+     * @return A list of the current items being tracked.
+     */
     public LiveData<ArrayList<Item>> getItemsLiveData() {
         return itemsLiveData;
     }
 
-    // fetch the whole list of items
+    /**
+     * Fetches the entire list of items being tracked inside the database.
+     * Updates the local copy of the entire set of objects being tracked for speed and use across all of the application.
+     */
     public void fetchItems() {
         // query database to get all items indiscriminately
         itemsDB.get()
@@ -67,7 +88,12 @@ public class ItemViewModel extends ViewModel {
             });
     }
 
-    // get a single item matching a certain key
+    /**
+     * Retrieves a single item matching a certain database key value.
+     * It is assumed that an item with the given key exists in the database.
+     * @param key The name of the object whose data is to be fetched.
+     * @return The item in the database with the given key.
+     */
     public Item getItem(String key) {
         // get the current items being tracked
         fetchItems();
@@ -83,7 +109,11 @@ public class ItemViewModel extends ViewModel {
         return new Item("Error", "", "", "", "", "", "", "");
     }
 
-    // add an item to the database and what is being shown
+    /**
+     * Adds a single item to the database.
+     * It is assumed that this item does not violate any database key constraints (as validated by ItemUtility()).
+     * @param item The item to be added to the database.
+     */
     public void addItem(Item item) {
         // get the current items being tracked
         fetchItems();
@@ -96,7 +126,13 @@ public class ItemViewModel extends ViewModel {
         fetchItems();
     }
 
-    // edit an existing item in the database and what is shown
+    /**
+     * Updates a single existing item in the database.
+     * The item is not updated in-place; the old item is deleted and the new version is added.
+     * This prevents any issues associated with changing the name (key) of an item.
+     * @param key The previous name of the item being updated.
+     * @param item The new version of the item being updated.
+     */
     public void editItem(String key, Item item) {
         // get the current items being tracked
         fetchItems();
@@ -118,7 +154,11 @@ public class ItemViewModel extends ViewModel {
         }
     }
 
-    // delete an existing item in the database and from what is shown
+    /**
+     * Deletes a single existing item in the database.
+     * It is assumed that this item exists in the database; no warning is provided if it does not.
+     * @param key The name of the item to be deleted.
+     */
     public void deleteItem(String key) {
         // get the current items being tracked
         fetchItems();
@@ -137,7 +177,14 @@ public class ItemViewModel extends ViewModel {
         }
     }
 
-    // checks if a name change is illegal
+    /**
+     * Checks whether a proposed item name is legal or not.
+     * If an existing item's name is not changed, it is always legal.
+     * If an existing item's name is changed or a new item's name is proposed, it is only legal if and only if that name is not taken by any other item.
+     * @param oldName The previous name of the item. For new items, this parameter should be set to "".
+     * @param newName The new proposed name of the item.
+     * @return TRUE if the name change is illegal (i.e., the name is already taken); FALSE if the name change is legal.
+     */
     public boolean isIllegalNameChange(String oldName, String newName) {
         // if editing an item and names match, that is ok
         if (oldName.equals(newName)) {

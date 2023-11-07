@@ -1,5 +1,6 @@
 package com.example.inventorymanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -34,4 +35,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+        startActivity(intent);
+    }
 }

@@ -1,9 +1,17 @@
-package com.example.inventorymanager.ui.addItem;
+package com.example.inventorymanager.ui.editItem;
 
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -13,49 +21,63 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
-import com.example.inventorymanager.ItemAdapter;
+import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
-import com.example.inventorymanager.Item;
+import com.example.inventorymanager.databinding.FragmentEditItemBinding;
+import com.example.inventorymanager.ui.addItem.addItemViewModel;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+/**
+ * Shows the details of a single item and allows a user to edit these details.
+ * Each field of the item is labelled and displayed in an editable format.
+ * Users may choose to save the new details of this item or to delete this item.
+ * @author Isaac Joffe
+ * @see com.example.inventorymanager.ui.home.HomeFragment
+ * @see com.example.inventorymanager.ui.viewItem.ViewItemFragment
+ */
+public class EditItemFragment extends Fragment {
 
-public class addItemFragment extends Fragment {
+    private FragmentEditItemBinding binding;
 
-    private FragmentAddItemBinding binding;
-
+    /**
+     * Provides the user interface of the fragment.
+     * Receives an item label from the calling fragment and queries the database to obtain detailed information about the item.
+     * Displays this item information.
+     * Allows the user to edit this information in a format best suited to the data type.
+     * Provides buttons for the user to choose to save the new details of this item or to delete this item.
+     * @param inflater The object used to inflate views as required.
+     * @param container The parent view of the fragment.
+     * @param savedInstanceState The previous state of the fragment; not used in this fragment.
+     * @return The root of the view.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Create an instance of the ViewModel for adding items
-        addItemViewModel addItemViewModel = new ViewModelProvider(this).get(addItemViewModel.class);
+        EditItemViewModel editItemViewModel = new ViewModelProvider(this).get(EditItemViewModel.class);
 
         // Inflate the layout for this fragment
-        binding = FragmentAddItemBinding.inflate(inflater, container, false);
+        binding = FragmentEditItemBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
+        // get the argument passed representing the item of interest
+        String key = getArguments().getString("key");
+        // fetch the full item from the database
+        Item item = itemViewModel.getItem(key);
+
         // Bind UI elements to variables
-        ScrollView addItemScrollView = binding.addItemScrollView;
+        ScrollView editItemScrollView = binding.editItemScrollView;
         EditText itemNameInput = binding.itemNameInput;
         EditText purchaseDateInput = binding.purchaseDateInput;
         EditText descriptionInput = binding.descriptionInput;
@@ -64,9 +86,19 @@ public class addItemFragment extends Fragment {
         EditText serialNumberInput = binding.serialNumberInput;
         EditText estimatedValueInput = binding.estimatedValueInput;
         EditText commentInput = binding.commentInput;
-        Button addItemButton = binding.addItemButton;
+        Button saveButton = binding.saveButton;
+        Button deleteButton = binding.deleteButton;
 
-        // Set up calendar to pop up and allow user to choose date
+        // set the text fields to default to the text that item already has
+        itemNameInput.setText(item.getItemName());
+        purchaseDateInput.setText(item.getPurchaseDate());
+        descriptionInput.setText(item.getDescription());
+        makeInput.setText(item.getMake());
+        modelInput.setText(item.getModel());
+        serialNumberInput.setText(item.getSerialNumber());
+        estimatedValueInput.setText(item.getEstimatedValue());
+        commentInput.setText(item.getComment());
+
         purchaseDateInput.setOnClickListener(v -> {
             Calendar selectedDate = Calendar.getInstance(); // Create a Calendar instance for the current date
             int year = selectedDate.get(Calendar.YEAR);
@@ -81,6 +113,7 @@ public class addItemFragment extends Fragment {
             },
                     year, month, dayOfMonth
             );
+
             // Set the maximum date to the current date to prevent future dates
             datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
             datePickerDialog.show();
@@ -122,22 +155,10 @@ public class addItemFragment extends Fragment {
             }
         });
 
-        // Set up behavior to scroll once the commentInput EditText is filled out to scroll and reveal button
-        // Close keyboard as we've reached the end of input fields
-        commentInput.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                addItemScrollView.post(() -> addItemScrollView.scrollTo(0, addItemButton.getBottom()));
-                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                return true;
-            }
-            return false;
-        });
-
-        // add effect of the add button when pressed (add this item to the list)
-        addItemButton.setOnClickListener(v -> {
+        // add effect of the save button when pressed (save changes)
+        saveButton.setOnClickListener(v -> {
             if (ItemUtility.validateItemFields(itemNameInput, purchaseDateInput ,descriptionInput,
-                    makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput, "", itemViewModel)) {
+                    makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput, key, itemViewModel)) {
                 // Get data from input fields
                 String itemName = itemNameInput.getText().toString();
                 String purchaseDate = purchaseDateInput.getText().toString();
@@ -151,7 +172,7 @@ public class addItemFragment extends Fragment {
                 Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment);
 
                 // Add the new item to the shared ViewModel
-                itemViewModel.addItem(newItem);
+                itemViewModel.editItem(key, newItem);
 
                 // Navigate back to the home fragment
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
@@ -164,9 +185,22 @@ public class addItemFragment extends Fragment {
             }
         });
 
+        // add effect of the delete button when pressed (delete this item)
+        deleteButton.setOnClickListener(v -> {
+            // delete this item from the database
+            itemViewModel.deleteItem(key);
+
+            // navigate back to the app home screen (item list)
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.navigation_home);
+        });
+
         return root;
     }
 
+    /**
+     * Destroys the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

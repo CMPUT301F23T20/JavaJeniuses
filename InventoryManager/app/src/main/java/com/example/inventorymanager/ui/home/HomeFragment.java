@@ -1,79 +1,137 @@
 package com.example.inventorymanager.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
+import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
+/**
+ * Shows the list of items being tracked by the application.
+ * A brief summary of each item is displayed.
+ * Users may choose to view the details of an item, delete items, filter items, or sort items.
+ * @author Kareem Assaf, Tyler Hoekstra, Isaac Joffe, David Onchuru
+ * @see Item
+ * @see ItemViewModel
+ */
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private ItemAdapter adapter;
     private ArrayList<Item> items;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
-
+    /**
+     * Provides the user interface of the fragment.
+     * Queries the database to obtain detailed information about each item being tracked.
+     * Displays summary information about each of these items.
+     * Allows the user to view detailed information about each item being tracked and to delete multiple items at a time.
+     * @param inflater The object used to inflate views as required.
+     * @param container The parent view of the fragment.
+     * @param savedInstanceState The previous state of the fragment; not used in this fragment.
+     * @return The root of the view.
+     */
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // basic setup functionality to set up view
+        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
         // Bind the listview
         ListView itemList = binding.itemList;
 
-        // Create a new ArrayList to store the data that will be displayed in the ListView
-        items = new ArrayList<>();
-
-        // Create an adapter to bind the data from the ArrayList to the ListView
-        adapter = new ItemAdapter(requireContext(), items);
-
-        // Create an instance of the shared ViewModel that manages the list of items
+        // instantiate the shared view model which manages the database
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+
+        // Create a new ArrayList to store the data that will be displayed in the ListView
+        items = itemViewModel.getItemsLiveData().getValue();
+        // Create an adapter to bind the data from the ArrayList to the ListView
+        adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
 
         // Set the adapter for the ListView, allowing it to display the data
         itemList.setAdapter(adapter);
+        // display the current total estimated value of items being displayed
+        updateTotal();
 
-        // Add the "Car" item to the ViewModel if it's empty (This is just the initial item that
-        // will be on the listview when app is booted, this is also a test to ensure the listview is
-        // not getting overwritten when an item is added
-        if (itemViewModel.getItemsLiveData().getValue() == null) {
-            Item item = new Item("Car", "2023/10/21", "fast car", "Aventador", "Lambo", 0.0, 0.0, "");
-            itemViewModel.addItem(item);
+        // display message if no items are found
+        if (items.isEmpty()) {
+            Toast.makeText(requireContext(), "No items found.", Toast.LENGTH_SHORT).show();
         }
 
-
-        // Observe changes in the LiveData provided by the shared ViewModel (itemViewModel)
-        itemViewModel.getItemsLiveData().observe(getViewLifecycleOwner(), items -> {
-            // Clear the current data in the adapter to accurately represent the current state
-            adapter.clear();
-
-            // Add all the new items from the observed LiveData to the adapter
-            adapter.addAll(items);
-
-            // Notify the adapter that the data set has changed, triggering a UI update
+        // add effect of clicking on an delete button (delete all highlighted items)
+        Button deleteButton = root.findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener( v-> {
+            // delete all those items that are currently checked off
+            // go backwards so we can delete in-place
+            for (int i = items.size()-1; i >= 0; i--) {
+                if (((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()) {
+                    itemViewModel.deleteItem(items.get(i).getItemName());
+                    // unselect each box that was previously checked
+                    ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
+                }
+            }
+            // update list so that the deleted item is gone and price reflects this
             adapter.notifyDataSetChanged();
+            updateTotal();
         });
 
+        // add effect of clicking on an existing item (view item details)
+        itemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // send bundle with the item name, which is the database key
+                Bundle bundle = new Bundle();
+                bundle.putString("key", items.get(i).getItemName());
 
-        // final TextView textView = binding.textHome;
-        // homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+                // navigate to the view item screen (item details), sending data
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                navController.navigate(R.id.navigation_viewItem, bundle);
+            }
+        });
+
         return root;
     }
 
+    /**
+     * Updates the total estimated monetary value being displayed on the screen.
+     * Computes the proper total value based on addition of each displayed item's estimated monetary value.
+     */
+    public void updateTotal() {
+        // calculate total estimated value
+        double total = 0;
+        for (Item item : items){
+            // must eliminate the $ and , characters to read as a number
+            total += Double.parseDouble(item.getEstimatedValue().replaceAll("[$,]", ""));
+        }
+
+        // update the text view with the total estimated value formatted as money
+        TextView totalTextView = binding.getRoot().findViewById(R.id.total_value);
+        totalTextView.setText(NumberFormat.getCurrencyInstance().format(total));
+    }
+
+    /**
+     * Destroys the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -1,25 +1,24 @@
-package com.example.inventorymanager.ui.home;
+package com.example.inventorymanager.ui.editItem;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 /**
- * A view model to manage the data for the HomeFragment.
+ * A view model to manage the data for the EditItemFragment.
  * Not used very much for the initial functionality of the project.
  * @author Kareem Assaf, Tomasz Ayobahan, Tyler Hoekstra, Isaac Joffe, David Onchuru, Sumaiya Salsabil
- * @see HomeFragment
+ * @see EditItemFragment
  */
-public class HomeViewModel extends ViewModel {
-
+public class EditItemViewModel extends ViewModel {
     private final MutableLiveData<String> mText;
 
     /**
      * Creates the view model with default text.
      */
-    public HomeViewModel() {
+    public EditItemViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is the application home fragment.");
+        mText.setValue("This is the edit item fragment.");
     }
 
     /**

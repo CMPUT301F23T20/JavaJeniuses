@@ -22,4 +22,16 @@
         android:name="com.example.inventorymanager.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_viewItem"
+        android:name="com.example.inventorymanager.ui.viewItem.ViewItemFragment"
+        android:label="@string/title_view_item"
+        tools:layout="@layout/fragment_view_item" />
+
+    <fragment
+        android:id="@+id/navigation_editItem"
+        android:name="com.example.inventorymanager.ui.editItem.EditItemFragment"
+        android:label="@string/title_edit_item"
+        tools:layout="@layout/fragment_edit_item" />
 </navigation>

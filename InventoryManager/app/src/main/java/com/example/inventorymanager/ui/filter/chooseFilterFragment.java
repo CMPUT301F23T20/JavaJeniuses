@@ -74,7 +74,6 @@ public class chooseFilterFragment extends Fragment {
             // perform filter operations
             ArrayList<Item> filteredItems = new ArrayList<Item>();
 
-
             // if user selects date range
             if (!startDate.isEmpty() && !endDate.isEmpty()){
 
@@ -100,6 +99,7 @@ public class chooseFilterFragment extends Fragment {
                 for(Item item: findItemsWithDescriptionKeyword(description)) {
                     if (!filteredItems.contains(item)) { filteredItems.add(item); }
                 }
+
             }
 
             ArrayList<Item> itemsToRemove = new ArrayList<Item>();

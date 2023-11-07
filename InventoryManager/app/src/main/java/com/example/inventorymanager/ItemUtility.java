@@ -5,6 +5,16 @@ import android.widget.EditText;
 
 /**
  * This is a utility class that contains helpful methods for handling item-related operations and validations.
+ * Various conditions are enforced on each field of an item, including:<ul>
+ *     <li>The name is mandatory, must be no longer than 15 characters, and must be unique.</li>
+ *     <li>The date purchased is mandatory, must follow YYYY-MM-DD format, and must be in the past.</li>
+ *     <li>The description is optional and must be no longer than 20 characters.</li>
+ *     <li>The make is mandatory.</li>
+ *     <li>The make ismandatory.</li>
+ *     <li>The serial number is optional and must be no longer than 20 characters.</li>
+ *     <li>The estimated value is mandatory and must follow a monetary format (i.e., "$NNN,NNN.NN")</li>
+ *     <li>The comment is optional and must be no longer than 20 characters.</li>
+ * </ul>
  * @author Kareem Assaf, Isaac Joffe
  * @see Item
  * @see com.example.inventorymanager.ui.addItem.addItemFragment

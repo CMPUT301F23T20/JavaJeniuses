@@ -159,7 +159,7 @@ public class Item {
      */
     public String getEstimatedValue() {
         // format string into two decimal places to represent money
-        return String.format(Locale.US, "$%.2f", this.estimatedValue);
+        return NumberFormat.getCurrencyInstance().format(this.estimatedValue);
     }
 
     /**

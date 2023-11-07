@@ -1,11 +1,15 @@
 package com.example.inventorymanager;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import java.util.HashMap;
 import java.util.Locale;
 
-public class Item {
+public class Item implements Parcelable {
     private String itemName;
     private String purchaseDate;
     private String description;
@@ -15,6 +19,44 @@ public class Item {
     private double estimatedValue;
     private String comment;
 
+    public Item(Parcel source) {
+        itemName = source.readString();
+        purchaseDate = source.readString();
+        description = source.readString();
+        model = source.readString();
+        make = source.readString();
+        serialNumber = source.readString();
+        estimatedValue = source.readDouble();
+        comment = source.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+
+        parcel.writeString(itemName);
+        parcel.writeString(purchaseDate);
+        parcel.writeString(description);
+        parcel.writeString(model);
+        parcel.writeString(make);
+        parcel.writeString(serialNumber);
+        parcel.writeDouble(estimatedValue);
+        parcel.writeString(comment);
+    }
+
+    public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 
     public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment) {
         this.setItemName(itemName);

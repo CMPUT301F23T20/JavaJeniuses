@@ -18,6 +18,8 @@ import com.example.inventorymanager.databinding.ActivityMainBinding;
  * The main activity in which the entire application operates.
  * Provides the framework of the application, including the back button and navigation tabs.
  * Transfers control to the application fragments that provide the application's functionality for the rest of its life cycle.
+ * @author Kareem Assaf, Tomasz Ayobahan, Tyler Hoekstra, Isaac Joffe, David Onchuru, Sumaiya Salsabil
+ * @see com.example.inventorymanager.ui.home.HomeFragment
  */
 public class MainActivity extends AppCompatActivity {
 

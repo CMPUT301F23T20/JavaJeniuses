@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel;
 /**
  * A view model to manage the data for the ViewItemFragment.
  * Not used very much for the initial functionality of the project.
+ * @author Kareem Assaf, Tomasz Ayobahan, Tyler Hoekstra, Isaac Joffe, David Onchuru, Sumaiya Salsabil
+ * @see ViewItemFragment
  */
 public class ViewItemViewModel extends ViewModel {
     private final MutableLiveData<String> mText;

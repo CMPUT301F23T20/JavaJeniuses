@@ -22,6 +22,8 @@ import java.util.Locale;
  *     <li>estimated monetary value of the item,</li>
  *     <li>and the date that the item was purchased.</li>
  * </ul>
+ * @author Kareem Assaf
+ * @see com.example.inventorymanager.ui.home.HomeFragment
  */
 public class ItemAdapter extends ArrayAdapter{
     private final Context context;

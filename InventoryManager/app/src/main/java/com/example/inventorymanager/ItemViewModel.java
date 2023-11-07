@@ -25,6 +25,9 @@ import java.util.List;
  * Delete operations are completed through deleteItem().
  * This class utilizes static variables to share global access to the same database, which is required to provide basic application functionality.
  * The database key is the name of the item.
+ * @author Isaac Joffe
+ * @see Item
+ * @see com.example.inventorymanager.ui.home.HomeFragment
  */
 public class ItemViewModel extends ViewModel {
     // static variables make it so one copy of this variable exists across the whole app, synchronization

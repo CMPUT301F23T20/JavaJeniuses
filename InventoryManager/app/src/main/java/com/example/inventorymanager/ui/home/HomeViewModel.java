@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel;
 /**
  * A view model to manage the data for the HomeFragment.
  * Not used very much for the initial functionality of the project.
+ * @author Kareem Assaf, Tomasz Ayobahan, Tyler Hoekstra, Isaac Joffe, David Onchuru, Sumaiya Salsabil
+ * @see HomeFragment
  */
 public class HomeViewModel extends ViewModel {
 

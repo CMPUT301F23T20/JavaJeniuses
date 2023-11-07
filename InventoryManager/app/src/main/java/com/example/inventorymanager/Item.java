@@ -19,6 +19,8 @@ import java.util.Locale;
  *     <li>the estimated monetary value of the item,</li>
  *     <li>and a comment about the item.</li>
  * </ul>
+ * @author Kareem Assaf, Isaac Joffe
+ * @see ItemViewModel
  */
 public class Item {
     private String itemName;

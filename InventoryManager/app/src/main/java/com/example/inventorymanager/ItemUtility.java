@@ -5,6 +5,10 @@ import android.widget.EditText;
 
 /**
  * This is a utility class that contains helpful methods for handling item-related operations and validations.
+ * @author Kareem Assaf, Isaac Joffe
+ * @see Item
+ * @see com.example.inventorymanager.ui.addItem.addItemFragment
+ * @see com.example.inventorymanager.ui.editItem.EditItemFragment
  */
 public class ItemUtility {
     /**

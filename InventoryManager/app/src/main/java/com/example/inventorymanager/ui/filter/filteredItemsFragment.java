@@ -95,7 +95,7 @@ public class filteredItemsFragment extends Fragment {
         // calculate total estimated value
         double total = 0;
         for (Item item : items){
-            total += Double.parseDouble(item.getEstimatedValue().substring(1));
+            total += Double.parseDouble(item.getEstimatedValue().replaceAll("[$,]", ""));
         }
 
         // update the text view with the total estimated value formatted as money

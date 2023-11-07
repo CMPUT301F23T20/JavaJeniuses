@@ -45,5 +45,8 @@
 
     <string name="total">Total Estimated Value:</string>
     <string name="total_value">$0.00</string>
+    <string name="title_filtered_items">Filtered Items</string>
+    <string name="title_choose_filter">Choose Filter</string>
+    <string name="title_no_items_found">No Items Found</string>
 
 </resources>

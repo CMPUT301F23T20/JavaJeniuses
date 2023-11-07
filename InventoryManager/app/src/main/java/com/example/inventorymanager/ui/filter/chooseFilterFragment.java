@@ -68,9 +68,6 @@ public class chooseFilterFragment extends Fragment {
             String startDate = startDateEditText.getText().toString();
             String endDate = endDateEditText.getText().toString();
 
-            System.out.println(!make.isEmpty());
-            System.out.println(description);
-
             // perform filter operations
             ArrayList<Item> filteredItems = new ArrayList<Item>();
 

@@ -14,10 +14,19 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.inventorymanager.databinding.ActivityMainBinding;
 
+/**
+ * The main activity in which the entire application operates.
+ * Provides the framework of the application, including the back button and navigation tabs.
+ * Transfers control to the application fragments that provide the application's functionality for the rest of its life cycle.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    /**
+     * Initially sets up the application's operations.
+     * @param savedInstanceState The previous state of the application; not used in this application.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,8 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+        // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_addItem, R.id.navigation_profile)
                 .build();
@@ -36,7 +44,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
-    // enable the back button to have an effect
+    /**
+     * Enables the back button present in the top left corner of nested fragments to have an effect.
+     * In all cases, this back button causes the user to return to the app home screen (item list).
+     * @return TRUE in all cases.
+     */
         // based on code from Stack Overflow, License: Attribution-ShareAlike 4.0 International
         // published April 2019, accessed November 2023
         // https://stackoverflow.com/questions/24032956/action-bar-back-button-not-working

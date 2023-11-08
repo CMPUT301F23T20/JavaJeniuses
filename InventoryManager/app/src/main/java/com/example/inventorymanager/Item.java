@@ -1,6 +1,13 @@
 package com.example.inventorymanager;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import java.util.HashMap;
+import java.util.Locale;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -19,10 +26,11 @@ import java.util.Locale;
  *     <li>the estimated monetary value of the item,</li>
  *     <li>and a comment about the item.</li>
  * </ul>
- * @author Kareem Assaf, Isaac Joffe
+ * Implements the Parcelable interface to be able to be passed between fragments, as required for filtering items.
+ * @author Kareem Assaf, Isaac Joffe, David Onchuru
  * @see ItemViewModel
  */
-public class Item {
+public class Item implements Parcelable {
     private String itemName;
     private String purchaseDate;
     private String description;
@@ -54,6 +62,23 @@ public class Item {
         this.setSerialNumber(serialNumber);
         this.setEstimatedValue(estimatedValue);
         this.setComment(comment);
+    }
+
+    /**
+     * Creates an item from a parcel.
+     * Required to pass full items between fragments safely.
+     * @param source The parcel from which to read the data.
+     */
+    public Item(Parcel source) {
+        // assign each field from the parcel
+        itemName = source.readString();
+        purchaseDate = source.readString();
+        description = source.readString();
+        model = source.readString();
+        make = source.readString();
+        serialNumber = source.readString();
+        estimatedValue = source.readDouble();
+        comment = source.readString();
     }
 
     /**
@@ -214,4 +239,43 @@ public class Item {
         doc.put("comment", this.getComment());
         return doc;
     }
+
+    /**
+     * Required to pass full items between fragments safely.
+     * @return Numerical value of 0 in all cases.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Converts this item to a parcel object.
+     * Required to pass full items between fragments safely.
+     * @param parcel The parcel to write the data in this item to.
+     * @param i Not used in this application.
+     */
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(itemName);
+        parcel.writeString(purchaseDate);
+        parcel.writeString(description);
+        parcel.writeString(model);
+        parcel.writeString(make);
+        parcel.writeString(serialNumber);
+        parcel.writeDouble(estimatedValue);
+        parcel.writeString(comment);
+    }
+
+    /**
+     * Required to pass full items between fragments safely.
+     */
+    public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 }

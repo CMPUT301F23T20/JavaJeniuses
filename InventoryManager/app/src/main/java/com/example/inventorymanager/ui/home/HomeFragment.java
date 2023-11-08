@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -61,7 +62,16 @@ public class HomeFragment extends Fragment {
         ListView itemList = binding.itemList;
 
         // instantiate the shared view model which manages the database
+//        ItemViewModel itemViewModel = new ItemViewModel(getArguments().getString("username"));
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+
+//        //
+//        try {
+//            String username = getArguments().getString("username");
+//            itemViewModel.setUsername(username);
+//        } catch (Exception e) {
+//            // nothing
+//        }
 
         // Create a new ArrayList to store the data that will be displayed in the ListView
         items = itemViewModel.getItemsLiveData().getValue();

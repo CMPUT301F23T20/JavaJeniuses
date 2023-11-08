@@ -29,13 +29,8 @@ import com.google.firebase.auth.FirebaseUser;
     // Published March 2021, accessed November 2023
     // https://github.com/firebase/snippets-android/blob/68c9ee528c3f3cc99fcf771edc2da2c642f6115f/auth/app/src/main/java/com/google/firebase/quickstart/auth/EmailPasswordActivity.java
 public class LoginActivity extends AppCompatActivity {
-
     private static final String TAG = "UsernamePassword";
-
-    // [START declare_auth]
     private FirebaseAuth mAuth;
-    // [END declare_auth]
-
     EditText enterUsername, enterPassword;
     Button login, signup;
 
@@ -49,10 +44,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // [START initialize_auth]
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
 
         setContentView(R.layout.activity_login);
 
@@ -108,7 +101,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     /**
@@ -120,7 +112,6 @@ public class LoginActivity extends AppCompatActivity {
      * @param password string password handled by Authentication
      */
     private void createAccount(String email, String password) {
-        // [START create_user_with_email]
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -138,7 +129,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
-        // [END create_user_with_email]
     }
 
     /**
@@ -149,7 +139,6 @@ public class LoginActivity extends AppCompatActivity {
      * @param password string password handled by Authentication
      */
     private void signIn(String email, String password) {
-        // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -168,7 +157,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
-        // [END sign_in_with_email]
     }
 
     /**
@@ -179,10 +167,7 @@ public class LoginActivity extends AppCompatActivity {
         // go to main activity
         if (user != null)  {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            int index = user.getEmail().indexOf('@');
-            String myUser = user.getEmail().substring(0,index);
-            intent.putExtra("username", myUser);
-            finish();
+            startActivity(intent);
         }
     }
 }

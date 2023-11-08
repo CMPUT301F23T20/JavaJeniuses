@@ -37,6 +37,13 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+        startActivity(intent);
+
+//        String myUser = getIntent().getStringExtra("username");
+//        ItemViewModel temp = new ItemViewModel();
+//        temp.getUserItems(myUser);
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -47,14 +54,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-        startActivity(intent);
-
-    }
     /**
      * Enables the back button present in the top left corner of nested fragments to have an effect.
      * In all cases, this back button causes the user to return to the app home screen (item list).

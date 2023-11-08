@@ -112,6 +112,19 @@ public class ItemViewModel extends ViewModel {
         return new Item("Error", "", "", "", "", "", "", "");
     }
 
+//    public void getUserItems(String username) {
+//        // create default empty list on first time creating
+//        ArrayList<Item> items = new ArrayList<>();
+//        itemsLiveData.setValue(items);
+//
+//        itemsDB = db.collection("user")
+//                .document(username)
+//                .collection("items");
+//
+//        // get the current system state from the database
+//        fetchItems();
+//    }
+
     /**
      * Adds a single item to the database.
      * It is assumed that this item does not violate any database key constraints (as validated by ItemUtility()).

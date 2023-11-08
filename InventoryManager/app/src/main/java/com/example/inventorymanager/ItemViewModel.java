@@ -17,13 +17,14 @@ import java.util.List;
 
 /**
  * The means by which the system interacts with the backend database.
- * This class essentially provides an API to access Firestore.
+ * This class interfaces with the API to access the Firestore database of items for any given user.
  * All database-related queries are completed via this class, which provides an API for basic CRUD operations.
  * Create operations are completed through addItem().
  * Read operations are completed through getItem() and fetchItems().
  * Update operations are completed through editItem().
  * Delete operations are completed through deleteItem().
- * This class utilizes static variables to share global access to the same database, which is required to provide basic application functionality.
+ * This class utilizes static variables to share global access to the same database, which is
+ * required to provide basic application functionality.
  * The database key is the name of the item.
  * @author Isaac Joffe
  * @see Item

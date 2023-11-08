@@ -38,10 +38,34 @@ import java.util.Calendar;
 import java.util.Locale;
 
 
+/**
+ * The addItemFragment class is a fragment that displays a series of editable fields.
+ * There are eight total fields that a user can edit: the item name, the purchase date of the item,
+ * the description of the item, the make of the item, the model of the item, the serial number of the
+ * item, the estimated price of the value, and a comment.
+ * Once all required fields are filled the user may add the item to the item view which is displayed
+ * in the home view.
+ * @author Kareem Assaf, Tyler Hoekstra, Isaac Joffe, David Onchuru, Tomasz Ayobahan
+ * @see com.example.inventorymanager.ui.home.HomeFragment
+ * @see com.example.inventorymanager.ui.viewItem.ViewItemFragment
+ * @see Item
+ * @see ItemViewModel
+ */
 public class addItemFragment extends Fragment {
 
     private FragmentAddItemBinding binding;
 
+    /**
+     * Generates the user interface of the fragment.
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     * @return the root of the view.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Create an instance of the ViewModel for adding items
@@ -167,6 +191,9 @@ public class addItemFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Kills the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

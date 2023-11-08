@@ -34,13 +34,10 @@ import java.util.Locale;
  */
 
 public class chooseFilterFragment extends Fragment {
-
     private ArrayList<Item> items;
-
     private ChooseFilterBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         binding = ChooseFilterBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -61,74 +58,78 @@ public class chooseFilterFragment extends Fragment {
 
         // search through items with the selected keywords
         searchButton.setOnClickListener(v -> {
-
             // fetch keywords
             String description = (descriptionKeywordEditText.getText().toString()).toLowerCase();
             String make = makeKeywordEditText.getText().toString().toLowerCase();
             String startDate = startDateEditText.getText().toString();
             String endDate = endDateEditText.getText().toString();
 
-
             // perform filter operations
-            ArrayList<Item> filteredItems = new ArrayList<Item>();
+            ArrayList<Item> filteredItems = new ArrayList<>();
+            ArrayList<Item> itemsBetweenDates = new ArrayList<>();
+            ArrayList<Item> itemsWithMake = new ArrayList<>();
+            ArrayList<Item> itemsWithKeyword = new ArrayList<>();
 
             // if user selects date range
-            if (!startDate.isEmpty() && !endDate.isEmpty()){
-
+            if (!startDate.isEmpty() && !endDate.isEmpty()) {
+                itemsBetweenDates = findItemsBetweenDates(startDate, endDate);
                 // if item not already in list, add item to filtered item list
-                for(Item item: findItemsBetweenDates(startDate, endDate)) {
-                    if (!filteredItems.contains(item)) { filteredItems.add(item); }
+                for (Item item: itemsBetweenDates) {
+                    if (!filteredItems.contains(item)) {
+                        filteredItems.add(item);
+                    }
                 }
-
             }
 
             // if user selects make
-            if (!make.isEmpty()){
+            if (!make.isEmpty()) {
+                itemsWithMake = findItemsWithMake(make);
                 // if item not already in list, add item to filtered item list
-                for(Item item: findItemsWithMake(make)) {
-                    if (!(filteredItems.contains(item))) { filteredItems.add(item); }
+                for (Item item: itemsWithMake) {
+                    if (!(filteredItems.contains(item))) {
+                        filteredItems.add(item);
+                    }
                 }
-
             }
 
             // if user selects description keyword
-            if (!description.isEmpty()){
+            if (!description.isEmpty()) {
+                itemsWithKeyword = findItemsWithDescriptionKeyword(description);
                 // if item not already in list, add item to filtered item list
-                for(Item item: findItemsWithDescriptionKeyword(description)) {
-                    if (!filteredItems.contains(item)) { filteredItems.add(item); }
+                for (Item item: itemsWithKeyword) {
+                    if (!filteredItems.contains(item)) {
+                        filteredItems.add(item);
+                    }
                 }
-
             }
 
-            ArrayList<Item> itemsToRemove = new ArrayList<Item>();
+            ArrayList<Item> itemsToRemove = new ArrayList<>();
             for (Item item: filteredItems) {
                 if (!itemsBetweenDates.isEmpty()) {
-                    if (!itemsBetweenDates.contains(item)) { itemsToRemove.add(item); }}
+                    if (!itemsBetweenDates.contains(item)) {
+                        itemsToRemove.add(item);
+                    }
+                }
                 if (!itemsWithMake.isEmpty()) {
-                    if (!itemsWithMake.contains(item)) { itemsToRemove.add(item); }}
+                    if (!itemsWithMake.contains(item)) {
+                        itemsToRemove.add(item);
+                    }
+                }
                 if (!itemsWithKeyword.isEmpty()) {
-                    if (!itemsWithKeyword.contains(item)) { itemsToRemove.add(item); }}
+                    if (!itemsWithKeyword.contains(item)) {
+                        itemsToRemove.add(item);
+                    }
+                }
             }
             filteredItems.removeAll(itemsToRemove);
 
+            // pack list of filtered items
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("items", filteredItems);
 
-            System.out.println(filteredItems.size());
-
-            if (filteredItems.size() == 0){
-                // take user to a page that says: "No items matching your search query"
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                navController.navigate(R.id.keywordNotFoundFragment);
-            }
-            else {
-                // pack list of filtered items
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList("items", filteredItems);
-
-                // navigate to filtered items screen with packed list
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                navController.navigate(R.id.filteredItemsFragment, bundle);
-            }
-
+            // navigate to filtered items screen with packed list
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.filteredItemsFragment, bundle);
         });
 
         return root;
@@ -157,9 +158,8 @@ public class chooseFilterFragment extends Fragment {
     /**
      * Populates a new list with all items containing our desired keyword
      */
-
-    ArrayList<Item> itemsWithKeyword = new ArrayList<Item>();
-    private ArrayList<Item> findItemsWithDescriptionKeyword(String description){
+    private ArrayList<Item> findItemsWithDescriptionKeyword(String description) {
+        ArrayList<Item> itemsWithKeyword = new ArrayList<>();
         for (Item item : items){
             if (item.getDescription().toLowerCase().contains(description)) {
                 itemsWithKeyword.add(item);
@@ -171,8 +171,8 @@ public class chooseFilterFragment extends Fragment {
     /**
      * Populate a new list with all items containing our desired make
      */
-    ArrayList<Item> itemsWithMake = new ArrayList<Item>();
     private ArrayList<Item> findItemsWithMake(String make){
+        ArrayList<Item> itemsWithMake = new ArrayList<>();
         for (Item item : items){
             if (item.getMake().toLowerCase().contains(make)) {
                 itemsWithMake.add(item);
@@ -184,10 +184,9 @@ public class chooseFilterFragment extends Fragment {
     /**
      * Find all items that fall within these dates
      */
-    ArrayList<Item> itemsBetweenDates = new ArrayList<Item>();
     private ArrayList<Item> findItemsBetweenDates(String startDate, String endDate){
+        ArrayList<Item> itemsBetweenDates = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
         try {
             Date parsedStartDate = dateFormat.parse(startDate);
             Date parsedEndDate = dateFormat.parse(endDate);
@@ -200,7 +199,9 @@ public class chooseFilterFragment extends Fragment {
                     itemsBetweenDates.add(item);
                 }
             }
-        } catch (ParseException e) { e.printStackTrace(); }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         return itemsBetweenDates;
     }

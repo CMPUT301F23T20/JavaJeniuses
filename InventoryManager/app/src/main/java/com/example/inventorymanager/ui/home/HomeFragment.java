@@ -76,9 +76,12 @@ public class HomeFragment extends Fragment {
         // display the current total estimated value of items being displayed
         updateTotal();
 
+        // display message if no items are found
+        if (items.isEmpty()) {
+            Toast.makeText(requireContext(), "No items found.", Toast.LENGTH_SHORT).show();
+        }
 
         // add effect of clicking on a delete button (delete all highlighted items)
-
         Button deleteButton = root.findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener( v-> {
             // delete all those items that are currently checked off

@@ -39,46 +39,6 @@ public class Item implements Parcelable {
     private double estimatedValue;
     private String comment;
 
-
-    public Item(Parcel source) {
-        itemName = source.readString();
-        purchaseDate = source.readString();
-        description = source.readString();
-        model = source.readString();
-        make = source.readString();
-        serialNumber = source.readString();
-        estimatedValue = source.readDouble();
-        comment = source.readString();
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
-
-        parcel.writeString(itemName);
-        parcel.writeString(purchaseDate);
-        parcel.writeString(description);
-        parcel.writeString(model);
-        parcel.writeString(make);
-        parcel.writeString(serialNumber);
-        parcel.writeDouble(estimatedValue);
-        parcel.writeString(comment);
-    }
-
-    public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
-        public Item createFromParcel(Parcel in) {
-            return new Item(in);
-        }
-
-        public Item[] newArray(int size) {
-            return new Item[size];
-        }
-    };
-
     /**
      * Creates an Item() object with the fields passed in.
      * All inputs are assumed to be valid, as ensured by ItemUtility().
@@ -101,6 +61,21 @@ public class Item implements Parcelable {
         this.setSerialNumber(serialNumber);
         this.setEstimatedValue(estimatedValue);
         this.setComment(comment);
+    }
+
+    /**
+     *
+     * @param source
+     */
+    public Item(Parcel source) {
+        itemName = source.readString();
+        purchaseDate = source.readString();
+        description = source.readString();
+        model = source.readString();
+        make = source.readString();
+        serialNumber = source.readString();
+        estimatedValue = source.readDouble();
+        comment = source.readString();
     }
 
     /**
@@ -261,4 +236,42 @@ public class Item implements Parcelable {
         doc.put("comment", this.getComment());
         return doc;
     }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     *
+     * @param parcel
+     * @param i
+     */
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(itemName);
+        parcel.writeString(purchaseDate);
+        parcel.writeString(description);
+        parcel.writeString(model);
+        parcel.writeString(make);
+        parcel.writeString(serialNumber);
+        parcel.writeDouble(estimatedValue);
+        parcel.writeString(comment);
+    }
+
+    /**
+     *
+     */
+    public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 }

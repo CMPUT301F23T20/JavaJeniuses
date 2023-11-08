@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.app.ActionBar;
 import android.os.Bundle;
 
+import com.example.inventorymanager.ui.addItem.addItemFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.activity.OnBackPressedCallback;
@@ -18,15 +19,22 @@ import com.example.inventorymanager.databinding.ActivityMainBinding;
 /**
  * The main activity in which the entire application operates.
  * Provides the framework of the application, including the back button and navigation tabs.
- * Transfers control to the application fragments that provide the application's functionality for the rest of its life cycle.
+ * First calls the login activity to allow the user to login.
+ * It then transfers control of the application to the application fragments that provide the
+ * application's functionality for the rest of its life cycle.
  * @author Kareem Assaf, Tomasz Ayobahan, Tyler Hoekstra, Isaac Joffe, David Onchuru, Sumaiya Salsabil
  * @see com.example.inventorymanager.ui.home.HomeFragment
+ * @see LoginActivity
+ * @see addItemFragment
+ * @see com.example.inventorymanager.ui.editItem.EditItemFragment
+ * @see com.example.inventorymanager.ui.profile.ProfileFragment
  */
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
     /**
+     * Calls the creation of the login activity to be generated and waits for its completion.
      * Initially sets up the application's operations.
      * @param savedInstanceState The previous state of the application; not used in this application.
      */

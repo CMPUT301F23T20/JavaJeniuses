@@ -112,8 +112,6 @@ public class chooseFilterFragment extends Fragment {
             filteredItems.removeAll(itemsToRemove);
 
 
-            System.out.println(filteredItems.size());
-
             if (filteredItems.size() == 0){
                 // take user to a page that says: "No items matching your search query"
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);

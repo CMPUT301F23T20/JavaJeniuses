@@ -2,18 +2,14 @@ package com.example.inventorymanager.ui.home;
 
 import android.os.Bundle;
 
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -26,14 +22,6 @@ import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
-
-import com.example.inventorymanager.ui.sort.ItemSortDialog;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -53,7 +41,6 @@ public class HomeFragment extends Fragment {
 
     // No accessors and modifier methods. If you want to get items, instantiate itemViewModel and pull from database (same results)
     private ArrayList<Item> items;
-    private ItemSortDialog itemSortDialog;
 
     /**
      * Provides the user interface of the fragment.
@@ -121,10 +108,14 @@ public class HomeFragment extends Fragment {
 
         // add effect of clicking on a sort icon
         Button sortButton = root.findViewById(R.id.sort_button);
-        itemSortDialog = new ItemSortDialog();
         sortButton.setOnClickListener( v-> {
-            // show sort dialog when sort icon clicked
-            itemSortDialog.showSortDialog(requireContext(), items, adapter);
+            // send bundle with the list of items
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("items", items);
+
+            // navigate to the choose filter fragment
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.sortOptionsFragment, bundle);
         });
 
 

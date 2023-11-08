@@ -37,10 +37,29 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+/**
+ * Shows the details of a single item and allows a user to edit these details.
+ * Each field of the item is labelled and displayed in an editable format.
+ * Users may choose to save the new details of this item or to delete this item.
+ * @author Isaac Joffe
+ * @see com.example.inventorymanager.ui.home.HomeFragment
+ * @see com.example.inventorymanager.ui.viewItem.ViewItemFragment
+ */
 public class EditItemFragment extends Fragment {
 
     private FragmentEditItemBinding binding;
 
+    /**
+     * Provides the user interface of the fragment.
+     * Receives an item label from the calling fragment and queries the database to obtain detailed information about the item.
+     * Displays this item information.
+     * Allows the user to edit this information in a format best suited to the data type.
+     * Provides buttons for the user to choose to save the new details of this item or to delete this item.
+     * @param inflater The object used to inflate views as required.
+     * @param container The parent view of the fragment.
+     * @param savedInstanceState The previous state of the fragment; not used in this fragment.
+     * @return The root of the view.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Create an instance of the ViewModel for adding items
         EditItemViewModel editItemViewModel = new ViewModelProvider(this).get(EditItemViewModel.class);
@@ -179,6 +198,9 @@ public class EditItemFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Destroys the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

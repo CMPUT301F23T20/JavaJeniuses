@@ -12,6 +12,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -20,6 +21,7 @@ import android.view.KeyEvent;
 import android.widget.DatePicker;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -41,6 +43,10 @@ public class ItemFunctionalityTest {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new
             ActivityScenarioRule<MainActivity>(MainActivity.class);
+
+
+    // When running the tests they run in order, so first it will add the item with the name "Gaming Keyboard"
+    // Then it will delete it
     @Test
     public void testAddItemNav(){
         // Navigate to the add item fragment
@@ -88,5 +94,21 @@ public class ItemFunctionalityTest {
     }
 
 
+    @Test
+    public void testDeleteItemNav() { // For some reason this only works with this method name
+                                    // If you change the method name you get an error
+
+        // Show the listview from Firestore
+        onView(withId(R.id.navigation_addItem)).perform(click());
+        onView(withId(R.id.navigation_home)).perform(click());
+        onView(withText("Gaming Keyboard")).perform(scrollTo());
+
+        // Click on the listview item with the text of "Gaming Keyboard"
+        onView(withText("Gaming Keyboard")).perform(click());
+
+        // Scroll to the delete button and delete the item
+        onView(withId(R.id.deleteButton)).perform(scrollTo());
+        onView(withId(R.id.deleteButton)).perform(click());
+    }
 
 }

@@ -26,7 +26,8 @@ import java.util.Locale;
  *     <li>the estimated monetary value of the item,</li>
  *     <li>and a comment about the item.</li>
  * </ul>
- * @author Kareem Assaf, Isaac Joffe
+ * Implements the Parcelable interface to be able to be passed between fragments, as required for filtering items.
+ * @author Kareem Assaf, Isaac Joffe, David Onchuru
  * @see ItemViewModel
  */
 public class Item implements Parcelable {
@@ -64,10 +65,12 @@ public class Item implements Parcelable {
     }
 
     /**
-     *
-     * @param source
+     * Creates an item from a parcel.
+     * Required to pass full items between fragments safely.
+     * @param source The parcel from which to read the data.
      */
     public Item(Parcel source) {
+        // assign each field from the parcel
         itemName = source.readString();
         purchaseDate = source.readString();
         description = source.readString();
@@ -238,8 +241,8 @@ public class Item implements Parcelable {
     }
 
     /**
-     *
-     * @return
+     * Required to pass full items between fragments safely.
+     * @return Numerical value of 0 in all cases.
      */
     @Override
     public int describeContents() {
@@ -247,9 +250,10 @@ public class Item implements Parcelable {
     }
 
     /**
-     *
-     * @param parcel
-     * @param i
+     * Converts this item to a parcel object.
+     * Required to pass full items between fragments safely.
+     * @param parcel The parcel to write the data in this item to.
+     * @param i Not used in this application.
      */
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
@@ -264,7 +268,7 @@ public class Item implements Parcelable {
     }
 
     /**
-     *
+     * Required to pass full items between fragments safely.
      */
     public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
         public Item createFromParcel(Parcel in) {

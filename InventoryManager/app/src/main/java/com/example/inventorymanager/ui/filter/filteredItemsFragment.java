@@ -27,13 +27,24 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 
 /**
- * This class manages the page(fragment_filtered_items) that displays the list of items with the selected filter queries
+ * Manages the screen that displays the list of items filtered by the requested conditions.
+ * A brief summary of each item is displayed.
+ * @author Isaac Joffe, David Onchuru, Sumaiya Salsabil
+ * @see chooseFilterFragment
  */
 public class filteredItemsFragment extends Fragment {
     private FragmentFilteredItemsBinding binding;
     private ItemAdapter adapter;
     private ArrayList<Item> items;
 
+    /**
+     * Provides the user interface of the fragment.
+     * Displays summary information about each of the filtered items.
+     * @param inflater The object used to inflate views as required.
+     * @param container The parent view of the fragment.
+     * @param savedInstanceState The previous state of the fragment; not used in this fragment.
+     * @return The root of the view.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentFilteredItemsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -95,7 +106,10 @@ public class filteredItemsFragment extends Fragment {
         return root;
     }
 
-    // updates the total estimated value being displayed on the screen
+    /**
+     * Updates the total estimated monetary value being displayed on the screen.
+     * Computes the proper total value based on addition of each displayed item's estimated monetary value.
+     */
     public void updateTotal() {
         // calculate total estimated value
         double total = 0;
@@ -109,6 +123,9 @@ public class filteredItemsFragment extends Fragment {
         totalTextView.setText(NumberFormat.getCurrencyInstance().format(total));
     }
 
+    /**
+     * Destroys the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

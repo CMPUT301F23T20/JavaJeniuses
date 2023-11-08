@@ -30,13 +30,23 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * This class manages the page(choose_filter.xml) that handles users choosing their filter queries
+ * Manages the screen that enables users to choose filtering conditions.
+ * Users may choose filters based on the date the item was purchased, the make of the item, or keywords from the item's description.
+ * @author Isaac Joffe, David Onchuru, Sumaiya Salsabil
+ * @see filteredItemsFragment
  */
-
 public class chooseFilterFragment extends Fragment {
     private ArrayList<Item> items;
     private ChooseFilterBinding binding;
 
+    /**
+     * Provides the user interface of the fragment.
+     * Displays filtering information and enables users to change these conditions.
+     * @param inflater The object used to inflate views as required.
+     * @param container The parent view of the fragment.
+     * @param savedInstanceState The previous state of the fragment; not used in this fragment.
+     * @return The root of the view.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = ChooseFilterBinding.inflate(inflater, container, false);
@@ -134,6 +144,11 @@ public class chooseFilterFragment extends Fragment {
 
         return root;
     }
+
+    /**
+     * Displays a calendar for the user to select dates to filter by.
+     * @param dateEditText The View associated with the data corresponding to this calendar.
+     */
     public void showCalendar(EditText dateEditText) {
 
         // create a Calendar instance for the current date
@@ -151,12 +166,13 @@ public class chooseFilterFragment extends Fragment {
         },
                 year, month, dayOfMonth
         );
-
+        // Set the maximum date to the current date to prevent future dates
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
     }
 
     /**
-     * Populates a new list with all items containing our desired keyword
+     * Populates a new list with all items containing the desired keyword.
      */
     private ArrayList<Item> findItemsWithDescriptionKeyword(String description) {
         ArrayList<Item> itemsWithKeyword = new ArrayList<>();
@@ -169,7 +185,7 @@ public class chooseFilterFragment extends Fragment {
     }
 
     /**
-     * Populate a new list with all items containing our desired make
+     * Populate a new list with all items containing the desired make.
      */
     private ArrayList<Item> findItemsWithMake(String make){
         ArrayList<Item> itemsWithMake = new ArrayList<>();
@@ -182,7 +198,7 @@ public class chooseFilterFragment extends Fragment {
     }
 
     /**
-     * Find all items that fall within these dates
+     * Find all items that fall within certain dates.
      */
     private ArrayList<Item> findItemsBetweenDates(String startDate, String endDate){
         ArrayList<Item> itemsBetweenDates = new ArrayList<>();
@@ -206,6 +222,9 @@ public class chooseFilterFragment extends Fragment {
         return itemsBetweenDates;
     }
 
+    /**
+     * Destroys the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -2,6 +2,8 @@ package com.example.inventorymanager;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static
@@ -14,6 +16,7 @@ import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 
+import android.view.KeyEvent;
 import android.widget.DatePicker;
 
 import androidx.test.core.app.ActivityScenario;
@@ -40,24 +43,50 @@ public class ItemFunctionalityTest {
             ActivityScenarioRule<MainActivity>(MainActivity.class);
     @Test
     public void testAddItemNav(){
-        // Click the add item navigation button
+        // Navigate to the add item fragment
         onView(withId(R.id.navigation_addItem)).perform(click());
+        // Set the item's name
+        onView(withId(R.id.itemNameInput)).perform(typeText("Gaming Keyboard"));
 
-        onView(withId(R.id.itemNameInput)).perform(typeText("Text for Field 1"));
-
-        // Get the current date in the format you expect
+        // Check the purchase date by clicking the current date on the date picker and checking if it
+        // matches with the current date
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date currentDate = Calendar.getInstance().getTime();
         String currentDateString = dateFormat.format(currentDate);
-
-        // Click on the purchaseDateInput field to open the date picker
         onView(withId(R.id.purchaseDateInput)).perform(click());
-
-        // Confirm the selected date by clicking "OK" (customize based on your UI)
         onView(withText("OK")).perform(click());
-        // Use matches to verify that the EditText contains the current date
         onView(withId(R.id.purchaseDateInput)).check(matches(withText(currentDateString)));
 
+        // Set the item's description
+        onView(withId(R.id.descriptionInput)).perform(typeText("Keyboard for gaming"));
+
+        // Set the item's make
+        onView(withId(R.id.makeInput)).perform(typeText("Logitech"));
+
+        // Set the item's model
+        onView(withId(R.id.modelInput)).perform(typeText("Apex Pro"));
+        onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        onView(withId(R.id.serialNumberInput)).perform(typeText("1A2B3C4D5E"));
+        onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+        // Set the item's estimate value
+        onView(withId(R.id.estimatedValueInput)).perform(typeText("200.00"));
+        onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Scroll to comment input and fill it in
+        onView(withId(R.id.commentInput)).perform(scrollTo());
+        onView(withId(R.id.commentInput)).perform(typeText("Nice keyboard"));
+        onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Add the item
+        onView(withId(R.id.addItemButton)).perform(click());
+
+        // Check to ensure navigation back to home fragment
+        onView(withText("Add Tag")).check(matches(isDisplayed()));
+
+
     }
+
+
 
 }

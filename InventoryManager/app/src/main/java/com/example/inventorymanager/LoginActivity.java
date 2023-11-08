@@ -56,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
+        // bind ui elements to variables to read text and set error messages
         enterUsername = (EditText) findViewById(R.id.username);
         enterPassword = (EditText) findViewById(R.id.password);
         login = (Button) findViewById(R.id.login);
@@ -66,11 +67,16 @@ public class LoginActivity extends AppCompatActivity {
                 String username = enterUsername.getText().toString();
                 String password = enterPassword.getText().toString();
 
-                if (username.equals("") || password.equals("")) {
-                    Toast.makeText(LoginActivity.this, "Please fill in all fields",
-                            Toast.LENGTH_SHORT).show();
+                // check that the user name is not empty
+                if (username.equals("")) {
+                    enterUsername.setError("This field is required");
+                }
+                // check that the password is not empty
+                if (password.equals("")) {
+                    enterPassword.setError("This field is required");
                 }
 
+                // attempt to sign in using provided information
                 if (!username.equals("") && !password.equals("")) {
                     String signInEmail = username + "@inventorymanager.com";
                     signIn(signInEmail, password);
@@ -83,17 +89,20 @@ public class LoginActivity extends AppCompatActivity {
                 String username = enterUsername.getText().toString();
                 String password = enterPassword.getText().toString();
 
-                if (username.equals("") || password.equals("")) {
-                    Toast.makeText(LoginActivity.this, "Please fill in all fields",
-                            Toast.LENGTH_SHORT).show();
+                // check that the user name is not empty
+                if (username.equals("")) {
+                    enterUsername.setError("This field is required");
+                }
+                // check that the password is not empty and meets length requirements
+                if (password.equals("")) {
+                    enterPassword.setError("This field is required");
+                } else if (password.length() < 6) {
+                    enterPassword.setError("Password must have at least 6 characters");
                 }
 
-                if (password.length() < 6) {
-                    Toast.makeText(LoginActivity.this, "Password must have at least 6 characters",
-                            Toast.LENGTH_SHORT).show();
-                }
-
+                // create account if all conditions are met
                 if (!username.equals("") && !password.equals("") && password.length() >= 6) {
+                    // use dummy email to sign up, user does not need a real email
                     String signUpEmail = username + "@inventorymanager.com";
                     createAccount(signUpEmail, password);
                 }
@@ -124,8 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Username has been taken",
-                                    Toast.LENGTH_SHORT).show();
+                            enterUsername.setError("Username has been taken");
                             updateUI(null);
                         }
                     }
@@ -154,8 +162,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Incorrect username or password",
-                                    Toast.LENGTH_SHORT).show();
+                            enterUsername.setError("Incorrect username or password");
+                            enterPassword.setError("Incorrect username or password");
                             updateUI(null);
                         }
                     }

@@ -38,6 +38,13 @@ import java.util.Date;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
+/**
+ * Conducts comprehensive UI testing on fragments and item-related functionalities
+ * Verifies proper navigation between fragments
+ * Assesses the functionality of adding, editing, and deleting items
+ * @author Kareem Assaf
+ * @see
+ */
 public class ItemFunctionalityTest {
 
     @Rule
@@ -45,8 +52,9 @@ public class ItemFunctionalityTest {
             ActivityScenarioRule<MainActivity>(MainActivity.class);
 
 
-    // When running the tests they run in order, so first it will add the item with the name "Gaming Keyboard"
-    // Then it will delete it
+    /**
+     * Test the navigation to the "Add Item" fragment and adding an item.
+     */
     @Test
     public void testAddItemNav(){
         // Navigate to the add item fragment
@@ -74,15 +82,16 @@ public class ItemFunctionalityTest {
         onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         onView(withId(R.id.serialNumberInput)).perform(typeText("1A2B3C4D5E"));
-        onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(withId(R.id.serialNumberInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
         // Set the item's estimate value
         onView(withId(R.id.estimatedValueInput)).perform(typeText("200.00"));
-        onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(withId(R.id.estimatedValueInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Scroll to comment input and fill it in
         onView(withId(R.id.commentInput)).perform(scrollTo());
         onView(withId(R.id.commentInput)).perform(typeText("Nice keyboard"));
-        onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(withId(R.id.commentInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Add the item
         onView(withId(R.id.addItemButton)).perform(click());
@@ -93,7 +102,10 @@ public class ItemFunctionalityTest {
 
     }
 
-
+    /**
+     * Test the navigation to delete an item.
+     * In order to delete an item, you must navigate to view item so this function also tests that
+     */
     @Test
     public void testDeleteItemNav() { // For some reason this only works with this method name
                                     // If you change the method name you get an error

@@ -145,7 +145,7 @@ public class SortOptionsFragment extends Fragment {
      * @return A comparator function for the specified sorting criteria and order.
      * @throws ParseException if an error occurs while parsing dates.
      */
-    public Comparator<Item> createComparator(String sortBy, boolean ascending) {
+    public static Comparator<Item> createComparator(String sortBy, boolean ascending) {
         Comparator<Item> comparator = null;
 
         switch (sortBy) {

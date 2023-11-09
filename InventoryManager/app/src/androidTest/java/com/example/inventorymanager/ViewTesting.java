@@ -34,6 +34,7 @@ import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.w3c.dom.Comment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -77,8 +78,13 @@ public class ViewTesting {
      */
     public void testItemFilteringKeyword() {
         // Do Login first
+        // Add all the items
         addManyItems();
+        onView(withId(R.id.filter_button)).perform(click());
+        onView(withId(R.id.description_keyword_editText)).perform(typeText("Mouse"));
+        onView(withId(R.id.searchButton)).perform(click());
 
+        // Check to make sure both items exist in the view
     }
 
     @Test
@@ -134,6 +140,7 @@ public class ViewTesting {
         // Do Login first
         addManyItems();
 
+
     }
 
     @Test
@@ -144,6 +151,8 @@ public class ViewTesting {
     public void testMultiDelete() {
         // Do Login first
         addManyItems();
+
+
 
     }
 
@@ -156,6 +165,9 @@ public class ViewTesting {
         // Do Login first
     }
 
+    /**
+     * Generates 7 unique items and adds them to the database.
+     */
     private void addManyItems(){
         addItem("Gaming Keyboard", "My keyboard I use for gaming", "Logitech",
                 "Apex Pro", "123456FGHJ", "200.00", "Cool Keyboard");
@@ -173,7 +185,18 @@ public class ViewTesting {
                 "iPhone 13 Pro", "79HJHU", "1100.00", "Newest phone");
     }
 
-    private void addItem(String Name, String Description, String Make, String Model, String SNumber, String EValue, String Comment) {
+    /**
+     * Adds items through a function to reduce the amount of code duplication in testing.
+     * @param Name The name of the item to be added.
+     * @param Description The description of the item to be added.
+     * @param Make The make of the item to be added.
+     * @param Model The model of the item to be added.
+     * @param SNumber The serial number of the item to be added.
+     * @param EValue The estimated value of the item to be added.
+     * @param Comment A comment for the item to be added.
+     */
+    private void addItem(String Name, String Description, String Make, String Model, String SNumber, String EValue, String
+        Comment) {
         // Navigate to the add item fragment
         onView(withId(R.id.navigation_addItem)).perform(click());
         // Set the item's name
@@ -190,9 +213,11 @@ public class ViewTesting {
 
         // Set the item's description
         onView(withId(R.id.descriptionInput)).perform(typeText(Description));
+        onView(withId(R.id.commentInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Set the item's make
         onView(withId(R.id.makeInput)).perform(typeText(Make));
+        onView(withId(R.id.commentInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Set the item's model
         onView(withId(R.id.modelInput)).perform(typeText(Model));

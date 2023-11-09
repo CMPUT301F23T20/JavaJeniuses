@@ -136,7 +136,7 @@ public class chooseFilterFragment extends Fragment {
     /**
      * Populates a new list with all items containing the desired keyword.
      */
-    private ArrayList<Item> findItemsWithDescriptionKeyword(String description, ArrayList<Item> itemsToFilter) {
+    public ArrayList<Item> findItemsWithDescriptionKeyword(String description, ArrayList<Item> itemsToFilter) {
         ArrayList<Item> itemsWithKeyword = new ArrayList<>();
         for (Item item : itemsToFilter){
             if (item.getDescription().toLowerCase().contains(description)) {
@@ -149,7 +149,7 @@ public class chooseFilterFragment extends Fragment {
     /**
      * Populate a new list with all items containing the desired make.
      */
-    private ArrayList<Item> findItemsWithMake(String make, ArrayList<Item> itemsToFilter){
+    public ArrayList<Item> findItemsWithMake(String make, ArrayList<Item> itemsToFilter){
         ArrayList<Item> itemsWithMake = new ArrayList<>();
         for (Item item : itemsToFilter){
             if (item.getMake().toLowerCase().contains(make)) {
@@ -162,7 +162,7 @@ public class chooseFilterFragment extends Fragment {
     /**
      * Find all items that fall within certain dates.
      */
-    private ArrayList<Item> findItemsBetweenDates(String startDate, String endDate, ArrayList<Item> itemsToFilter){
+    public ArrayList<Item> findItemsBetweenDates(String startDate, String endDate, ArrayList<Item> itemsToFilter){
         ArrayList<Item> itemsBetweenDates = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {

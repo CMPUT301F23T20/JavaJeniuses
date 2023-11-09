@@ -100,12 +100,16 @@ public class ItemFunctionalityTest {
         // Check to ensure navigation back to home fragment
         onView(withText("Add Tag")).check(matches(isDisplayed()));
 
+        // Check to make sure there is text on screen with the item name
+        onView(withText("Gaming Keyboard")).perform(scrollTo());
+        onView(withText("Gaming Keyboard")).check(matches(isDisplayed()));
+
 
     }
 
 
     /**
-     * Test the navigation to edit an item.
+     * Test the navigation to edit an item and editing an item
      * In order to edit an item, you must navigate to view item so this function also tests that
      */
 
@@ -161,17 +165,21 @@ public class ItemFunctionalityTest {
         onView(withId(R.id.saveButton)).perform(click());
         // Check to ensure navigation back to home fragment
         onView(withText("Add Tag")).check(matches(isDisplayed()));
+
+        // Check to make sure there is text on screen with the item name
+        onView(withText("Car")).perform(scrollTo());
+        onView(withText("Car")).check(matches(isDisplayed()));
     }
 
 
 
     /**
-     * Test the navigation to delete an item.
+     * Test the navigation to delete an item and deleting an item
      * In order to delete an item, you must navigate to view item so this function also tests that
      */
     @Test
     public void testDeleteItemNav() { // For some reason this only works with this method name
-                                    // If you change the method name you get an error
+        // If you change the method name you get an error
 
         // Show the listview from Firestore
         onView(withId(R.id.navigation_addItem)).perform(click());

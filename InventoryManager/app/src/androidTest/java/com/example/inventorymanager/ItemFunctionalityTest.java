@@ -105,11 +105,9 @@ public class ItemFunctionalityTest {
         onView(withId(R.id.descriptionInput)).perform(typeText("Keyboard for gaming"));
         onView(withId(R.id.descriptionInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
-
         // Set the item's make
         onView(withId(R.id.makeInput)).perform(typeText("Logitech"));
         onView(withId(R.id.makeInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
-
 
         // Set the item's model
         onView(withId(R.id.modelInput)).perform(typeText("Apex Pro"));

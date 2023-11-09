@@ -1,9 +1,11 @@
 package com.example.inventorymanager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -56,6 +58,8 @@ public class LoginActivity extends AppCompatActivity {
 
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+               InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+               imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 String username = enterUsername.getText().toString();
                 String password = enterPassword.getText().toString();
 

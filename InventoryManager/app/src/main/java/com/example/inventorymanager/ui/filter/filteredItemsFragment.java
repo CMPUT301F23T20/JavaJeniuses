@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -22,19 +23,29 @@ import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentFilteredItemsBinding;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 /**
- * This class manages the page(fragment_filtered_items) that displays the list of items with the selected filter queries
+ * Manages the screen that displays the list of items filtered by the requested conditions.
+ * A brief summary of each item is displayed.
+ * @author Isaac Joffe, David Onchuru, Sumaiya Salsabil
+ * @see chooseFilterFragment
  */
 public class filteredItemsFragment extends Fragment {
-
     private FragmentFilteredItemsBinding binding;
     private ItemAdapter adapter;
     private ArrayList<Item> items;
 
+    /**
+     * Provides the user interface of the fragment.
+     * Displays summary information about each of the filtered items.
+     * @param inflater The object used to inflate views as required.
+     * @param container The parent view of the fragment.
+     * @param savedInstanceState The previous state of the fragment; not used in this fragment.
+     * @return The root of the view.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         binding = FragmentFilteredItemsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         // Bind the listview that displays our items
@@ -53,6 +64,11 @@ public class filteredItemsFragment extends Fragment {
         itemList.setAdapter(adapter);
         // display the current total estimated value of items being displayed
         updateTotal();
+
+        // display message if no items are found
+        if (items.isEmpty()) {
+            Toast.makeText(requireContext(), "No items found.", Toast.LENGTH_SHORT).show();
+        }
 
         // add effect of clicking on a delete button (delete all highlighted items)
         Button deleteButton = root.findViewById(R.id.deleteButton);
@@ -90,19 +106,26 @@ public class filteredItemsFragment extends Fragment {
         return root;
     }
 
-    // updates the total estimated value being displayed on the screen
+    /**
+     * Updates the total estimated monetary value being displayed on the screen.
+     * Computes the proper total value based on addition of each displayed item's estimated monetary value.
+     */
     public void updateTotal() {
         // calculate total estimated value
         double total = 0;
         for (Item item : items){
+            // must eliminate the $ and , characters to read as a number
             total += Double.parseDouble(item.getEstimatedValue().replaceAll("[$,]", ""));
         }
 
         // update the text view with the total estimated value formatted as money
         TextView totalTextView = binding.getRoot().findViewById(R.id.total_value);
-        totalTextView.setText(String.format("$%.2f", total));
+        totalTextView.setText(NumberFormat.getCurrencyInstance().format(total));
     }
 
+    /**
+     * Destroys the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -34,21 +34,18 @@
         android:name="com.example.inventorymanager.ui.editItem.EditItemFragment"
         android:label="@string/title_edit_item"
         tools:layout="@layout/fragment_edit_item" />
+
     <fragment
         android:id="@+id/filteredItemsFragment"
         android:name="com.example.inventorymanager.ui.filter.filteredItemsFragment"
         android:label="@string/title_filtered_items"
         tools:layout="@layout/fragment_filtered_items" />
+
     <fragment
         android:id="@+id/chooseFilterFragment"
         android:name="com.example.inventorymanager.ui.filter.chooseFilterFragment"
         android:label="@string/title_choose_filter"
         tools:layout="@layout/choose_filter" />
-    <fragment
-        android:id="@+id/keywordNotFoundFragment"
-        android:name="com.example.inventorymanager.ui.filter.keywordNotFoundFragment"
-        android:label="@string/title_no_items_found"
-        tools:layout="@layout/keyword_not_found" />
     <fragment
         android:id="@+id/sortOptionsFragment"
         android:name="com.example.inventorymanager.ui.sort.SortOptionsFragment"
@@ -59,4 +56,5 @@
         android:name="com.example.inventorymanager.ui.sort.sortedItemsFragment"
         android:label="@string/title_sorted_items"
         tools:layout="@layout/fragment_sorted_items" />
+
 </navigation>

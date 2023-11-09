@@ -19,6 +19,7 @@ import android.widget.ToggleButton;
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentSortOptionsBinding;
+import com.example.inventorymanager.ui.filter.filteredItemsFragment;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +30,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
+/**
+ * Manages the screen that enables users to choose sorting conditions.
+ * Users may choose filters based on the date the item was purchased, the make of the item, or keywords from the item's description.
+ * @author Sumaiya Salsabil
+ * @see sortedItemsFragment
+ */
 public class SortOptionsFragment extends Fragment {
 
     private ArrayList<Item> items, sortedItems;
@@ -37,6 +43,14 @@ public class SortOptionsFragment extends Fragment {
     private FragmentSortOptionsBinding binding;
     private boolean ascending;
 
+    /**
+     * Provides the user interface of the fragment.
+     * Displays filtering information and enables users to change these conditions.
+     * @param inflater The object used to inflate views as required.
+     * @param container The parent view of the fragment.
+     * @param savedInstanceState The previous state of the fragment; not used in this fragment.
+     * @return The root of the view.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
@@ -90,6 +104,13 @@ public class SortOptionsFragment extends Fragment {
         return root;
     }
 
+    /**
+     * Sorts the items in the `sortedItems` list based on the provided sort criteria.
+     * The function first creates a list of comparators based on the `sortBys` list,
+     * and then creates a composite comparator to perform multi-sorting.
+     *
+     * @param sortBys An ArrayList of strings representing the sorting criteria.
+     */
     private void sortItems(ArrayList<String> sortBys) {
 
         // create a list of comparators based on sortBys
@@ -114,6 +135,16 @@ public class SortOptionsFragment extends Fragment {
         sortedItems.sort(multiComparator);
     }
 
+    /**
+     * Creates a comparator based on the given sorting criteria and sorting order (ascending or descending).
+     * The sorting criteria can be "Date," "Description," "Make," or "Value," and the sorting order
+     * can be specified by the `ascending` parameter.
+     *
+     * @param sortBy     A string representing the sorting criteria ("Date," "Description," "Make," or "Value").
+     * @param ascending  A boolean value indicating whether the sorting order is ascending (true) or descending (false).
+     * @return A comparator function for the specified sorting criteria and order.
+     * @throws ParseException if an error occurs while parsing dates.
+     */
     private Comparator<Item> createComparator(String sortBy, boolean ascending) {
         Comparator<Item> comparator = null;
 
@@ -158,6 +189,9 @@ public class SortOptionsFragment extends Fragment {
         return comparator;
     }
 
+    /**
+     * Destroys the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

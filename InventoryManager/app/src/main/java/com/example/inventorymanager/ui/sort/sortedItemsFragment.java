@@ -22,15 +22,30 @@ import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentFilteredItemsBinding;
 import com.example.inventorymanager.databinding.FragmentSortedItemsBinding;
+import com.example.inventorymanager.ui.filter.chooseFilterFragment;
 
 import java.util.ArrayList;
 
+/**
+ * Manages the screen that displays the list of items sorted by the requested conditions.
+ * A brief summary of each item is displayed.
+ * @author Sumaiya Salsabil
+ * @see SortOptionsFragment
+ */
 public class sortedItemsFragment extends Fragment {
 
     private FragmentSortedItemsBinding binding;
     private ItemAdapter adapter;
     private ArrayList<Item> items;
 
+    /**
+     * Provides the user interface of the fragment.
+     * Displays summary information about each of the filtered items.
+     * @param inflater The object used to inflate views as required.
+     * @param container The parent view of the fragment.
+     * @param savedInstanceState The previous state of the fragment; not used in this fragment.
+     * @return The root of the view.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentSortedItemsBinding.inflate(inflater, container, false);
@@ -88,7 +103,10 @@ public class sortedItemsFragment extends Fragment {
         return root;
     }
 
-    // updates the total estimated value being displayed on the screen
+    /**
+     * Updates the total estimated monetary value being displayed on the screen.
+     * Computes the proper total value based on addition of each displayed item's estimated monetary value.
+     */
     public void updateTotal() {
         // calculate total estimated value
         double total = 0;
@@ -101,6 +119,9 @@ public class sortedItemsFragment extends Fragment {
         totalTextView.setText(String.format("$%.2f", total));
     }
 
+    /**
+     * Destroys the fragment.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

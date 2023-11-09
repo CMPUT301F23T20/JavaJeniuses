@@ -63,10 +63,17 @@ public class ViewTesting {
      */
     public void testItemFilteringMake() {
         // Do Login first
+        // Add all the items to the list
         addManyItems();
+        // Filter by make
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.make_keyword_editText)).perform(typeText("Logitech"));
         onView(withId(R.id.searchButton)).perform(click());
+        // Check if the test is successful
+
+        // Return to home
+
+        // Select all items and delete them.
 
 
     }
@@ -83,8 +90,11 @@ public class ViewTesting {
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.description_keyword_editText)).perform(typeText("Mouse"));
         onView(withId(R.id.searchButton)).perform(click());
+        // Check if the test is successful
 
-        // Check to make sure both items exist in the view
+        // Return to home
+
+        // Select all items and delete them.
     }
 
     @Test
@@ -94,7 +104,13 @@ public class ViewTesting {
      */
     public void testItemFilteringDate() {
         // Do Login first
+        // Add all the items
         addManyItems();
+        // Check if the test is successful
+
+        // Return to home
+
+        // Select all items and delete them.
 
     }
 
@@ -105,6 +121,7 @@ public class ViewTesting {
      */
     public void testItemSortingMake() {
         // Do Login first
+        // Add all the items
         addManyItems();
 
     }
@@ -116,6 +133,7 @@ public class ViewTesting {
      */
     public void testItemSortingKeyword() {
         // Do Login first
+        // Add all the items
         addManyItems();
 
     }
@@ -127,6 +145,7 @@ public class ViewTesting {
      */
     public void testItemSortingDate() {
         // Do Login first
+        // Add all the items
         addManyItems();
 
     }
@@ -138,6 +157,7 @@ public class ViewTesting {
      */
     public void testMultiSelection() {
         // Do Login first
+        // Add all the items
         addManyItems();
 
 
@@ -150,6 +170,7 @@ public class ViewTesting {
      */
     public void testMultiDelete() {
         // Do Login first
+        // Add all the items
         addManyItems();
 
 
@@ -169,19 +190,19 @@ public class ViewTesting {
      * Generates 7 unique items and adds them to the database.
      */
     private void addManyItems(){
-        addItem("Gaming Keyboard", "My keyboard I use for gaming", "Logitech",
+        addItem("Gaming Keyboard", "Keyboard for gaming", "Logitech",
                 "Apex Pro", "123456FGHJ", "200.00", "Cool Keyboard");
-        addItem("Gaming Mouse", "My mouse I use for gaming", "Logitech",
+        addItem("Gaming Mouse", "Mouse for gaming", "Logitech",
                 "G502 Lightspeed", "ABC123FG45", "180.00", "Cool Mouse");
-        addItem("Gaming Headset", "My headset I use for gaming", "Logitech",
+        addItem("Gaming Headset", "Headset for gaming", "Logitech",
                 "Astro A30 Wireless", "PJF9920", "230.99", "My Headset");
         addItem("Toy Car", "My little toy car", "Hot Wheels",
                 "Rocket League Car", "MNA67", "14.50", "My toy car");
-        addItem("My Ergo Mouse ", "Mouse I use for coding", "Logitech",
+        addItem("My Ergo Mouse ", "Mouse for coding", "Logitech",
                 "MX Master 3S", "JIN879T", "139.99", "Nice Mouse");
-        addItem("Laptop", "The Laptop I use for school", "Microsoft",
+        addItem("Laptop", "Laptop for school", "Microsoft",
                 "Surface Pro 7", "UGB675", "1500.50", "Slow laptop");
-        addItem("Smartphone", "My daily driver smartphone", "Apple",
+        addItem("Smartphone", "My iPhone", "Apple",
                 "iPhone 13 Pro", "79HJHU", "1100.00", "Newest phone");
     }
 

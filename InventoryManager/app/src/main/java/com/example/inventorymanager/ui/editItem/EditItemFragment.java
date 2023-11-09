@@ -155,6 +155,18 @@ public class EditItemFragment extends Fragment {
             }
         });
 
+        // Set up behavior to scroll once the commentInput EditText is filled out to scroll and reveal button
+        // Close keyboard as we've reached the end of input fields
+        commentInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                editItemScrollView.post(() -> editItemScrollView.scrollTo(0, editItemScrollView.getBottom()));
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        });
+
         // add effect of the save button when pressed (save changes)
         saveButton.setOnClickListener(v -> {
             if (ItemUtility.validateItemFields(itemNameInput, purchaseDateInput ,descriptionInput,

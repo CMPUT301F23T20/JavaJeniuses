@@ -111,7 +111,7 @@ public class SortOptionsFragment extends Fragment {
      *
      * @param sortBys An ArrayList of strings representing the sorting criteria.
      */
-    private void sortItems(ArrayList<String> sortBys) {
+    public void sortItems(ArrayList<String> sortBys) {
 
         // create a list of comparators based on sortBys
         ArrayList<Comparator<Item>> comparators = new ArrayList<>();
@@ -145,7 +145,7 @@ public class SortOptionsFragment extends Fragment {
      * @return A comparator function for the specified sorting criteria and order.
      * @throws ParseException if an error occurs while parsing dates.
      */
-    private Comparator<Item> createComparator(String sortBy, boolean ascending) {
+    public Comparator<Item> createComparator(String sortBy, boolean ascending) {
         Comparator<Item> comparator = null;
 
         switch (sortBy) {

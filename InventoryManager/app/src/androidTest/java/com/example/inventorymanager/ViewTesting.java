@@ -53,8 +53,8 @@ import java.util.Date;
 public class ViewTesting {
 
     @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new
-            ActivityScenarioRule<MainActivity>(MainActivity.class);
+    public ActivityScenarioRule<LoginActivity> scenario = new
+            ActivityScenarioRule<LoginActivity>(LoginActivity.class);
 
     @Test
     /**
@@ -64,7 +64,7 @@ public class ViewTesting {
     public void testItemFilteringMake() {
         // Do Login first
         // Add all the items to the list
-        addManyItems();
+        loginAndAddManyItems();
         // Filter by make
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.make_keyword_editText)).perform(typeText("Logitech"));
@@ -86,7 +86,7 @@ public class ViewTesting {
     public void testItemFilteringKeyword() {
         // Do Login first
         // Add all the items
-        addManyItems();
+        loginAndAddManyItems();
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.description_keyword_editText)).perform(typeText("Mouse"));
         onView(withId(R.id.searchButton)).perform(click());
@@ -105,7 +105,7 @@ public class ViewTesting {
     public void testItemFilteringDate() {
         // Do Login first
         // Add all the items
-        addManyItems();
+        loginAndAddManyItems();
         // Check if the test is successful
 
         // Return to home
@@ -122,7 +122,7 @@ public class ViewTesting {
     public void testItemSortingMake() {
         // Do Login first
         // Add all the items
-        addManyItems();
+        loginAndAddManyItems();
 
     }
 
@@ -134,7 +134,7 @@ public class ViewTesting {
     public void testItemSortingKeyword() {
         // Do Login first
         // Add all the items
-        addManyItems();
+        loginAndAddManyItems();
 
     }
 
@@ -146,7 +146,7 @@ public class ViewTesting {
     public void testItemSortingDate() {
         // Do Login first
         // Add all the items
-        addManyItems();
+        loginAndAddManyItems();
 
     }
 
@@ -158,7 +158,7 @@ public class ViewTesting {
     public void testMultiSelection() {
         // Do Login first
         // Add all the items
-        addManyItems();
+        loginAndAddManyItems();
 
 
     }
@@ -171,7 +171,8 @@ public class ViewTesting {
     public void testMultiDelete() {
         // Do Login first
         // Add all the items
-        addManyItems();
+        loginAndAddManyItems();
+        
 
 
 
@@ -189,7 +190,21 @@ public class ViewTesting {
     /**
      * Generates 7 unique items and adds them to the database.
      */
-    private void addManyItems(){
+    private void loginAndAddManyItems(){
+        // Click on the user name field
+        onView(withId(R.id.username)).perform(click());
+        // Type the username
+        onView(withId(R.id.username)).perform(typeText("JohnDoe"));
+        onView(withId(R.id.username)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Click on the password field
+        // Type the password
+        onView(withId(R.id.password)).perform(typeText("123456"));
+        onView(withId(R.id.password)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Login to the user account
+        onView(withId(R.id.login)).perform(click());
+        // Add all the items
         addItem("Gaming Keyboard", "Keyboard for gaming", "Logitech",
                 "Apex Pro", "123456FGHJ", "200.00", "Cool Keyboard");
         addItem("Gaming Mouse", "Mouse for gaming", "Logitech",

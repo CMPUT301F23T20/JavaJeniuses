@@ -63,6 +63,10 @@ public class ViewTesting {
     public void testItemFilteringMake() {
         // Do Login first
         addManyItems();
+        onView(withId(R.id.filter_button)).perform(click());
+        onView(withId(R.id.make_keyword_editText)).perform(typeText("Logitech"));
+        onView(withId(R.id.searchButton)).perform(click());
+
 
     }
 

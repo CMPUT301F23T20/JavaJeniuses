@@ -31,7 +31,7 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-         />
+        />
 
     <EditText
         android:id="@+id/description_keyword_editText"

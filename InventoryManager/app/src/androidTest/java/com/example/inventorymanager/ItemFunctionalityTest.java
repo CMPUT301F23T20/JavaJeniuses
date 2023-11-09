@@ -135,7 +135,6 @@ public class ItemFunctionalityTest {
         onView(withText("Gaming Keyboard")).perform(scrollTo());
         onView(withText("Gaming Keyboard")).check(matches(isDisplayed()));
 
-
     }
 
 

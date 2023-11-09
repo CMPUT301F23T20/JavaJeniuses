@@ -49,8 +49,35 @@ import java.util.Date;
 public class ItemFunctionalityTest {
 
     @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new
-            ActivityScenarioRule<MainActivity>(MainActivity.class);
+    public ActivityScenarioRule<LoginActivity> scenario = new
+            ActivityScenarioRule<LoginActivity>(LoginActivity.class);
+
+
+    @Test
+    public void testLoginNav(){
+        // Click on the user name field
+        onView(withId(R.id.username)).perform(click());
+        // Type the username
+        onView(withId(R.id.username)).perform(typeText("JohnDoe"));
+        onView(withId(R.id.username)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Click on the password field
+        // Type the password
+        onView(withId(R.id.password)).perform(typeText("123456"));
+        onView(withId(R.id.password)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Login to the user account
+        onView(withId(R.id.login)).perform(click());
+
+
+        onView(withId(R.id.navigation_addItem)).perform(click());
+        onView(withId(R.id.navigation_home)).perform(click());
+        onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
+        onView(withText("Add Tag")).check(matches(isDisplayed()));
+
+
+
+    }
 
 
     /**
@@ -58,6 +85,8 @@ public class ItemFunctionalityTest {
      */
     @Test
     public void testAddItemNav(){
+        testLoginNav();
+
         // Navigate to the add item fragment
         onView(withId(R.id.navigation_addItem)).perform(click());
         // Set the item's name
@@ -100,12 +129,11 @@ public class ItemFunctionalityTest {
         onView(withId(R.id.addItemButton)).perform(click());
 
         // Check to ensure navigation back to home fragment
-        onView(withText("Add Tag")).check(matches(isDisplayed()));
+        onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
 
         // Check to make sure there is text on screen with the item name
         onView(withText("Gaming Keyboard")).perform(scrollTo());
         onView(withText("Gaming Keyboard")).check(matches(isDisplayed()));
-
 
     }
 
@@ -117,9 +145,7 @@ public class ItemFunctionalityTest {
 
     @Test
     public void testEditItemNav() {
-        // Show the listview from Firestore
-        onView(withId(R.id.navigation_addItem)).perform(click());
-        onView(withId(R.id.navigation_home)).perform(click());
+        testLoginNav();
 
         // Scroll and click the item to edit
         onView(withText("Gaming Keyboard")).perform(scrollTo());
@@ -135,10 +161,12 @@ public class ItemFunctionalityTest {
         // Edit the item's description
         onView(withId(R.id.descriptionInput)).perform(clearText());
         onView(withId(R.id.descriptionInput)).perform(typeText("Car for driving"));
+        onView(withId(R.id.descriptionInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Edit the item's make
         onView(withId(R.id.makeInput)).perform(clearText());
         onView(withId(R.id.makeInput)).perform(typeText("Honda"));
+        onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Edit the item's model
         onView(withId(R.id.modelInput)).perform(clearText());
@@ -182,10 +210,11 @@ public class ItemFunctionalityTest {
     @Test
     public void testDeleteItemNav() { // For some reason this only works with this method name
         // If you change the method name you get an error
+        testLoginNav();
 
         // Show the listview from Firestore
-        onView(withId(R.id.navigation_addItem)).perform(click());
-        onView(withId(R.id.navigation_home)).perform(click());
+      //  onView(withId(R.id.navigation_addItem)).perform(click());
+       // onView(withId(R.id.navigation_home)).perform(click());
         onView(withText("Car")).perform(scrollTo());
 
         // Click on the listview item with the text of "Car"

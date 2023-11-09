@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,6 +22,7 @@ import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.ChooseFilterBinding;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,72 +76,32 @@ public class chooseFilterFragment extends Fragment {
             String startDate = startDateEditText.getText().toString();
             String endDate = endDateEditText.getText().toString();
 
-            // perform filter operations
-            ArrayList<Item> filteredItems = new ArrayList<>();
-            ArrayList<Item> itemsBetweenDates = new ArrayList<>();
-            ArrayList<Item> itemsWithMake = new ArrayList<>();
-            ArrayList<Item> itemsWithKeyword = new ArrayList<>();
-
+            // perform multi-level filtering
             // if user selects date range
             if (!startDate.isEmpty() && !endDate.isEmpty()) {
-                itemsBetweenDates = findItemsBetweenDates(startDate, endDate);
-                // if item not already in list, add item to filtered item list
-                for (Item item: itemsBetweenDates) {
-                    if (!filteredItems.contains(item)) {
-                        filteredItems.add(item);
-                    }
-                }
+                items = findItemsBetweenDates(startDate, endDate, items);
             }
 
             // if user selects make
             if (!make.isEmpty()) {
-                itemsWithMake = findItemsWithMake(make);
+                items = findItemsWithMake(make, items);
                 // if item not already in list, add item to filtered item list
-                for (Item item: itemsWithMake) {
-                    if (!(filteredItems.contains(item))) {
-                        filteredItems.add(item);
-                    }
-                }
             }
 
             // if user selects description keyword
             if (!description.isEmpty()) {
-                itemsWithKeyword = findItemsWithDescriptionKeyword(description);
+                items = findItemsWithDescriptionKeyword(description, items);
                 // if item not already in list, add item to filtered item list
-                for (Item item: itemsWithKeyword) {
-                    if (!filteredItems.contains(item)) {
-                        filteredItems.add(item);
-                    }
-                }
             }
-
-            ArrayList<Item> itemsToRemove = new ArrayList<>();
-            for (Item item: filteredItems) {
-                if (!itemsBetweenDates.isEmpty()) {
-                    if (!itemsBetweenDates.contains(item)) {
-                        itemsToRemove.add(item);
-                    }
-                }
-                if (!itemsWithMake.isEmpty()) {
-                    if (!itemsWithMake.contains(item)) {
-                        itemsToRemove.add(item);
-                    }
-                }
-                if (!itemsWithKeyword.isEmpty()) {
-                    if (!itemsWithKeyword.contains(item)) {
-                        itemsToRemove.add(item);
-                    }
-                }
-            }
-            filteredItems.removeAll(itemsToRemove);
 
             // pack list of filtered items
             Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList("items", filteredItems);
+            bundle.putParcelableArrayList("items", items);
 
             // navigate to filtered items screen with packed list
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.filteredItemsFragment, bundle);
+
         });
 
         return root;
@@ -174,9 +136,9 @@ public class chooseFilterFragment extends Fragment {
     /**
      * Populates a new list with all items containing the desired keyword.
      */
-    private ArrayList<Item> findItemsWithDescriptionKeyword(String description) {
+    private ArrayList<Item> findItemsWithDescriptionKeyword(String description, ArrayList<Item> itemsToFilter) {
         ArrayList<Item> itemsWithKeyword = new ArrayList<>();
-        for (Item item : items){
+        for (Item item : itemsToFilter){
             if (item.getDescription().toLowerCase().contains(description)) {
                 itemsWithKeyword.add(item);
             }
@@ -187,9 +149,9 @@ public class chooseFilterFragment extends Fragment {
     /**
      * Populate a new list with all items containing the desired make.
      */
-    private ArrayList<Item> findItemsWithMake(String make){
+    private ArrayList<Item> findItemsWithMake(String make, ArrayList<Item> itemsToFilter){
         ArrayList<Item> itemsWithMake = new ArrayList<>();
-        for (Item item : items){
+        for (Item item : itemsToFilter){
             if (item.getMake().toLowerCase().contains(make)) {
                 itemsWithMake.add(item);
             }
@@ -200,14 +162,14 @@ public class chooseFilterFragment extends Fragment {
     /**
      * Find all items that fall within certain dates.
      */
-    private ArrayList<Item> findItemsBetweenDates(String startDate, String endDate){
+    private ArrayList<Item> findItemsBetweenDates(String startDate, String endDate, ArrayList<Item> itemsToFilter){
         ArrayList<Item> itemsBetweenDates = new ArrayList<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date parsedStartDate = dateFormat.parse(startDate);
             Date parsedEndDate = dateFormat.parse(endDate);
 
-            for (Item item : items) {
+            for (Item item : itemsToFilter) {
                 Date itemDate = dateFormat.parse(item.getPurchaseDate());
 
                 if ((itemDate.equals(parsedStartDate)|| itemDate.after(parsedStartDate)) &&

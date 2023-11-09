@@ -64,6 +64,10 @@ public class filterItemsTest {
         ArrayList<Item> items = defaultList();
         ArrayList<Item> filteredItems = chooseFilterFragment.findItemsWithDescriptionKeyword("gaming", items);
         assertTrue(filteredItems.size() == 2);
+
+        // Test case: description doesn't exist within items
+        ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsWithMake("empty", items);
+        assertEquals(filteredItems_empty.size(), 0);
     }
 
     /**
@@ -74,6 +78,10 @@ public class filterItemsTest {
         ArrayList<Item> items = defaultList();
         ArrayList<Item> filteredItems = chooseFilterFragment.findItemsWithMake("micro", items);
         assertEquals(filteredItems.size(), 1);
+
+        // Test case: make doesn't exist within items
+        ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsWithMake("empty", items);
+        assertEquals(filteredItems_empty.size(), 0);
     }
 
     /**
@@ -84,6 +92,10 @@ public class filterItemsTest {
         ArrayList<Item> items = defaultList();
         ArrayList<Item> filteredItems = chooseFilterFragment.findItemsBetweenDates("2023-08-15", "2023-08-25", items);
         assertEquals(filteredItems.size(), 1);
+
+        // Test case: user puts in dates where no items exist
+        ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsBetweenDates("2023-02-15", "2023-02-25", items);
+        assertEquals(filteredItems_empty.size(), 0);
     }
 
 }

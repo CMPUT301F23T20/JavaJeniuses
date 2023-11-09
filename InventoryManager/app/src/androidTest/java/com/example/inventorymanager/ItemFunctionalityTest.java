@@ -1,6 +1,7 @@
 package com.example.inventorymanager;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.pressKey;
@@ -73,9 +74,11 @@ public class ItemFunctionalityTest {
 
         // Set the item's description
         onView(withId(R.id.descriptionInput)).perform(typeText("Keyboard for gaming"));
+        onView(withId(R.id.descriptionInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Set the item's make
         onView(withId(R.id.makeInput)).perform(typeText("Logitech"));
+        onView(withId(R.id.makeInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Set the item's model
         onView(withId(R.id.modelInput)).perform(typeText("Apex Pro"));
@@ -99,24 +102,94 @@ public class ItemFunctionalityTest {
         // Check to ensure navigation back to home fragment
         onView(withText("Add Tag")).check(matches(isDisplayed()));
 
+        // Check to make sure there is text on screen with the item name
+        onView(withText("Gaming Keyboard")).perform(scrollTo());
+        onView(withText("Gaming Keyboard")).check(matches(isDisplayed()));
+
 
     }
 
+
     /**
-     * Test the navigation to delete an item.
+     * Test the navigation to edit an item and editing an item
+     * In order to edit an item, you must navigate to view item so this function also tests that
+     */
+
+    @Test
+    public void testEditItemNav() {
+        // Show the listview from Firestore
+        onView(withId(R.id.navigation_addItem)).perform(click());
+        onView(withId(R.id.navigation_home)).perform(click());
+
+        // Scroll and click the item to edit
+        onView(withText("Gaming Keyboard")).perform(scrollTo());
+        onView(withText("Gaming Keyboard")).perform(click());
+
+        onView(withId(R.id.editButton)).perform(scrollTo());
+        onView(withId(R.id.editButton)).perform(click());
+
+        // Edit the item's name
+        onView(withId(R.id.itemNameInput)).perform(clearText());
+        onView(withId(R.id.itemNameInput)).perform(typeText("Car"));
+
+        // Edit the item's description
+        onView(withId(R.id.descriptionInput)).perform(clearText());
+        onView(withId(R.id.descriptionInput)).perform(typeText("Car for driving"));
+
+        // Edit the item's make
+        onView(withId(R.id.makeInput)).perform(clearText());
+        onView(withId(R.id.makeInput)).perform(typeText("Honda"));
+
+        // Edit the item's model
+        onView(withId(R.id.modelInput)).perform(clearText());
+        onView(withId(R.id.modelInput)).perform(typeText("Civic"));
+        onView(withId(R.id.modelInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Edit the item's serial number
+        onView(withId(R.id.serialNumberInput)).perform(clearText());
+        onView(withId(R.id.serialNumberInput)).perform(typeText("12345ABCDE"));
+        onView(withId(R.id.serialNumberInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Edit the item's estimate value
+        onView(withId(R.id.estimatedValueInput)).perform(clearText());
+        onView(withId(R.id.estimatedValueInput)).perform(typeText("5000.00"));
+        onView(withId(R.id.estimatedValueInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Scroll to comment input and fill it in
+        onView(withId(R.id.commentInput)).perform(clearText());
+        onView(withId(R.id.commentInput)).perform(scrollTo());
+        onView(withId(R.id.commentInput)).perform(typeText("Reliable Car"));
+        onView(withId(R.id.commentInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+
+        // Save the edited item
+        onView(withId(R.id.saveButton)).perform(scrollTo());
+        onView(withId(R.id.saveButton)).perform(click());
+        // Check to ensure navigation back to home fragment
+        onView(withText("Add Tag")).check(matches(isDisplayed()));
+
+        // Check to make sure there is text on screen with the item name
+        onView(withText("Car")).perform(scrollTo());
+        onView(withText("Car")).check(matches(isDisplayed()));
+    }
+
+
+
+    /**
+     * Test the navigation to delete an item and deleting an item
      * In order to delete an item, you must navigate to view item so this function also tests that
      */
     @Test
     public void testDeleteItemNav() { // For some reason this only works with this method name
-                                    // If you change the method name you get an error
+        // If you change the method name you get an error
 
         // Show the listview from Firestore
         onView(withId(R.id.navigation_addItem)).perform(click());
         onView(withId(R.id.navigation_home)).perform(click());
-        onView(withText("Gaming Keyboard")).perform(scrollTo());
+        onView(withText("Car")).perform(scrollTo());
 
-        // Click on the listview item with the text of "Gaming Keyboard"
-        onView(withText("Gaming Keyboard")).perform(click());
+        // Click on the listview item with the text of "Car"
+        onView(withText("Car")).perform(click());
 
         // Scroll to the delete button and delete the item
         onView(withId(R.id.deleteButton)).perform(scrollTo());

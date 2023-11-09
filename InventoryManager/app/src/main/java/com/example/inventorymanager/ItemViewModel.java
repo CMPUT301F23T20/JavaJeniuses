@@ -11,6 +11,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +36,20 @@ public class ItemViewModel extends ViewModel {
     // static variables make it so one copy of this variable exists across the whole app, synchronization
     private static MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private static CollectionReference itemsDB = db.collection("items");
+    private static CollectionReference itemsDB;
 
     /**
      * Creates an ItemViewModel() object synced to the global application database.
+     * Sets up the data accessed from a single user.
      */
     public ItemViewModel() {
+        // get the user from firebase
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        // set the database accessed to be for this one user
+        itemsDB = db.collection("users")
+                .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
+                .collection("items");
         // create default empty list on first time creating
         ArrayList<Item> items = new ArrayList<>();
         itemsLiveData.setValue(items);

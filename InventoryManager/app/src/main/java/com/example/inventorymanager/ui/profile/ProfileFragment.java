@@ -12,7 +12,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemViewModel;
+import com.example.inventorymanager.LoginActivity;
 import com.example.inventorymanager.databinding.FragmentProfileBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Shows the user details of the user currently logged into the application.
@@ -44,7 +47,8 @@ public class ProfileFragment extends Fragment {
         View root = binding.getRoot();
 
         final TextView username = binding.Username;
-        final TextView email = binding.Email;
+
+        //        final TextView email = binding.Email;
         profileViewModel.getText().observe(getViewLifecycleOwner(), username::setText);
         return root;
     }

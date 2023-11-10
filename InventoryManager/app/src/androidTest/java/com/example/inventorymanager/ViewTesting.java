@@ -25,6 +25,7 @@ import static java.lang.Thread.sleep;
 
 import android.view.KeyEvent;
 
+import androidx.annotation.Nullable;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -177,8 +178,19 @@ public class ViewTesting {
      */
     public void testItemSortingMake() {
         // Do Login first
-        // Add all the items
-        //loginAndAddManyItems();
+        // Add all the items to the list
+        loginAndAddManyItems(6);
+        // Filter by make
+        onView(withId(R.id.sort_button)).perform(click());
+        onView(withId(R.id.sort_make_button)).perform(click());
+        onView(withId(R.id.sort_done)).perform(click());
+
+        // Select all items and delete them.
+        for(int i = 0; i < 6; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
+
 
     }
 
@@ -189,8 +201,18 @@ public class ViewTesting {
      */
     public void testItemSortingKeyword() {
         // Do Login first
-        // Add all the items
-        //loginAndAddManyItems();
+        // Add all the items to the list
+        loginAndAddManyItems(3);
+        // Filter by make
+        onView(withId(R.id.sort_button)).perform(click());
+        onView(withId(R.id.sort_description_button)).perform(click());
+        onView(withId(R.id.sort_done)).perform(click());
+
+        // Select all items and delete them.
+        for(int i = 0; i < 3; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
 
     }
 
@@ -200,9 +222,40 @@ public class ViewTesting {
      * them by date of purchase of the items.
      */
     public void testItemSortingDate() {
-        // Do Login first
-        // Add all the items
-        //loginAndAddManyItems();
+        // Click on the user name field
+        onView(withId(R.id.username)).perform(click());
+        // Type the username
+        onView(withId(R.id.username)).perform(typeText("ViewTest"));
+        onView(withId(R.id.username)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Click on the password field
+        // Type the password
+        onView(withId(R.id.password)).perform(typeText("123456"));
+        onView(withId(R.id.password)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
+        // Login to the user account
+        onView(withId(R.id.login)).perform(click());
+        // Pause for a second to allow network call to finish
+        try {
+            sleep(100);
+        }catch (InterruptedException e){}
+
+        addItem("Gaming Keyboard", null, "Keyboard for gaming", "Logitech",
+                    "Apex Pro", "123456FGHJ", "200.00", "Cool Keyboard");
+
+        addItem("Gaming Mouse", "2023-11-08","Mouse for gaming", "Logitech",
+                    "G502 Lightspeed", "ABC123FG45", "180.00", "Cool Mouse");
+
+        // Filter by make
+        onView(withId(R.id.sort_button)).perform(click());
+        onView(withId(R.id.sort_date_button)).perform(click());
+        onView(withId(R.id.sort_done)).perform(click());
+
+        // Select all items and delete them.
+        for(int i = 0; i < 2; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
 
     }
 
@@ -260,25 +313,25 @@ public class ViewTesting {
 
         // Add all the items
         if(num>0) {
-        addItem("Gaming Keyboard", "Keyboard for gaming", "Logitech",
+        addItem("Gaming Keyboard", null, "Keyboard for gaming", "Logitech",
                 "Apex Pro", "123456FGHJ", "200.00", "Cool Keyboard");}
         if(num>1) {
-        addItem("Gaming Mouse", "Mouse for gaming", "Logitech",
+        addItem("Gaming Mouse", null,"Mouse for gaming", "Logitech",
                 "G502 Lightspeed", "ABC123FG45", "180.00", "Cool Mouse");}
         if(num>2) {
-        addItem("Gaming Headset", "Headset for gaming", "Logitech",
+        addItem("Gaming Headset", null, "Headset for gaming", "Logitech",
                 "Astro A30 Wireless", "PJF9920", "230.99", "My Headset");}
         if(num>3) {
-        addItem("Toy Car", "My little toy car", "Hot Wheels",
+        addItem("Toy Car", null,"My little toy car", "Hot Wheels",
                 "Rocket League Car", "MNA67", "14.50", "My toy car");}
         if(num>4) {
-        addItem("My Ergo Mouse", "Mouse for coding", "Logitech",
+        addItem("My Ergo Mouse", null, "Mouse for coding", "Logitech",
                 "MX Master 3S", "JIN879T", "139.99", "Nice Mouse");}
         if(num>5) {
-        addItem("Laptop", "Laptop for school", "Microsoft",
+        addItem("Laptop", null, "Laptop for school", "Microsoft",
                 "Surface Pro 7", "UGB675", "1500.50", "Slow laptop");}
         if(num>6) {
-        addItem("Smartphone", "My iPhone", "Apple",
+        addItem("Smartphone", null, "My iPhone", "Apple",
                 "iPhone 13 Pro", "79HJHU", "1100.00", "Newest phone");}
 
     }
@@ -293,7 +346,7 @@ public class ViewTesting {
      * @param EValue The estimated value of the item to be added.
      * @param Comment A comment for the item to be added.
      */
-    private void addItem(String Name, String Description, String Make, String Model, String SNumber, String EValue, String
+    private void addItem(String Name, @Nullable String currentDateString, String Description, String Make, String Model, String SNumber, String EValue, String
         Comment) {
         // Navigate to the add item fragment
         onView(withId(R.id.navigation_addItem)).perform(click());
@@ -302,9 +355,11 @@ public class ViewTesting {
 
         // Check the purchase date by clicking the current date on the date picker and checking if it
         // matches with the current date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date currentDate = Calendar.getInstance().getTime();
-        String currentDateString = dateFormat.format(currentDate);
+        if (currentDateString == null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date currentDate = Calendar.getInstance().getTime();
+            currentDateString = dateFormat.format(currentDate);
+        }
         onView(withId(R.id.purchaseDateInput)).perform(click());
         onView(withText("OK")).perform(click());
         onView(withId(R.id.purchaseDateInput)).check(matches(withText(currentDateString)));

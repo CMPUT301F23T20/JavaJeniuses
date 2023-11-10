@@ -18,6 +18,7 @@ import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 
+import android.app.Activity;
 import android.view.KeyEvent;
 import android.widget.DatePicker;
 
@@ -47,12 +48,13 @@ import java.util.Date;
  * @see
  */
 public class ItemFunctionalityTest {
-
     @Rule
-    public ActivityScenarioRule<LoginActivity> scenario = new
-            ActivityScenarioRule<LoginActivity>(LoginActivity.class);
+    public ActivityScenarioRule<LoginActivity> scenario = new ActivityScenarioRule<>(LoginActivity.class);
 
-
+    /**
+     * Test that the uer can login to the application.
+     * Tests US 6.1.
+     */
     @Test
     public void testLoginNav(){
         // Click on the user name field
@@ -69,23 +71,39 @@ public class ItemFunctionalityTest {
         // Login to the user account
         onView(withId(R.id.login)).perform(click());
 
+        // wait to ensure that Firebase has time to process the login
+        for (int i = 0; i < 10; i++) {
+            // try and see if login has loaded yet
+            try {
+                // try to move to the add item fragment bu pressing the button
+                onView(withId(R.id.navigation_addItem)).perform(click());
+            } catch (androidx.test.espresso.NoMatchingViewException e) {
+                // if this fails, then wait for a second and try again, maximum 10 times
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e2) {
+                    throw new RuntimeException(e2);
+                }
+            }
+        }
 
-        onView(withId(R.id.navigation_addItem)).perform(click());
+        // verify that we are on the next page
         onView(withId(R.id.navigation_home)).perform(click());
         onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
         onView(withText("Add Tag")).check(matches(isDisplayed()));
-
-
-
     }
 
 
     /**
      * Test the navigation to the "Add Item" fragment and adding an item.
+     * Tests US 1.1, 2.1, and 2.2.
      */
     @Test
     public void testAddItemNav(){
         testLoginNav();
+
+        // check that estimated value field starts as empty
+        onView(withId(R.id.total_value)).check(matches(withText("$0.00")));
 
         // Navigate to the add item fragment
         onView(withId(R.id.navigation_addItem)).perform(click());
@@ -135,17 +153,22 @@ public class ItemFunctionalityTest {
         onView(withText("Gaming Keyboard")).perform(scrollTo());
         onView(withText("Gaming Keyboard")).check(matches(isDisplayed()));
 
+        // check that estimated value field displays updated value
+        onView(withId(R.id.total_value)).check(matches(withText("$200.00")));
     }
 
 
     /**
      * Test the navigation to edit an item and editing an item
-     * In order to edit an item, you must navigate to view item so this function also tests that
+     * In order to edit an item, you must navigate to view item so this function also tests that.
+     * Tests US 1.2, 1.3, 2.1, and 2.2.
      */
-
     @Test
     public void testEditItemNav() {
         testLoginNav();
+
+        // check that estimated value field starts with last item
+        onView(withId(R.id.total_value)).check(matches(withText("$200.00")));
 
         // Scroll and click the item to edit
         onView(withText("Gaming Keyboard")).perform(scrollTo());
@@ -199,30 +222,37 @@ public class ItemFunctionalityTest {
         // Check to make sure there is text on screen with the item name
         onView(withText("Car")).perform(scrollTo());
         onView(withText("Car")).check(matches(isDisplayed()));
+
+        // check that estimated value field displays updated value
+        onView(withId(R.id.total_value)).check(matches(withText("$5,000.00")));
     }
 
 
 
     /**
-     * Test the navigation to delete an item and deleting an item
-     * In order to delete an item, you must navigate to view item so this function also tests that
+     * Test the navigation to delete an item and deleting an item.
+     * In order to delete an item, you must navigate to view item so this function also tests that.
+     * Tests US 1.2, 1.4, 2.1, and 2.2.
      */
     @Test
     public void testDeleteItemNav() { // For some reason this only works with this method name
         // If you change the method name you get an error
         testLoginNav();
 
-        // Show the listview from Firestore
-      //  onView(withId(R.id.navigation_addItem)).perform(click());
-       // onView(withId(R.id.navigation_home)).perform(click());
-        onView(withText("Car")).perform(scrollTo());
+        // check that estimated value field displays previous value
+        onView(withId(R.id.total_value)).check(matches(withText("$5,000.00")));
 
+        // Show the listview from Firestore
+        onView(withText("Car")).perform(scrollTo());
         // Click on the listview item with the text of "Car"
         onView(withText("Car")).perform(click());
 
         // Scroll to the delete button and delete the item
         onView(withId(R.id.deleteButton)).perform(scrollTo());
         onView(withId(R.id.deleteButton)).perform(click());
+
+        // check that estimated value field displays updated value
+        onView(withId(R.id.total_value)).check(matches(withText("$0.00")));
     }
 
 }

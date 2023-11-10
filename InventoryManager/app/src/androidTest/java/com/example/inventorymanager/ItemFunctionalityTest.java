@@ -4,10 +4,12 @@ import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.swipeDown;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -18,6 +20,7 @@ import static org.hamcrest.CoreMatchers.not;
 import android.view.KeyEvent;
 
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -232,6 +235,109 @@ public class ItemFunctionalityTest {
         onView(withText("Gaming Keyboard")).perform(scrollTo());
         onView(withText("Gaming Keyboard")).check(matches(isDisplayed()));
     }
+    /**
+     * Attempt to add an item with incorrect fields
+     */
+    private void failAdd(){
+        // Navigate to the add item fragment
+        onView(withId(R.id.navigation_addItem)).perform(click());
+        scrollToBottom();
+
+        // Check the item name field with an empty input
+        onView(withId(R.id.addItemNameTextView)).perform(scrollTo());
+        onView(withId(R.id.itemNameInput)).check(matches(hasErrorText("This field is required")));
+
+        // Check the item name field with too many characters
+        onView(withId(R.id.itemNameInput)).perform(typeText("A lot of characters........"));
+        Espresso.closeSoftKeyboard();
+        scrollToBottom();
+        onView(withId(R.id.addItemNameTextView)).perform(scrollTo());
+        onView(withId(R.id.itemNameInput)).perform(click());
+        onView(withId(R.id.itemNameInput)).check(matches(hasErrorText("Up to 15 characters")));
+        onView(withId(R.id.itemNameInput)).perform(clearText());
+        Espresso.closeSoftKeyboard();
+
+        // Check the date field with an empty field
+        scrollToBottom();
+        onView(withId(R.id.addPurchaseDateTextView)).perform(scrollTo());
+        onView(withId(R.id.purchaseDateInput)).check(matches(hasErrorText("This field is required")));
+        onView(withId(R.id.purchaseDateInput)).perform(click());
+        onView(withText("OK")).perform(click());
+
+
+        // Check the description field with too many characters (optional field)
+        onView(withId(R.id.descriptionInput)).perform(typeText("A lot of characters..............."));
+        Espresso.closeSoftKeyboard();
+        scrollToBottom();
+        onView(withId(R.id.addDescriptionTextView)).perform(scrollTo());
+        onView(withId(R.id.descriptionInput)).perform(click());
+        onView(withId(R.id.descriptionInput)).check(matches(hasErrorText("Up to 20 characters")));
+        onView(withId(R.id.descriptionInput)).perform(clearText());
+        Espresso.closeSoftKeyboard();
+
+        // Check the make field with an empty input
+        scrollToBottom();
+        onView(withId(R.id.addMakeTextView)).perform(scrollTo());
+        onView(withId(R.id.makeInput)).perform(click());
+        onView(withId(R.id.makeInput)).check(matches(hasErrorText("This field is required")));
+
+        // Check the make field with too many characters
+        onView(withId(R.id.makeInput)).perform(typeText("A lot of characters........"));
+        Espresso.closeSoftKeyboard();
+        scrollToBottom();
+        onView(withId(R.id.addMakeTextView)).perform(scrollTo());
+        onView(withId(R.id.makeInput)).perform(click());
+        onView(withId(R.id.makeInput)).check(matches(hasErrorText("Up to 15 characters")));
+        onView(withId(R.id.makeInput)).perform(clearText());
+        Espresso.closeSoftKeyboard();
+
+        // Check the model field with an empty input
+        scrollToBottom();
+        onView(withId(R.id.addModelTextView)).perform(scrollTo());
+        onView(withId(R.id.modelInput)).perform(click());
+        onView(withId(R.id.modelInput)).check(matches(hasErrorText("This field is required")));
+
+        // Check the model field with too many characters
+        onView(withId(R.id.modelInput)).perform(typeText("A lot of characters........"));
+        Espresso.closeSoftKeyboard();
+        scrollToBottom();
+        onView(withId(R.id.addModelTextView)).perform(scrollTo());
+        onView(withId(R.id.modelInput)).perform(click());
+        onView(withId(R.id.modelInput)).check(matches(hasErrorText("Up to 15 characters")));
+        onView(withId(R.id.modelInput)).perform(clearText());
+        Espresso.closeSoftKeyboard();
+
+        // Check the serial number field with too many characters (optional field)
+        onView(withId(R.id.serialNumberInput)).perform(typeText("A lot of characters..............."));
+        Espresso.closeSoftKeyboard();
+        scrollToBottom();
+        onView(withId(R.id.addSerialNumberTextView)).perform(scrollTo());
+        onView(withId(R.id.serialNumberInput)).perform(click());
+        onView(withId(R.id.serialNumberInput)).check(matches(hasErrorText("Up to 20 characters")));
+        onView(withId(R.id.serialNumberInput)).perform(clearText());
+        Espresso.closeSoftKeyboard();
+
+        // Check the estimate value field with an empty input
+        scrollToBottom();
+        onView(withId(R.id.addEstimatedValueTextView)).perform(scrollTo());
+        onView(withId(R.id.estimatedValueInput)).perform(click());
+        onView(withId(R.id.estimatedValueInput)).check(matches(hasErrorText("This field is required")));
+
+
+        // Check the comment field with too many characters (optional field)
+        onView(withId(R.id.commentInput)).perform(typeText("A lot of characters..............."));
+        Espresso.closeSoftKeyboard();
+        scrollToBottom();
+        onView(withId(R.id.addCommentTextView)).perform(scrollTo());
+        onView(withId(R.id.commentInput)).perform(click());
+        onView(withId(R.id.commentInput)).check(matches(hasErrorText("Up to 20 characters")));
+        onView(withId(R.id.commentInput)).perform(clearText());
+        Espresso.closeSoftKeyboard();
+
+        // Scroll back to the top of add item fragment
+        onView(withId(R.id.addItemNameTextView)).perform(scrollTo());
+
+    }
 
     /**
      * Edit an existing item in the database.
@@ -291,6 +397,17 @@ public class ItemFunctionalityTest {
     }
 
     /**
+     * Attempt to edit an item with incorrect fields
+     */
+    private void failEdit(){
+
+
+
+
+    }
+
+
+    /**
      * Delete a particular item in the database; specifically, the one made by addItem().
      */
     private void deleteItem1() {
@@ -316,6 +433,16 @@ public class ItemFunctionalityTest {
         // Scroll to the delete button and delete the item
         onView(withId(R.id.deleteButton)).perform(scrollTo());
         onView(withId(R.id.deleteButton)).perform(click());
+    }
+
+    /**
+     * Allows to scroll down in the add item fragment for testing
+     */
+    private void scrollToBottom(){
+        onView(withId(R.id.commentInput)).perform(scrollTo());
+        onView(withId(R.id.commentInput)).perform(click());
+        onView(withId(R.id.commentInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+        onView(withId(R.id.addItemButton)).perform(click());
     }
 
     /**
@@ -359,6 +486,29 @@ public class ItemFunctionalityTest {
         // check that estimated value field return to nothing
         onView(withId(R.id.total_value)).check(matches(withText("$0.00")));
     }
+    /**
+     * Test the input fields for the "Add Item" fragment and ensures the correct error messages are
+     * showing
+     * Tests US 1.1, 2.1, and 2.2.
+     */
+    @Test
+    public void testFailedAddItem(){
+        // login to default user
+        login();
+        // check that estimated value field starts as empty
+        onView(withId(R.id.total_value)).check(matches(withText("$0.00")));
+        // add item to the list
+        failAdd();
+        // add item to the list
+        addItem();
+        // check that estimated value field displays updated value
+        onView(withId(R.id.total_value)).check(matches(withText("$200.00")));
+        // remove item for future tests
+        deleteItem1();
+        // check that estimated value field return to nothing
+        onView(withId(R.id.total_value)).check(matches(withText("$0.00")));
+
+    }
 
 
     /**
@@ -384,6 +534,17 @@ public class ItemFunctionalityTest {
         deleteItem2();
         // check that estimated value field return to nothing
         onView(withId(R.id.total_value)).check(matches(withText("$0.00")));
+    }
+
+    /**
+     * Test the input fields for the "Edit Item" fragment and ensures the correct error messages are
+     * showing
+     * Tests US 1.2, 1.3, 2.1, and 2.2.
+     */
+    @Test
+    public void testFailedEditItem(){
+
+
     }
 
     /**

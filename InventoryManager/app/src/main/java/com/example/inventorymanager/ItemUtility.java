@@ -72,11 +72,17 @@ public class ItemUtility {
         if (make.isEmpty()) {
             makeInput.setError("This field is required");
             isAllFieldsChecked = false;
+        }else if (make.length() >= 16) {
+            makeInput.setError("Up to 15 characters");
+            isAllFieldsChecked = false;
         }
 
         // Model Checks
         if (model.isEmpty()) {
             modelInput.setError("This field is required");
+            isAllFieldsChecked = false;
+        }else if (model.length() >= 16) {
+            modelInput.setError("Up to 15 characters");
             isAllFieldsChecked = false;
         }
 

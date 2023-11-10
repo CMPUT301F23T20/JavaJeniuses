@@ -13,28 +13,26 @@ import static
         androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anything;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
+
+import static java.lang.Thread.sleep;
 
 import android.view.KeyEvent;
-import android.widget.DatePicker;
 
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.w3c.dom.Comment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -64,18 +62,38 @@ public class ViewTesting {
     public void testItemFilteringMake() {
         // Do Login first
         // Add all the items to the list
-        loginAndAddManyItems();
+        loginAndAddManyItems(7);
         // Filter by make
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.make_keyword_editText)).perform(typeText("Logitech"));
         onView(withId(R.id.searchButton)).perform(click());
         // Check if the test is successful
-
+        // Checks to make sure all logitech items are displayed
+        onView(withText("Gaming Keyboard")).check(matches(isDisplayed()));
+        onView(withText("Gaming Mouse")).check(matches(isDisplayed()));
+        onView(withText("Gaming Headset")).check(matches(isDisplayed()));
+        onView(withText("My Ergo Mouse")).check(matches(isDisplayed()));
+        // Check to make sure other items are not displayed
+        onView(withText("Toy Car")).check(doesNotExist());
+        onView(withText("Laptop")).check(doesNotExist());
+        onView(withText("Smartphone")).check(doesNotExist());
+        // Select and delete the filtered items
+        for(int i = 0; i < 4; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
+        onView(withText("Gaming Keyboard")).check(doesNotExist());
+        onView(withText("Gaming Mouse")).check(doesNotExist());
+        onView(withText("Gaming Headset")).check(doesNotExist());
+        onView(withText("My Ergo Mouse")).check(doesNotExist());
         // Return to home
-
+        onView(isRoot()).perform(ViewActions.pressBack());
+        onView(isRoot()).perform(ViewActions.pressBack());
         // Select all items and delete them.
-
-
+        for(int i = 0; i < 3; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
     }
 
     @Test
@@ -85,16 +103,37 @@ public class ViewTesting {
      */
     public void testItemFilteringKeyword() {
         // Do Login first
-        // Add all the items
-        loginAndAddManyItems();
+        // Add all the items to the list
+        loginAndAddManyItems(7);
+        // Filter by make
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.description_keyword_editText)).perform(typeText("Mouse"));
         onView(withId(R.id.searchButton)).perform(click());
         // Check if the test is successful
-
+        // Checks to make sure all logitech items are displayed
+        onView(withText("Gaming Mouse")).check(matches(isDisplayed()));
+        onView(withText("My Ergo Mouse")).check(matches(isDisplayed()));
+        // Check to make sure other items are not displayed
+        onView(withText("Gaming Keyboard")).check(doesNotExist());
+        onView(withText("Gaming Headset")).check(doesNotExist());
+        onView(withText("Toy Car")).check(doesNotExist());
+        onView(withText("Laptop")).check(doesNotExist());
+        onView(withText("Smartphone")).check(doesNotExist());
+        // Select and delete the filtered items
+        for(int i = 0; i < 2; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
+        onView(withText("Gaming Mouse")).check(doesNotExist());
+        onView(withText("My Ergo Mouse")).check(doesNotExist());
         // Return to home
-
+        onView(isRoot()).perform(ViewActions.pressBack());
+        onView(isRoot()).perform(ViewActions.pressBack());
         // Select all items and delete them.
+        for(int i = 0; i < 5; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
     }
 
     @Test
@@ -104,14 +143,31 @@ public class ViewTesting {
      */
     public void testItemFilteringDate() {
         // Do Login first
-        // Add all the items
-        loginAndAddManyItems();
+        // Add all the items to the list
+        loginAndAddManyItems(3);
+        // Filter by make
+        onView(withId(R.id.filter_button)).perform(click());
+        onView(withId(R.id.description_keyword_editText)).perform(typeText("Mouse"));
+        onView(withId(R.id.searchButton)).perform(click());
         // Check if the test is successful
-
+        // Checks to make sure all logitech items are displayed
+        // Check to make sure other items are not displayed
+        onView(withText("Gaming Mouse")).check(doesNotExist());
+        onView(withText("Gaming Keyboard")).check(doesNotExist());
+        onView(withText("Gaming Headset")).check(doesNotExist());
+        // Select and delete the filtered items
+        for(int i = 0; i < 0; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
         // Return to home
-
+        onView(isRoot()).perform(ViewActions.pressBack());
+        onView(isRoot()).perform(ViewActions.pressBack());
         // Select all items and delete them.
-
+        for(int i = 0; i < 3; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
     }
 
     @Test
@@ -122,7 +178,7 @@ public class ViewTesting {
     public void testItemSortingMake() {
         // Do Login first
         // Add all the items
-        loginAndAddManyItems();
+        //loginAndAddManyItems();
 
     }
 
@@ -134,7 +190,7 @@ public class ViewTesting {
     public void testItemSortingKeyword() {
         // Do Login first
         // Add all the items
-        loginAndAddManyItems();
+        //loginAndAddManyItems();
 
     }
 
@@ -146,35 +202,28 @@ public class ViewTesting {
     public void testItemSortingDate() {
         // Do Login first
         // Add all the items
-        loginAndAddManyItems();
+        //loginAndAddManyItems();
 
     }
 
-    @Test
-    /**
-     * Tests selecting and deselecting of multiple items. First login, adds multiple items, selects
-     * multiple items, check for selection, deselects multiple items, checks for selection.
-     */
-    public void testMultiSelection() {
-        // Do Login first
-        // Add all the items
-        loginAndAddManyItems();
-
-
-    }
 
     @Test
     /**
      * Tests selecting and deleting multiple items at once. First login, adds multiple items, selects
      * multiple items, then delete and check if the items were successfully deleted.
      */
-    public void testMultiDelete() {
+    public void testMultiSelectionDelete() {
         // Do Login first
         // Add all the items
-        loginAndAddManyItems();
-        
-
-
+        loginAndAddManyItems(3);
+        for(int i = 0; i < 3; i++) {
+            onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
+        }
+        onView(withId(R.id.deleteButton)).perform(click());
+        // Check to make no items are displayed
+        onView(withText("Gaming Mouse")).check(doesNotExist());
+        onView(withText("My Ergo Mouse")).check(doesNotExist());
+        onView(withText("Gaming Keyboard")).check(doesNotExist());
 
     }
 
@@ -190,11 +239,11 @@ public class ViewTesting {
     /**
      * Generates 7 unique items and adds them to the database.
      */
-    private void loginAndAddManyItems(){
+    private void loginAndAddManyItems(int num){
         // Click on the user name field
         onView(withId(R.id.username)).perform(click());
         // Type the username
-        onView(withId(R.id.username)).perform(typeText("JohnDoe"));
+        onView(withId(R.id.username)).perform(typeText("ViewTest"));
         onView(withId(R.id.username)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Click on the password field
@@ -204,21 +253,34 @@ public class ViewTesting {
 
         // Login to the user account
         onView(withId(R.id.login)).perform(click());
+        // Pause for a second to allow network call to finish
+        try {
+            sleep(100);
+        }catch (InterruptedException e){}
+
         // Add all the items
+        if(num>0) {
         addItem("Gaming Keyboard", "Keyboard for gaming", "Logitech",
-                "Apex Pro", "123456FGHJ", "200.00", "Cool Keyboard");
+                "Apex Pro", "123456FGHJ", "200.00", "Cool Keyboard");}
+        if(num>1) {
         addItem("Gaming Mouse", "Mouse for gaming", "Logitech",
-                "G502 Lightspeed", "ABC123FG45", "180.00", "Cool Mouse");
+                "G502 Lightspeed", "ABC123FG45", "180.00", "Cool Mouse");}
+        if(num>2) {
         addItem("Gaming Headset", "Headset for gaming", "Logitech",
-                "Astro A30 Wireless", "PJF9920", "230.99", "My Headset");
+                "Astro A30 Wireless", "PJF9920", "230.99", "My Headset");}
+        if(num>3) {
         addItem("Toy Car", "My little toy car", "Hot Wheels",
-                "Rocket League Car", "MNA67", "14.50", "My toy car");
-        addItem("My Ergo Mouse ", "Mouse for coding", "Logitech",
-                "MX Master 3S", "JIN879T", "139.99", "Nice Mouse");
+                "Rocket League Car", "MNA67", "14.50", "My toy car");}
+        if(num>4) {
+        addItem("My Ergo Mouse", "Mouse for coding", "Logitech",
+                "MX Master 3S", "JIN879T", "139.99", "Nice Mouse");}
+        if(num>5) {
         addItem("Laptop", "Laptop for school", "Microsoft",
-                "Surface Pro 7", "UGB675", "1500.50", "Slow laptop");
+                "Surface Pro 7", "UGB675", "1500.50", "Slow laptop");}
+        if(num>6) {
         addItem("Smartphone", "My iPhone", "Apple",
-                "iPhone 13 Pro", "79HJHU", "1100.00", "Newest phone");
+                "iPhone 13 Pro", "79HJHU", "1100.00", "Newest phone");}
+
     }
 
     /**
@@ -274,5 +336,4 @@ public class ViewTesting {
         // Add the item
         onView(withId(R.id.addItemButton)).perform(click());
     }
-
 }

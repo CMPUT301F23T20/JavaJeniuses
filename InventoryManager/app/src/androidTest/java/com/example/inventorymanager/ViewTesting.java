@@ -33,6 +33,9 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.example.inventorymanager.ui.filter.chooseFilterFragment;
+import com.example.inventorymanager.ui.filter.filteredItemsFragment;
+
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,8 +45,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-@RunWith(AndroidJUnit4.class)
-@LargeTest
 /**
  * Conducts comprehensive UI testing. Tests the home view and the primary actions that can be taken
  * within the home view. Tests basic filtering, sorting, multi-selection, multi-deleting, and multi-tagging*.
@@ -52,17 +53,19 @@ import java.util.Date;
  * @see chooseFilterFragment
  * @see filteredItemsFragment
  */
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class ViewTesting {
 
     @Rule
     public ActivityScenarioRule<LoginActivity> scenario = new
             ActivityScenarioRule<LoginActivity>(LoginActivity.class);
 
-    @Test
     /**
      * Tests the item filtering in the home view. First login, adds multiple items, then attempt to filter
      * them by make of the items.
      */
+    @Test
     public void testItemFilteringMake() {
         // Do Login first
         // Add all the items to the list
@@ -100,11 +103,11 @@ public class ViewTesting {
         onView(withId(R.id.deleteButton)).perform(click());
     }
 
-    @Test
     /**
      * Tests the item filtering in the home view. First login, adds multiple items, then attempt to filter
      * them by keywords in their description.
      */
+    @Test
     public void testItemFilteringKeyword() {
         // Do Login first
         // Add all the items to the list
@@ -140,11 +143,11 @@ public class ViewTesting {
         onView(withId(R.id.deleteButton)).perform(click());
     }
 
-    @Test
     /**
      * Tests the item filtering in the home view. First login, adds multiple items, then attempt to filter
      * them by date of purchase.
      */
+    @Test
     public void testItemFilteringDate() {
         // Do Login first
         // Add all the items to the list
@@ -174,11 +177,11 @@ public class ViewTesting {
         onView(withId(R.id.deleteButton)).perform(click());
     }
 
-    @Test
     /**
      * Tests the item sorting in the home view. First login, adds multiple items, then attempt to sort
      * them by make of the items.
      */
+    @Test
     public void testItemSortingMake() {
         // Do Login first
         // Add all the items to the list
@@ -202,11 +205,11 @@ public class ViewTesting {
 
     }
 
-    @Test
     /**
      * Tests the item sorting in the home view. First login, adds multiple items, then attempt to sort
      * them by keywords in the description of the items.
      */
+    @Test
     public void testItemSortingKeyword() {
         // Do Login first
         // Add all the items to the list
@@ -229,11 +232,11 @@ public class ViewTesting {
 
     }
 
-    @Test
     /**
      * Tests the item sorting in the home view. First login, adds multiple items, then attempt to sort
      * them by value of the items.
      */
+    @Test
     public void testItemValueKeyword() {
         // Do Login first
         // Add all the items to the list
@@ -256,11 +259,11 @@ public class ViewTesting {
 
     }
 
-    @Test
     /**
      * Tests selecting and deleting multiple items at once. First login, adds multiple items, selects
      * multiple items, then delete and check if the items were successfully deleted.
      */
+    @Test
     public void testMultiSelectionDelete() {
         // Do Login first
         // Add all the items
@@ -274,15 +277,6 @@ public class ViewTesting {
         onView(withText("My Ergo Mouse")).check(doesNotExist());
         onView(withText("Gaming Keyboard")).check(doesNotExist());
 
-    }
-
-    @Test
-    /**
-     *
-     */
-    public void testTagging() {
-        // Unneeded for current implementation
-        // Do Login first
     }
 
     /**

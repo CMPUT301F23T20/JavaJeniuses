@@ -14,7 +14,6 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:text="Username"
-        android:textAlignment="center"
         android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,37 +21,14 @@
 
     <TextView
         android:id="@+id/Username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="303dp"
+        android:layout_height="42dp"
         android:layout_marginTop="32dp"
-        android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.296"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Username_title" />
 
-    <TextView
-        android:id="@+id/Email_title"
-        android:layout_width="193dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="256dp"
-        android:text="Email"
-        android:textAlignment="center"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/Email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Email_title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.inventorymanager.ui.home.HomeFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * A view model to manage the data for the profile fragment.
@@ -21,7 +23,9 @@ public class ProfileViewModel extends ViewModel {
      */
     public ProfileViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is profile fragment");
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        mText.setValue(user.getEmail().substring(0, user.getEmail().indexOf('@')));
     }
 
     /**

@@ -37,8 +37,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-@RunWith(AndroidJUnit4.class)
-@LargeTest
 /**
  * Conducts comprehensive UI testing on fragments and item-related functionalities
  * Verifies proper navigation between fragments
@@ -46,6 +44,8 @@ import java.util.Date;
  * @author Kareem Assaf
  * @see
  */
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class ItemFunctionalityTest {
 
     @Rule

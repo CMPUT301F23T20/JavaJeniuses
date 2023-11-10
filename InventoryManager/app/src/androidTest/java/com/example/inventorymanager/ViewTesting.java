@@ -33,6 +33,9 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.example.inventorymanager.ui.filter.chooseFilterFragment;
+import com.example.inventorymanager.ui.filter.filteredItemsFragment;
+
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,8 +45,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-@RunWith(AndroidJUnit4.class)
-@LargeTest
 /**
  * Conducts comprehensive UI testing. Tests the home view and the primary actions that can be taken
  * within the home view. Tests basic filtering, sorting, multi-selection, multi-deleting, and multi-tagging*.
@@ -52,17 +53,19 @@ import java.util.Date;
  * @see chooseFilterFragment
  * @see filteredItemsFragment
  */
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class ViewTesting {
 
     @Rule
     public ActivityScenarioRule<LoginActivity> scenario = new
             ActivityScenarioRule<LoginActivity>(LoginActivity.class);
 
-    @Test
     /**
      * Tests the item filtering in the home view. First login, adds multiple items, then attempt to filter
      * them by make of the items.
      */
+    @Test
     public void testItemFilteringMake() {
         // Do Login first
         // Add all the items to the list
@@ -100,11 +103,11 @@ public class ViewTesting {
         onView(withId(R.id.deleteButton)).perform(click());
     }
 
-    @Test
     /**
      * Tests the item filtering in the home view. First login, adds multiple items, then attempt to filter
      * them by keywords in their description.
      */
+    @Test
     public void testItemFilteringKeyword() {
         // Do Login first
         // Add all the items to the list
@@ -140,27 +143,39 @@ public class ViewTesting {
         onView(withId(R.id.deleteButton)).perform(click());
     }
 
-    @Test
     /**
      * Tests the item filtering in the home view. First login, adds multiple items, then attempt to filter
      * them by date of purchase.
      */
+    @Test
     public void testItemFilteringDate() {
         // Do Login first
         // Add all the items to the list
         loginAndAddManyItems(3);
-        // Filter by make
+        // Filter by date pf purchase
         onView(withId(R.id.filter_button)).perform(click());
-        onView(withId(R.id.description_keyword_editText)).perform(typeText("Mouse"));
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date currentDate = Calendar.getInstance().getTime();
+        String currentDateString = dateFormat.format(currentDate);
+
+        onView(withId(R.id.start_date_editText)).perform(click());
+        onView(withText("OK")).perform(click());
+        onView(withId(R.id.start_date_editText)).check(matches(withText(currentDateString)));
+
+        onView(withId(R.id.end_date_editText)).perform(click());
+        onView(withText("OK")).perform(click());
+        onView(withId(R.id.end_date_editText)).check(matches(withText(currentDateString)));
+
         onView(withId(R.id.searchButton)).perform(click());
         // Check if the test is successful
-        // Checks to make sure all logitech items are displayed
+        // Checks to make sure all items purchased today are displayed
+        onView(withText("Gaming Mouse")).check(matches(isDisplayed()));
+        onView(withText("Gaming Keyboard")).check(matches(isDisplayed()));
+        onView(withText("Gaming Headset")).check(matches(isDisplayed()));
         // Check to make sure other items are not displayed
-        onView(withText("Gaming Mouse")).check(doesNotExist());
-        onView(withText("Gaming Keyboard")).check(doesNotExist());
-        onView(withText("Gaming Headset")).check(doesNotExist());
         // Select and delete the filtered items
-        for(int i = 0; i < 0; i++) {
+        for(int i = 0; i < 3; i++) {
             onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
         }
         onView(withId(R.id.deleteButton)).perform(click());
@@ -168,17 +183,17 @@ public class ViewTesting {
         onView(isRoot()).perform(ViewActions.pressBack());
         onView(isRoot()).perform(ViewActions.pressBack());
         // Select all items and delete them.
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 0; i++) {
             onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
         }
         onView(withId(R.id.deleteButton)).perform(click());
     }
 
-    @Test
     /**
      * Tests the item sorting in the home view. First login, adds multiple items, then attempt to sort
      * them by make of the items.
      */
+    @Test
     public void testItemSortingMake() {
         // Do Login first
         // Add all the items to the list
@@ -202,11 +217,11 @@ public class ViewTesting {
 
     }
 
-    @Test
     /**
      * Tests the item sorting in the home view. First login, adds multiple items, then attempt to sort
      * them by keywords in the description of the items.
      */
+    @Test
     public void testItemSortingKeyword() {
         // Do Login first
         // Add all the items to the list
@@ -229,11 +244,11 @@ public class ViewTesting {
 
     }
 
-    @Test
     /**
      * Tests the item sorting in the home view. First login, adds multiple items, then attempt to sort
      * them by value of the items.
      */
+    @Test
     public void testItemValueKeyword() {
         // Do Login first
         // Add all the items to the list
@@ -256,11 +271,11 @@ public class ViewTesting {
 
     }
 
-    @Test
     /**
      * Tests selecting and deleting multiple items at once. First login, adds multiple items, selects
      * multiple items, then delete and check if the items were successfully deleted.
      */
+    @Test
     public void testMultiSelectionDelete() {
         // Do Login first
         // Add all the items
@@ -269,20 +284,14 @@ public class ViewTesting {
             onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
         }
         onView(withId(R.id.deleteButton)).perform(click());
+        // make sure to refresh page in case items still there
+        onView(withId(R.id.navigation_addItem)).perform(click());
+        onView(withId(R.id.navigation_home)).perform(click());
         // Check to make no items are displayed
         onView(withText("Gaming Mouse")).check(doesNotExist());
-        onView(withText("My Ergo Mouse")).check(doesNotExist());
+        onView(withText("Gaming Headset")).check(doesNotExist());
         onView(withText("Gaming Keyboard")).check(doesNotExist());
 
-    }
-
-    @Test
-    /**
-     *
-     */
-    public void testTagging() {
-        // Unneeded for current implementation
-        // Do Login first
     }
 
     /**
@@ -302,10 +311,23 @@ public class ViewTesting {
 
         // Login to the user account
         onView(withId(R.id.login)).perform(click());
-        // Pause for a second to allow network call to finish
-        try {
-            sleep(100);
-        }catch (InterruptedException e){}
+
+        // wait to ensure that Firebase has time to process the login
+        for (int i = 0; i < 10; i++) {
+            // try and see if login has loaded yet
+            try {
+                // try to move to the add item fragment bu pressing the button
+                onView(withId(R.id.navigation_addItem)).perform(click());
+                break;
+            } catch (androidx.test.espresso.NoMatchingViewException e) {
+                // if this fails, then wait for a second and try again, maximum 10 times
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e2) {
+                    throw new RuntimeException(e2);
+                }
+            }
+        }
 
         // Add all the items
         if(num>0) {
@@ -316,10 +338,10 @@ public class ViewTesting {
                 "G502 Lightspeed", "ABC123FG45", "180.00", "Cool Mouse");}
         if(num>2) {
         addItem("Gaming Headset", null, "Headset for gaming", "Logitech",
-                "Astro A30 Wireless", "PJF9920", "230.99", "My Headset");}
+                "Astro A30", "PJF9920", "230.99", "My Headset");}
         if(num>3) {
         addItem("Toy Car", null,"My little toy car", "Hot Wheels",
-                "Rocket League Car", "MNA67", "14.50", "My toy car");}
+                "Rocket Car", "MNA67", "14.50", "My toy car");}
         if(num>4) {
         addItem("My Ergo Mouse", null, "Mouse for coding", "Logitech",
                 "MX Master 3S", "JIN879T", "139.99", "Nice Mouse");}

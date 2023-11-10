@@ -10,6 +10,7 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static
         androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -17,6 +18,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import android.app.Activity;
 import android.view.KeyEvent;
@@ -24,6 +26,7 @@ import android.widget.DatePicker;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.DataInteraction;
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -56,7 +59,7 @@ public class ItemFunctionalityTest {
      * Tests US 6.1.
      */
     @Test
-    public void testLoginNav(){
+    public void testLoginNav() {
         // Click on the user name field
         onView(withId(R.id.username)).perform(click());
         // Type the username
@@ -77,6 +80,140 @@ public class ItemFunctionalityTest {
             try {
                 // try to move to the add item fragment bu pressing the button
                 onView(withId(R.id.navigation_addItem)).perform(click());
+                break;
+            } catch (androidx.test.espresso.NoMatchingViewException e) {
+                // if this fails, then wait for a second and try again, maximum 10 times
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e2) {
+                    throw new RuntimeException(e2);
+                }
+            }
+        }
+
+        // verify that we are on the next page
+        onView(withId(R.id.navigation_home)).perform(click());
+        onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
+        onView(withText("Add Tag")).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Test that each sign up and log in error message appears correctly.
+     * Tests US 6.1.
+     */
+    @Test
+    public void testFailedLogin() {
+        // attempt blank signup
+        onView(withId(R.id.signup)).perform(click());
+        onView(withId(R.id.username)).check(matches(hasErrorText("This field is required")));
+        onView(withId(R.id.password)).check(matches(hasErrorText("This field is required")));
+
+        // attempt blank login
+        onView(withId(R.id.login)).perform(click());
+        onView(withId(R.id.username)).check(matches(hasErrorText("This field is required")));
+        onView(withId(R.id.password)).check(matches(hasErrorText("This field is required")));
+
+        // attempt leaving username blank
+        // ensure fields are blank
+        onView(withId(R.id.username)).perform(clearText());
+        onView(withId(R.id.password)).perform(clearText());
+        // type in something to the password text view and close the keyboard
+        onView(withId(R.id.password)).perform(click());
+        onView(withId(R.id.password)).perform(typeText("testing"));
+        Espresso.closeSoftKeyboard();
+        // try signing up and logging on, check error for each
+        onView(withId(R.id.signup)).perform(click());
+        onView(withId(R.id.username)).check(matches(hasErrorText("This field is required")));
+        onView(withId(R.id.login)).perform(click());
+        onView(withId(R.id.username)).check(matches(hasErrorText("This field is required")));
+
+        // attempt leaving password blank
+        // ensure fields are blank
+        onView(withId(R.id.username)).perform(clearText());
+        onView(withId(R.id.password)).perform(clearText());
+        // type in something to the username text view and close the keyboard
+        onView(withId(R.id.username)).perform(click());
+        onView(withId(R.id.username)).perform(typeText("testing"));
+        Espresso.closeSoftKeyboard();
+        // try signing up and logging on, check error for each
+        onView(withId(R.id.signup)).perform(click());
+        onView(withId(R.id.password)).check(matches(hasErrorText("This field is required")));
+        onView(withId(R.id.login)).perform(click());
+        onView(withId(R.id.password)).check(matches(hasErrorText("This field is required")));
+
+        // attempt making password too short
+        // ensure fields are blank
+        onView(withId(R.id.username)).perform(clearText());
+        onView(withId(R.id.password)).perform(clearText());
+        // type in something to the username text view and close the keyboard
+        onView(withId(R.id.username)).perform(click());
+        onView(withId(R.id.username)).perform(typeText("testing"));
+        Espresso.closeSoftKeyboard();
+        // type in something to the password text view and close the keyboard
+        onView(withId(R.id.password)).perform(click());
+        onView(withId(R.id.password)).perform(typeText("12345"));
+        Espresso.closeSoftKeyboard();
+        // try signing up and check associated error
+        onView(withId(R.id.signup)).perform(click());
+        onView(withId(R.id.password)).check(matches(hasErrorText("Password must have at least 6 characters")));
+
+        // attempt to create account where username already exists
+        // ensure fields are blank
+        onView(withId(R.id.username)).perform(clearText());
+        onView(withId(R.id.password)).perform(clearText());
+        // type in something to the username text view and close the keyboard
+        onView(withId(R.id.username)).perform(click());
+        onView(withId(R.id.username)).perform(typeText("JohnDoe"));
+        Espresso.closeSoftKeyboard();
+        // type in something to the password text view and close the keyboard
+        onView(withId(R.id.password)).perform(click());
+        onView(withId(R.id.password)).perform(typeText("1234567"));
+        Espresso.closeSoftKeyboard();
+        // try signing up and check associated error
+        onView(withId(R.id.signup)).perform(click());
+        onView(withId(R.id.username)).perform(click());
+        onView(withId(R.id.username)).check(matches(hasErrorText("Username has been taken")));
+        Espresso.closeSoftKeyboard();
+
+        // attempt to log in to account with incorrect credentials
+        // ensure fields are blank
+        onView(withId(R.id.username)).perform(clearText());
+        onView(withId(R.id.password)).perform(clearText());
+        // type in something to the username text view and close the keyboard
+        onView(withId(R.id.username)).perform(click());
+        onView(withId(R.id.username)).perform(typeText("JohnDoe"));
+        Espresso.closeSoftKeyboard();
+        // type in something to the password text view and close the keyboard
+        onView(withId(R.id.password)).perform(click());
+        onView(withId(R.id.password)).perform(typeText("1234567"));
+        Espresso.closeSoftKeyboard();
+        // try logging in and check associated errors
+        onView(withId(R.id.login)).perform(click());
+        onView(withId(R.id.username)).check(matches(hasErrorText("Incorrect username or password")));
+        onView(withId(R.id.password)).check(matches(hasErrorText("Incorrect username or password")));
+
+        // attempt to login correctly
+        // ensure fields are blank
+        onView(withId(R.id.username)).perform(clearText());
+        onView(withId(R.id.password)).perform(clearText());
+        // enter username
+        onView(withId(R.id.username)).perform(click());
+        onView(withId(R.id.username)).perform(typeText("JohnDoe"));
+        Espresso.closeSoftKeyboard();
+        // enter password
+        onView(withId(R.id.password)).perform(click());
+        onView(withId(R.id.password)).perform(typeText("123456"));
+        Espresso.closeSoftKeyboard();
+        // attempt login
+        onView(withId(R.id.login)).perform(click());
+
+        // wait to ensure that Firebase has time to process the login
+        for (int i = 0; i < 10; i++) {
+            // try and see if login has loaded yet
+            try {
+                // try to move to the add item fragment bu pressing the button
+                onView(withId(R.id.navigation_addItem)).perform(click());
+                break;
             } catch (androidx.test.espresso.NoMatchingViewException e) {
                 // if this fails, then wait for a second and try again, maximum 10 times
                 try {
@@ -99,7 +236,7 @@ public class ItemFunctionalityTest {
      * Tests US 1.1, 2.1, and 2.2.
      */
     @Test
-    public void testAddItemNav(){
+    public void testAddItemNav() {
         testLoginNav();
 
         // check that estimated value field starts as empty
@@ -211,7 +348,6 @@ public class ItemFunctionalityTest {
         onView(withId(R.id.commentInput)).perform(scrollTo());
         onView(withId(R.id.commentInput)).perform(typeText("Reliable Car"));
         onView(withId(R.id.commentInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
-
 
         // Save the edited item
         onView(withId(R.id.saveButton)).perform(scrollTo());

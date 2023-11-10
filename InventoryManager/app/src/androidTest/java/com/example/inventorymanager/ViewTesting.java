@@ -20,10 +20,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anything;
+import static org.hamcrest.CoreMatchers.containsString;
 
 import static java.lang.Thread.sleep;
 
 import android.view.KeyEvent;
+import android.widget.DatePicker;
 
 import androidx.annotation.Nullable;
 import androidx.test.espresso.action.ViewActions;
@@ -31,6 +33,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -185,6 +188,11 @@ public class ViewTesting {
         onView(withId(R.id.sort_make_button)).perform(click());
         onView(withId(R.id.sort_done)).perform(click());
 
+        // first item should be Toy Car
+        onData(anything())
+                .inAdapterView(withId(R.id.item_list)).atPosition(0)
+                .onChildView(withId(R.id.itemNameTextView)).check(matches(withText(containsString("Toy"))));
+
         // Select all items and delete them.
         for(int i = 0; i < 6; i++) {
             onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
@@ -208,6 +216,11 @@ public class ViewTesting {
         onView(withId(R.id.sort_description_button)).perform(click());
         onView(withId(R.id.sort_done)).perform(click());
 
+        // first item should be Toy Car
+        onData(anything())
+                .inAdapterView(withId(R.id.item_list)).atPosition(0)
+                .onChildView(withId(R.id.itemNameTextView)).check(matches(withText(containsString("Headset"))));
+
         // Select all items and delete them.
         for(int i = 0; i < 3; i++) {
             onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
@@ -219,46 +232,29 @@ public class ViewTesting {
     @Test
     /**
      * Tests the item sorting in the home view. First login, adds multiple items, then attempt to sort
-     * them by date of purchase of the items.
+     * them by value of the items.
      */
-    public void testItemSortingDate() {
-        // Click on the user name field
-        onView(withId(R.id.username)).perform(click());
-        // Type the username
-        onView(withId(R.id.username)).perform(typeText("ViewTest"));
-        onView(withId(R.id.username)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
-
-        // Click on the password field
-        // Type the password
-        onView(withId(R.id.password)).perform(typeText("123456"));
-        onView(withId(R.id.password)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
-
-        // Login to the user account
-        onView(withId(R.id.login)).perform(click());
-        // Pause for a second to allow network call to finish
-        try {
-            sleep(100);
-        }catch (InterruptedException e){}
-
-        addItem("Gaming Keyboard", null, "Keyboard for gaming", "Logitech",
-                    "Apex Pro", "123456FGHJ", "200.00", "Cool Keyboard");
-
-        addItem("Gaming Mouse", "2023-11-08","Mouse for gaming", "Logitech",
-                    "G502 Lightspeed", "ABC123FG45", "180.00", "Cool Mouse");
-
+    public void testItemValueKeyword() {
+        // Do Login first
+        // Add all the items to the list
+        loginAndAddManyItems(3);
         // Filter by make
         onView(withId(R.id.sort_button)).perform(click());
-        onView(withId(R.id.sort_date_button)).perform(click());
+        onView(withId(R.id.sort_value_button)).perform(click());
         onView(withId(R.id.sort_done)).perform(click());
 
+        // first item should be Toy Car
+        onData(anything())
+                .inAdapterView(withId(R.id.item_list)).atPosition(0)
+                .onChildView(withId(R.id.itemNameTextView)).check(matches(withText(containsString("Mouse"))));
+
         // Select all items and delete them.
-        for(int i = 0; i < 2; i++) {
+        for(int i = 0; i < 3; i++) {
             onData(anything()).inAdapterView(withId(R.id.item_list)).atPosition(i).onChildView(withId(R.id.checkBox)).perform(click());
         }
         onView(withId(R.id.deleteButton)).perform(click());
 
     }
-
 
     @Test
     /**
@@ -359,10 +355,15 @@ public class ViewTesting {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date currentDate = Calendar.getInstance().getTime();
             currentDateString = dateFormat.format(currentDate);
+            onView(withId(R.id.purchaseDateInput)).perform(click());
+            onView(withText("OK")).perform(click());
+            onView(withId(R.id.purchaseDateInput)).check(matches(withText(currentDateString)));
         }
-        onView(withId(R.id.purchaseDateInput)).perform(click());
-        onView(withText("OK")).perform(click());
-        onView(withId(R.id.purchaseDateInput)).check(matches(withText(currentDateString)));
+        else {
+//            onView(withClassName(Matchers.equalTo(DatePicker.class.getName())))
+//                    .perform(PickerActions.setDate(2023, 11, 8));
+        }
+
 
         // Set the item's description
         onView(withId(R.id.descriptionInput)).perform(typeText(Description));

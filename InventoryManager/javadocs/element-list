@@ -1,0 +1,8 @@
+com.example.inventorymanager
+com.example.inventorymanager.ui.addItem
+com.example.inventorymanager.ui.editItem
+com.example.inventorymanager.ui.filter
+com.example.inventorymanager.ui.home
+com.example.inventorymanager.ui.profile
+com.example.inventorymanager.ui.sort
+com.example.inventorymanager.ui.viewItem

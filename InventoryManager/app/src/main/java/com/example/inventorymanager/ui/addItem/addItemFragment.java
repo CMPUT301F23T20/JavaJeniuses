@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -89,6 +90,8 @@ public class addItemFragment extends Fragment {
         EditText estimatedValueInput = binding.estimatedValueInput;
         EditText commentInput = binding.commentInput;
         Button addItemButton = binding.addItemButton;
+        ImageView itemImage = binding.itemImage;
+        Button addImageButton = binding.addImageButton;
 
         // Set up calendar to pop up and allow user to choose date
         purchaseDateInput.setOnClickListener(v -> {
@@ -157,6 +160,17 @@ public class addItemFragment extends Fragment {
             }
             return false;
         });
+
+        // ##### ADDING IMAGE SECTION ########
+
+
+
+
+        // ###################
+
+
+
+
 
         // add effect of the add button when pressed (add this item to the list)
         addItemButton.setOnClickListener(v -> {

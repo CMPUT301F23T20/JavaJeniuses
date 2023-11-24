@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -28,9 +27,7 @@ import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
-import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.databinding.FragmentEditItemBinding;
-import com.example.inventorymanager.ui.addItem.addItemViewModel;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -61,9 +58,6 @@ public class EditItemFragment extends Fragment {
      * @return The root of the view.
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Create an instance of the ViewModel for adding items
-        EditItemViewModel editItemViewModel = new ViewModelProvider(this).get(EditItemViewModel.class);
-
         // Inflate the layout for this fragment
         binding = FragmentEditItemBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

@@ -6,15 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -25,6 +23,7 @@ import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
 
+import java.sql.Array;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
@@ -40,9 +39,9 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private ItemAdapter adapter;
-
     // No accessors and modifier methods. If you want to get items, instantiate itemViewModel and pull from database (same results)
     private ArrayList<Item> items;
+    private Observer<ArrayList<Item>> dataObserver;
 
     /**
      * Provides the user interface of the fragment.
@@ -56,7 +55,6 @@ public class HomeFragment extends Fragment {
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // basic setup functionality to set up view
-        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         // Bind the listview
@@ -65,31 +63,44 @@ public class HomeFragment extends Fragment {
         // instantiate the shared view model which manages the database
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
-        // Create a new ArrayList to store the data that will be displayed in the ListView
-        items = itemViewModel.getItemsLiveData().getValue();
-        // Create an adapter to bind the data from the ArrayList to the ListView
-        adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
+        // create a listener so that the items being displayed automatically update based on database changes
+        dataObserver = new Observer<ArrayList<Item>>() {
+            @Override
+            public void onChanged(ArrayList<Item> updatedItems) {
+                // Create a new ArrayList to store the data that will be displayed in the ListView
+                items = updatedItems;
+                // Create an adapter to bind the data from the ArrayList to the ListView
+                adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
+                // Set the adapter for the ListView, allowing it to display the data
+                itemList.setAdapter(adapter);
+                // display the current total estimated value of items being displayed
+                updateTotal();
+            }
+        };
 
-        // Set the adapter for the ListView, allowing it to display the data
-        itemList.setAdapter(adapter);
-        // display the current total estimated value of items being displayed
-        updateTotal();
+        // call this listener so that the items load in the first time
+        itemViewModel.getItemsLiveData().observe(getViewLifecycleOwner(), dataObserver);
 
         // add effect of clicking on a delete button (delete all highlighted items)
         Button deleteButton = root.findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener( v-> {
+            // multi-delete causes issues for listeners, so temporarily disable
+            itemViewModel.getItemsLiveData().removeObservers(getViewLifecycleOwner());
+            // enter critical section
+
             // delete all those items that are currently checked off
             // go backwards so we can delete in-place
             for (int i = items.size()-1; i >= 0; i--) {
-                if (((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()) {
+                // check if this item is checked off through the adapter
+                if (adapter.getIsChecked(items.get(i).getItemName())) {
+                    // delete the present item if needed
                     itemViewModel.deleteItem(items.get(i).getItemName());
-                    // unselect each box that was previously checked
-                    ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
                 }
             }
-            // update list so that the deleted item is gone and price reflects this
-            adapter.notifyDataSetChanged();
-            updateTotal();
+
+            // exit critical section
+            // update data being shown to reflect deletions
+            itemViewModel.getItemsLiveData().observe(getViewLifecycleOwner(), dataObserver);
         });
 
         // add effect of clicking on an existing item (view item details)

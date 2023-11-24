@@ -50,5 +50,7 @@
     <string name="title_no_items_found">No Items Found</string>
     <string name="title_sort_options">Choose Sort</string>
     <string name="title_sorted_items">Sorted Items</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

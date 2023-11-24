@@ -3,6 +3,8 @@ package com.example.inventorymanager;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -39,6 +41,7 @@ public class Item implements Parcelable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
+    private String tag;
 
     /**
      * Creates an Item() object with the fields passed in.
@@ -53,7 +56,7 @@ public class Item implements Parcelable {
      * @param estimatedValue The estimated monetary value of the item to be created.
      * @param comment A brief comment about the item to be created.
      */
-    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment) {
+    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, String tag) {
         this.setItemName(itemName);
         this.setPurchaseDate(purchaseDate);
         this.setDescription(description);
@@ -62,6 +65,7 @@ public class Item implements Parcelable {
         this.setSerialNumber(serialNumber);
         this.setEstimatedValue(estimatedValue);
         this.setComment(comment);
+        this.setTag(tag);
     }
 
     /**
@@ -79,6 +83,7 @@ public class Item implements Parcelable {
         serialNumber = source.readString();
         estimatedValue = source.readDouble();
         comment = source.readString();
+        tag = source.readString();
     }
 
     /**
@@ -220,6 +225,24 @@ public class Item implements Parcelable {
     }
 
     /**
+     * Retrieves the item's tag.
+     * @return The item's new tag.
+     */
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * Changes the item's tag.
+     * @param tag The item's new tag.
+     */
+    public void setTag(String tag) {
+
+        this.tag = tag;
+
+    }
+
+    /**
      * Retrieves a dictionary representation of the original item.
      * The mapping returned is in the proper format for storage in the database.
      * Each field is represented as a String key associated with a String value.
@@ -237,6 +260,7 @@ public class Item implements Parcelable {
         doc.put("number", this.getSerialNumber());
         doc.put("value", this.getEstimatedValue());
         doc.put("comment", this.getComment());
+        doc.put("tag", this.getTag());
         return doc;
     }
 
@@ -265,6 +289,7 @@ public class Item implements Parcelable {
         parcel.writeString(serialNumber);
         parcel.writeDouble(estimatedValue);
         parcel.writeString(comment);
+        parcel.writeString(tag);
     }
 
     /**

@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -28,6 +30,7 @@ import java.util.Locale;
 public class ItemAdapter extends ArrayAdapter{
     private final Context context;
     private ArrayList<Item> items;
+    private TextView itemTag;
 
     /**
      * Creates an adapter to display the list of items.
@@ -65,6 +68,7 @@ public class ItemAdapter extends ArrayAdapter{
         TextView description = view.findViewById(R.id.descriptionTextView);
         TextView estimateValue = view.findViewById(R.id.estimateValueTextView);
         TextView purchaseDate = view.findViewById(R.id.purchaseDateTextView);
+        TextView itemTag = view.findViewById(R.id.itemTag);
 
         // display the most relevant fields for each item
         itemName.setText(item.getItemName());
@@ -72,6 +76,14 @@ public class ItemAdapter extends ArrayAdapter{
         estimateValue.setText(item.getEstimatedValue());
         purchaseDate.setText(item.getPurchaseDate());
 
+        if (item.getTag() != null) {
+            itemTag.setVisibility(View.VISIBLE);
+            itemTag.setText(item.getTag());
+        } else {
+            itemTag.setVisibility(View.INVISIBLE);
+        }
+
         return view;
     }
+
 }

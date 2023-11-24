@@ -1,5 +1,6 @@
 package com.example.inventorymanager.ui.home;
 
+import android.app.Dialog;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.view.menu.MenuView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -42,7 +44,7 @@ public class HomeFragment extends Fragment {
     private ItemAdapter adapter;
 
     // No accessors and modifier methods. If you want to get items, instantiate itemViewModel and pull from database (same results)
-    private ArrayList<Item> items;
+    private ArrayList<Item> items, selectedItems;
 
     /**
      * Provides the user interface of the fragment.
@@ -130,6 +132,33 @@ public class HomeFragment extends Fragment {
             // navigate to the choose filter fragment
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.chooseFilterFragment, bundle);
+        });
+
+        // add effect of clicking on add tag button
+        Button addTagButton = root.findViewById(R.id.tag_button);
+        // show add button fragment when button clicked
+        addTagButton.setOnClickListener( v-> {
+            selectedItems = new ArrayList<Item>();
+
+            for (int i = 0; i < items.size(); i++) {
+                if (((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()) {
+                    selectedItems.add(items.get(i));
+                    // unselect each box that was previously checked
+                    ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
+                }
+            }
+
+            // send bundle with the list of items
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("items", selectedItems);
+
+            // navigate to the add tag fragment
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.addTagFragment, bundle);
+//
+//            for (Item item : selectedItems) {
+//            }
+
         });
 
         return root;

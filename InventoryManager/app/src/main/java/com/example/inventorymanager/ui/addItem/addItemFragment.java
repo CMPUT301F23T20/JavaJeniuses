@@ -67,10 +67,6 @@ public class addItemFragment extends Fragment {
      * @return the root of the view.
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        // Create an instance of the ViewModel for adding items
-        addItemViewModel addItemViewModel = new ViewModelProvider(this).get(addItemViewModel.class);
-
         // Inflate the layout for this fragment
         binding = FragmentAddItemBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

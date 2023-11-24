@@ -5,13 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.HashMap;
 
 /**
  * Displays the items being tracked by the inventory manager to the user.
@@ -20,14 +21,16 @@ import java.util.Locale;
  *     <li>the item's name,</li>
  *     <li>a brief description of the item,</li>
  *     <li>estimated monetary value of the item,</li>
- *     <li>and the date that the item was purchased.</li>
+ *     <li>the date that the item was purchased,</li>
+ *     <li>and an indicator of whether this item is selected.</li>
  * </ul>
- * @author Kareem Assaf
+ * @author Kareem Assaf, Isaac Joffe
  * @see com.example.inventorymanager.ui.home.HomeFragment
  */
 public class ItemAdapter extends ArrayAdapter{
     private final Context context;
     private ArrayList<Item> items;
+    private HashMap<String, Boolean> isChecked;
 
     /**
      * Creates an adapter to display the list of items.
@@ -39,6 +42,7 @@ public class ItemAdapter extends ArrayAdapter{
         super(context, value, items);
         this.context = context;
         this.items = items;
+        this.createEmptyIsChecked();
     }
 
     /**
@@ -65,13 +69,53 @@ public class ItemAdapter extends ArrayAdapter{
         TextView description = view.findViewById(R.id.descriptionTextView);
         TextView estimateValue = view.findViewById(R.id.estimateValueTextView);
         TextView purchaseDate = view.findViewById(R.id.purchaseDateTextView);
+        CheckBox checkBox = view.findViewById(R.id.checkBox);
 
         // display the most relevant fields for each item
         itemName.setText(item.getItemName());
         description.setText(item.getDescription());
         estimateValue.setText(item.getEstimatedValue());
         purchaseDate.setText(item.getPurchaseDate());
+        checkBox.setChecked(isChecked.get(item.getItemName()));
+
+        // add effect of clicking on checkbox (toggling whether the item is selected)
+        checkBox.setOnClickListener(v -> {
+            // toggle the state of the check box
+            // use XOR with logical "1" to do this -- if "1" then now "0", and if "0" then now "1"
+            isChecked.put(item.getItemName(), Boolean.logicalXor(Boolean.TRUE, isChecked.get(item.getItemName())));
+        });
 
         return view;
+    }
+
+    /**
+     * Slightly alters the behavior of the built-in data updating call.
+     * Still properly updates the data displayed in the list, but now resets check boxes too.
+     */
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+        createEmptyIsChecked();
+    }
+
+    /**
+     * Retrieves whether or not the checkbox of a particular item is selected.
+     * @param key The name of the item to check.
+     * @return TRUE if the item is selected; FALSE otherwise.
+     */
+    public Boolean getIsChecked(String key) {
+        return this.isChecked.get(key);
+    }
+
+    /**
+     * Refreshes the checkbox tracker so that no items are actively selected.
+     */
+    private void createEmptyIsChecked() {
+        // reset to a new, empty mapping because certain items may no longer exist
+        this.isChecked = new HashMap<>();
+        // uncheck each checkbox for all the items that do exist now
+        for (int i = 0; i < this.items.size(); i++) {
+            this.isChecked.put(items.get(i).getItemName(), Boolean.FALSE);
+        }
     }
 }

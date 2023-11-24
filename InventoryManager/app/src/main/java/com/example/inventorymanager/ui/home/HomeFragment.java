@@ -56,7 +56,6 @@ public class HomeFragment extends Fragment {
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // basic setup functionality to set up view
-        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         // Bind the listview
@@ -81,10 +80,8 @@ public class HomeFragment extends Fragment {
             // delete all those items that are currently checked off
             // go backwards so we can delete in-place
             for (int i = items.size()-1; i >= 0; i--) {
-                if (((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()) {
+                if (adapter.getIsChecked(items.get(i).getItemName())) {
                     itemViewModel.deleteItem(items.get(i).getItemName());
-                    // unselect each box that was previously checked
-                    ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
                 }
             }
             // update list so that the deleted item is gone and price reflects this

@@ -8,7 +8,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import java.text.NumberFormat;
@@ -41,7 +43,7 @@ public class Item implements Parcelable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
-    private String tag;
+    private ArrayList<Tag> tags;
 
     /**
      * Creates an Item() object with the fields passed in.
@@ -56,7 +58,7 @@ public class Item implements Parcelable {
      * @param estimatedValue The estimated monetary value of the item to be created.
      * @param comment A brief comment about the item to be created.
      */
-    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, String tag) {
+    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment) {
         this.setItemName(itemName);
         this.setPurchaseDate(purchaseDate);
         this.setDescription(description);
@@ -65,7 +67,7 @@ public class Item implements Parcelable {
         this.setSerialNumber(serialNumber);
         this.setEstimatedValue(estimatedValue);
         this.setComment(comment);
-        this.setTag(tag);
+        this.tags = new ArrayList<>();
     }
 
     /**
@@ -83,7 +85,8 @@ public class Item implements Parcelable {
         serialNumber = source.readString();
         estimatedValue = source.readDouble();
         comment = source.readString();
-        tag = source.readString();
+        tags = new ArrayList<>();
+        source.readTypedList(tags, Tag.CREATOR);
     }
 
     /**
@@ -224,23 +227,25 @@ public class Item implements Parcelable {
         this.comment = comment;
     }
 
-    /**
-     * Retrieves the item's tag.
-     * @return The item's new tag.
-     */
-    public String getTag() {
-        return tag;
+    // Methods for handling tags
+    public void addTag(Tag tag) {
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+        }
     }
 
-    /**
-     * Changes the item's tag.
-     * @param tag The item's new tag.
-     */
-    public void setTag(String tag) {
-
-        this.tag = tag;
-
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
     }
+
+    public ArrayList<Tag> getTags() {
+        return tags;
+    }
+
+//    public void setTags(ArrayList<Tag> tags) {
+//        this.tags = tags;
+//    }
+
 
     /**
      * Retrieves a dictionary representation of the original item.
@@ -260,7 +265,6 @@ public class Item implements Parcelable {
         doc.put("number", this.getSerialNumber());
         doc.put("value", this.getEstimatedValue());
         doc.put("comment", this.getComment());
-        doc.put("tag", this.getTag());
         return doc;
     }
 
@@ -289,7 +293,7 @@ public class Item implements Parcelable {
         parcel.writeString(serialNumber);
         parcel.writeDouble(estimatedValue);
         parcel.writeString(comment);
-        parcel.writeString(tag);
+        parcel.writeList(tags);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.example.inventorymanager;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import org.w3c.dom.Text;
 
@@ -30,6 +32,8 @@ import java.util.Locale;
 public class ItemAdapter extends ArrayAdapter{
     private final Context context;
     private ArrayList<Item> items;
+    private ArrayList<Tag> tags;
+    private Tag tag;
     private TextView itemTag;
 
     /**
@@ -76,11 +80,15 @@ public class ItemAdapter extends ArrayAdapter{
         estimateValue.setText(item.getEstimatedValue());
         purchaseDate.setText(item.getPurchaseDate());
 
-        if (item.getTag() != null) {
+        tags = item.getTags();
+        if (tags != null && !tags.isEmpty()) {
+            tag = tags.get(0);
+            String text = tag.getText();
+            String colour = tag.getColour();
+            itemTag.setText(text);
+            int colourInt = Color.parseColor(colour);
+            itemTag.setBackgroundColor(colourInt);
             itemTag.setVisibility(View.VISIBLE);
-            itemTag.setText(item.getTag());
-        } else {
-            itemTag.setVisibility(View.INVISIBLE);
         }
 
         return view;

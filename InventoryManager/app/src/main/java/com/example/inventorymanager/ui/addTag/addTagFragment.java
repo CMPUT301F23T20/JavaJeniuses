@@ -26,6 +26,7 @@ import android.widget.ToggleButton;
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.FragmentAddTagBinding;
 import com.example.inventorymanager.databinding.FragmentSortOptionsBinding;
 import com.example.inventorymanager.ui.filter.filteredItemsFragment;
@@ -48,8 +49,10 @@ public class addTagFragment extends Fragment {
     private ArrayList<String> tagInfo, tagItems;
     private String selectedItem;
     private FragmentAddTagBinding binding;
-    AutoCompleteTextView autoCompleteTextView;
-    ArrayAdapter<String> adapterItems;
+    private AutoCompleteTextView autoCompleteTextView;
+    private ArrayAdapter<String> adapterItems;
+    private ArrayList<Tag> allTags = new ArrayList<>();
+    private Tag selectedTag;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -72,8 +75,12 @@ public class addTagFragment extends Fragment {
         });
 
         tagItems = new ArrayList<>();
-        tagItems.add("Tag 1");
-        tagItems.add("Tag 2");
+        Tag tag1 = new Tag("Tag 1", "red");
+        Tag tag2 = new Tag("Tag 2", "blue");
+        addTagToGlobalList(tag1);
+        addTagToGlobalList(tag2);
+        tagItems.add(tag1.getText());
+        tagItems.add(tag2.getText());
         autoCompleteTextView = binding.autocompleteTextview;
         adapterItems = new ArrayAdapter<String>(getActivity(), R.layout.tag_list_item, tagItems);
         autoCompleteTextView.setAdapter(adapterItems);
@@ -91,6 +98,9 @@ public class addTagFragment extends Fragment {
                 tagName = tagInfo.get(0);
                 tagColour = tagInfo.get(1);
 
+                Tag tag = new Tag(tagName, tagColour);
+                addTagToGlobalList(tag);
+
                 tagItems.add(tagName);
                 adapterItems.notifyDataSetChanged();
             }
@@ -100,6 +110,7 @@ public class addTagFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedItem = parent.getItemAtPosition(position).toString();
+                selectedTag = findTagByName(selectedItem);
             }
         });
 
@@ -108,13 +119,28 @@ public class addTagFragment extends Fragment {
 
             if (items != null && selectedItem != null) {
                 for (Item item : items) {
-                    item.setTag(selectedItem);
+                    item.addTag(selectedTag);
+                    selectedTag.addItem(item);
             }}
 
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_home);
         });
 
+    }
+
+    private void addTagToGlobalList(Tag tag) {
+        if (!allTags.contains(tag)) {
+            allTags.add(tag);
+        }
+    }
+    private Tag findTagByName(String tagName) {
+        for (Tag tag : allTags) {
+            if (tag.getText().equals(tagName)) {
+                return tag;
+            }
+        }
+        return null; // Return null if tag not found
     }
 
     /**

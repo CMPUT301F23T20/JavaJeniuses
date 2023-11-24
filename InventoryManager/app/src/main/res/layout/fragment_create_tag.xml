@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:backgroundTint="#FF8986"
+            android:backgroundTint="@color/red"
             android:text="Red"
             android:textColor="@color/black" />
 
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:text="Blue"
-            android:backgroundTint="#a8e4ef"/>
+            android:backgroundTint="@color/blue"/>
 
         <Button
             android:id="@+id/green_button"
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:text="Green"
-            android:backgroundTint="#a6eca8"/>
+            android:backgroundTint="@color/green"/>
 
         <Button
             android:id="@+id/yellow_button"
@@ -105,7 +105,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:text="Yellow"
-            android:backgroundTint="#fcfc99"/>
+            android:backgroundTint="@color/yellow"/>
 
     </LinearLayout>
 

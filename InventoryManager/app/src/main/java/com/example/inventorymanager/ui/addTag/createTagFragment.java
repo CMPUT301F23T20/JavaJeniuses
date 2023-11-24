@@ -41,8 +41,10 @@ public class createTagFragment extends Fragment {
         Button cancelButton = binding.cancelButton;
         Button saveButton = binding.saveButton;
 
+        // default tag colour is red
         tagColour = "red";
 
+        // change colour based on user's choice
         redButton.setOnClickListener(v -> { tagColour = "red"; });
         blueButton.setOnClickListener(v -> { tagColour = "blue"; });
         greenButton.setOnClickListener(v -> { tagColour = "green"; });
@@ -53,16 +55,12 @@ public class createTagFragment extends Fragment {
             ArrayList<String> tagInfo = new ArrayList<String>();
             tagInfo.add(tagName);
             tagInfo.add(tagColour);
-            Log.d("myTag", "tag name" + tagInfo.get(0));
-            Log.d("myTag", "tag colour" + tagInfo.get(1));
 
             Bundle bundle = new Bundle();
             bundle.putStringArrayList("tagInfo", tagInfo);
 
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.addTagFragment, bundle);
-//            navController.getPreviousBackStackEntry().getSavedStateHandle().set("tagInfo", tagInfo);
-//            navController.popBackStack();
         });
 
         cancelButton.setOnClickListener( v -> {

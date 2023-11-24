@@ -56,5 +56,9 @@
         android:name="com.example.inventorymanager.ui.sort.sortedItemsFragment"
         android:label="@string/title_sorted_items"
         tools:layout="@layout/fragment_sorted_items" />
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.example.inventorymanager.ui.camera.cameraFragment"
+        android:label="cameraFragment" />
 
 </navigation>

@@ -158,8 +158,15 @@ public class addItemFragment extends Fragment {
         });
 
         // ##### ADDING IMAGE SECTION ########
+        // when you click the Add Image button, navigate to the camera fragment
+        addImageButton.setOnClickListener( v -> {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.cameraFragment);
+                });
 
-
+        // TODO: once user takes picture, display it in the imageView
+        // add the url to the item's image
+        // itemImage.setImageResource(  );
 
 
         // ###################

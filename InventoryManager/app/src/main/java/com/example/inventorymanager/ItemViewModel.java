@@ -191,32 +191,6 @@ public class ItemViewModel extends ViewModel {
         }
     }
 
-//    /**
-//     *
-//     * @param keys
-//     */
-//    public void deleteItems(ArrayList<String> keys) {
-//        // get the current items being tracked
-//        fetchItems();
-//        ArrayList<Item> items = getItemsLiveData().getValue();
-//        // find and delete the item corresponding to the given search key
-//        for (int i = 0; i < items.size(); i++) {
-//            for (int j = 0; j < keys.size(); j++) {
-//                if (items.get(i).getItemName().equals(keys.get(j))) {
-//                    // remove item locally and from the database
-//                    items.remove(i);
-//                    itemsDB.document(keys.get(j)).delete();
-//                }
-//            }
-//        }
-////        for (int i = 0; i < keys.size(); i++) {
-////            itemsDB.document(keys.get(i)).delete();
-////        }
-//        // save the new state of items being tracked
-//        itemsLiveData.setValue(items);
-//        fetchItems();
-//    }
-
     /**
      * Checks whether a proposed item name is legal or not.
      * If an existing item's name is not changed, it is always legal.

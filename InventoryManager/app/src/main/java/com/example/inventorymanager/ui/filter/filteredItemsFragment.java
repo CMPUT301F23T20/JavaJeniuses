@@ -80,6 +80,8 @@ public class filteredItemsFragment extends Fragment {
                 if (adapter.getIsChecked(items.get(i).getItemName())) {
                     // delete the present item if needed
                     itemViewModel.deleteItem(items.get(i).getItemName());
+                    // remove the checked items from our displaying listview too
+                    items.remove(i);
                 }
             }
             // update listView adapter so that the deleted item is gone and price reflects this

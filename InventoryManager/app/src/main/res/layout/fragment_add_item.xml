@@ -16,8 +16,6 @@
         android:orientation="vertical">
 
         <!-- Name of item -->
-
-
         <TextView
             android:layout_marginTop="10dp"
             android:id="@+id/addItemNameTextView"
@@ -29,7 +27,6 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-
         <EditText
             android:id="@+id/itemNameInput"
             android:layout_width="match_parent"
@@ -37,6 +34,7 @@
             android:hint="@string/item_name_hint"
             android:imeOptions="actionNext"
             android:inputType="text" />
+
 
         <!-- Date of purchase/acquisition -->
         <TextView
@@ -50,8 +48,6 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <!-- Brief description -->
-
         <EditText
             android:id="@+id/purchaseDateInput"
             android:layout_width="match_parent"
@@ -60,6 +56,8 @@
             android:imeOptions="actionNext"
             android:focusable="false"/>
 
+
+        <!-- Brief description -->
         <TextView
             android:id="@+id/addDescriptionTextView"
             android:layout_width="wrap_content"
@@ -78,6 +76,7 @@
             android:hint="@string/description_hint"
             android:imeOptions="actionNext"
             android:inputType="text" />
+
 
         <!-- Make -->
         <TextView
@@ -98,6 +97,7 @@
             android:hint="@string/make_hint"
             android:imeOptions="actionNext"
             android:inputType="text" />
+
 
         <!-- Model -->
         <TextView
@@ -120,6 +120,7 @@
             android:imeOptions="actionNext"
             android:textColor="@color/black" />
 
+
         <!-- Serial Number -->
         <TextView
             android:id="@+id/addSerialNumberTextView"
@@ -141,6 +142,7 @@
             android:imeOptions="actionNext"
             android:textColor="@color/black" />
 
+
         <!-- Estimated Value -->
         <TextView
             android:id="@+id/addEstimatedValueTextView"
@@ -161,6 +163,7 @@
             android:inputType="numberDecimal"
             android:imeOptions="actionNext"
             />
+
 
         <!-- Comment -->
         <TextView
@@ -184,6 +187,8 @@
             android:inputType="text"
             />
 
+
+        <!-- Add images -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/image_constraint_layout"
             android:layout_width="match_parent"
@@ -208,10 +213,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.496"
                 app:layout_constraintStart_toStartOf="parent" />
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!--Submit item-->
         <Button
             android:id="@+id/addItemButton"
             android:layout_width="281dp"

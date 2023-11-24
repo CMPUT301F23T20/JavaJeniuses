@@ -9,9 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.databinding.FragmentCameraBinding;
-import com.example.inventorymanager.ui.addItem.addItemViewModel;
 
 public class cameraFragment extends Fragment {
 

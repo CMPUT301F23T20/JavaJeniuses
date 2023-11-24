@@ -42,6 +42,7 @@
     <string name="add_item">Add Item</string>
     <string name="delete_button">Delete</string>
     <string name="add_tag_button">Add Tag</string>
+    <string name="add_image">Add Image</string>
 
     <string name="total">Total Estimated Value:</string>
     <string name="total_value">$0.00</string>

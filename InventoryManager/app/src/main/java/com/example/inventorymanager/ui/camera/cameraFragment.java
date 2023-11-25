@@ -36,6 +36,15 @@ import java.util.concurrent.Executors;
 
 public class cameraFragment extends Fragment {
 
+    // The following code is based on and excerpted from a Youtube Tutorial
+    // URL: https://www.youtube.com/watch?v=L482ZAno-fY
+    // Linked GitHub repo: https://github.com/Everyday-Programmer/Android-Camera-using-CameraX
+    // Published April 10, 2023, accessed November 2023
+    // License: GNU General Public License v3.0
+
+    // Portions of the code were adapted from the Android CameraX documentation and samples.
+    // URL: https://developer.android.com/training/camerax
+
     private FragmentCameraBinding binding;
     private Button capture;
     private PreviewView previewView;

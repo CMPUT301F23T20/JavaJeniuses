@@ -76,12 +76,12 @@ public class filteredItemsFragment extends Fragment {
             // delete all those items that are currently checked off
             // go backwards so we can delete in-place
             for (int i = items.size()-1; i >= 0; i--) {
-                if (((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()) {
+                // check if this item is checked off through the adapter
+                if (adapter.getIsChecked(items.get(i).getItemName())) {
+                    // delete the present item if needed
                     itemViewModel.deleteItem(items.get(i).getItemName());
                     // remove the checked items from our displaying listview too
                     items.remove(i);
-                    // unselect each box that was previously checked
-                    ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
                 }
             }
             // update listView adapter so that the deleted item is gone and price reflects this

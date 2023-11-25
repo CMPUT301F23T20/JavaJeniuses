@@ -1,9 +1,11 @@
 package com.example.inventorymanager.ui.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.LoginActivity;
+import com.example.inventorymanager.MainActivity;
 import com.example.inventorymanager.databinding.FragmentProfileBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,8 +51,16 @@ public class ProfileFragment extends Fragment {
 
         final TextView username = binding.Username;
 
-        //        final TextView email = binding.Email;
         profileViewModel.getText().observe(getViewLifecycleOwner(), username::setText);
+
+        final Button logout = binding.logoutButton;
+        logout.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+        });
+
+
+
         return root;
     }
 

@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -39,6 +40,7 @@ public class Item implements Parcelable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
+    private ArrayList<String> imageUrls;
 
     /**
      * Creates an Item() object with the fields passed in.
@@ -52,8 +54,9 @@ public class Item implements Parcelable {
      * @param serialNumber The serial number of the item to be created.
      * @param estimatedValue The estimated monetary value of the item to be created.
      * @param comment A brief comment about the item to be created.
+     * @param imageUrls URLs to pictures of items stored in Firebase Cloud Storage
      */
-    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment) {
+    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, ArrayList<String> imageUrls) {
         this.setItemName(itemName);
         this.setPurchaseDate(purchaseDate);
         this.setDescription(description);
@@ -62,6 +65,9 @@ public class Item implements Parcelable {
         this.setSerialNumber(serialNumber);
         this.setEstimatedValue(estimatedValue);
         this.setComment(comment);
+        // store empty array if item doesn't have urls
+        if (imageUrls != null){ this.setImageUrls(imageUrls); }
+        else{ this.setImageUrls(new ArrayList<>()); }
     }
 
     /**
@@ -79,6 +85,7 @@ public class Item implements Parcelable {
         serialNumber = source.readString();
         estimatedValue = source.readDouble();
         comment = source.readString();
+        imageUrls = source.createStringArrayList();
     }
 
     /**
@@ -219,6 +226,14 @@ public class Item implements Parcelable {
         this.comment = comment;
     }
 
+    public void setImageUrls(ArrayList<String> imageUrls){
+        this.imageUrls = imageUrls;
+    }
+
+    public ArrayList<String> getImageUrls(ArrayList<String> imageUrls){
+        return this.imageUrls;
+    }
+
     /**
      * Retrieves a dictionary representation of the original item.
      * The mapping returned is in the proper format for storage in the database.
@@ -265,6 +280,7 @@ public class Item implements Parcelable {
         parcel.writeString(serialNumber);
         parcel.writeDouble(estimatedValue);
         parcel.writeString(comment);
+        parcel.writeStringList(imageUrls);
     }
 
     /**

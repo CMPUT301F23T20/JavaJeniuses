@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ public class ItemViewModel extends ViewModel {
     private static MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference itemsDB;
+
+    public FirebaseStorage storage = FirebaseStorage.getInstance();
 
     /**
      * Creates an ItemViewModel() object synced to the global application database.
@@ -92,7 +95,8 @@ public class ItemViewModel extends ViewModel {
                                     (String) rawItem.get("make"),
                                     (String) rawItem.get("number"),
                                     (String) rawItem.get("value"),
-                                    (String) rawItem.get("comment"));
+                                    (String) rawItem.get("comment"),
+                                    null);
                             items.add(cleanedItem);
                         }
                         // update the items being shown to the what was fetched
@@ -120,7 +124,7 @@ public class ItemViewModel extends ViewModel {
         }
 
         // should never ever be reached
-        return new Item("Error", "", "", "", "", "", "", "");
+        return new Item("Error", "", "", "", "", "", "", "", null);
     }
 
     /**
@@ -132,8 +136,11 @@ public class ItemViewModel extends ViewModel {
         // get the current items being tracked
         fetchItems();
         ArrayList<Item> items = getItemsLiveData().getValue();
-        // add the new item locally and to the database
+
+        // item added locally
         items.add(item);
+
+        // item added to database
         itemsDB.document(item.getItemName()).set(item.getDocument());
         // save the new state of items being tracked
         itemsLiveData.setValue(items);

@@ -66,4 +66,12 @@ dependencies {
     implementation "androidx.camera:camera-mlkit-vision:${camerax_version}"
     // If you want to additionally use the CameraX Extensions library
     implementation "androidx.camera:camera-extensions:${camerax_version}"
+
+    // dependencies for Firebase Cloud storage to store and fetch photos
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+
+    // Add the dependency for the Cloud Storage library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-storage")
 }

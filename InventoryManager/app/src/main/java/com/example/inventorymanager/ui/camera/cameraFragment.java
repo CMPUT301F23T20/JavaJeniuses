@@ -22,15 +22,19 @@ import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import android.Manifest;
 import android.widget.Toast;
 
-
 import com.example.inventorymanager.MainActivity;
+import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentCameraBinding;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
@@ -50,6 +54,8 @@ public class cameraFragment extends Fragment {
     private PreviewView previewView;
     int cameraFacing = CameraSelector.LENS_FACING_BACK;
 
+    private ArrayList<String> localImagePaths;
+
     // Activity result launcher to request camera and storage permissions
     private final ActivityResultLauncher<String> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
         @Override
@@ -68,6 +74,8 @@ public class cameraFragment extends Fragment {
 
         previewView = binding.previewView;
         capture = binding.captureButton;
+
+//        this.localImagePaths = getArguments().getStringArrayList("localImagePaths");
 
         // Check if camera permission is granted
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -119,7 +127,6 @@ public class cameraFragment extends Fragment {
                             activityResultLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                         }
                         // Take a picture using the image capture use case
-
                         takePicture(imageCapture);
                     }
                 });
@@ -136,6 +143,8 @@ public class cameraFragment extends Fragment {
         final File file = new File(requireContext().getExternalFilesDir(null), System.currentTimeMillis() + ".jpg");
         ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
 
+        System.out.println(file.getPath());
+
         // Take the picture and handle the result using callbacks
         imageCapture.takePicture(outputFileOptions, Executors.newCachedThreadPool(), new ImageCapture.OnImageSavedCallback() {
             @Override
@@ -147,8 +156,19 @@ public class cameraFragment extends Fragment {
                         Toast.makeText(requireContext(), "Image saved at: " + file.getPath(), Toast.LENGTH_SHORT).show();
                     }
                 });
-                // Restart the camera preview after taking a picture
-                startCamera(cameraFacing);
+//                // Restart the camera preview after taking a picture
+//                startCamera(cameraFacing);
+
+                // ENFORCING only one picture to be taken
+                // once user presses camera icon to take pic, go back to add item screen
+                // send the path back to the add item page for display
+//                localImagePaths.add(file.getPath());
+//                Bundle bundle = new Bundle();
+//                bundle.putStringArrayList("localImagePaths", localImagePaths);
+
+                // navigate to the add item fragment
+//                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+//                navController.navigate(R.id.navigation_addItem); // TODO: Add bundle
             }
 
             @Override

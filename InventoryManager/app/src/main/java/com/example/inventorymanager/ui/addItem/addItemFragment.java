@@ -3,6 +3,8 @@ package com.example.inventorymanager.ui.addItem;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,6 +33,8 @@ import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -55,6 +59,8 @@ import java.util.Locale;
 public class addItemFragment extends Fragment {
 
     private FragmentAddItemBinding binding;
+    private ArrayList<String> localImagePaths = new ArrayList<String>();
+    private ArrayList<String> imageUrls = new ArrayList<String>();
 
     /**
      * Generates the user interface of the fragment.
@@ -75,6 +81,10 @@ public class addItemFragment extends Fragment {
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
+        // get the FirebaseStorage instance
+        StorageReference storageRef = itemViewModel.storage.getReference();
+        StorageReference imagesRef = storageRef.child("itemImages");
+
         // Bind UI elements to variables
         ScrollView addItemScrollView = binding.addItemScrollView;
         EditText itemNameInput = binding.itemNameInput;
@@ -86,8 +96,19 @@ public class addItemFragment extends Fragment {
         EditText estimatedValueInput = binding.estimatedValueInput;
         EditText commentInput = binding.commentInput;
         Button addItemButton = binding.addItemButton;
-        ImageView itemImage = binding.itemImage;
+
+        // enforcing a maximum of 3 images per item
+        ImageView itemImage0 = binding.itemImage;
+        ImageView itemImage1 = binding.itemImage;
+        ImageView itemImage2 = binding.itemImage;
         Button addImageButton = binding.addImageButton;
+
+        // populate our localImagePaths so that we can render the pictures for that item instantly
+//        localImagePaths = getArguments().getStringArrayList("localImagePaths");
+
+//        itemImage0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
+//        itemImage1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
+//        itemImage2.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(2)));
 
         // Set up calendar to pop up and allow user to choose date
         purchaseDateInput.setOnClickListener(v -> {
@@ -164,19 +185,21 @@ public class addItemFragment extends Fragment {
             navController.navigate(R.id.cameraFragment);
                 });
 
-        // TODO: once user takes picture, display it in the imageView
-        // add the url to the item's image
-        // itemImage.setImageResource(  );
+        // once user takes picture, store it in 2 places: locally and in Firebase Cloud Storage
+        // Currently enforcing that user can only take picture once (no retaking)
 
-
-        // ###################
-
-
-
-
+        // TODO: We need to populate our localImagePaths
 
         // add effect of the add button when pressed (add this item to the list)
         addItemButton.setOnClickListener(v -> {
+            for (String localPath : this.localImagePaths) {
+                // to be sent to Firestore db
+                this.imageUrls.add(localPath);
+
+                // storing to firebase cloud storage
+                UploadTask uploadTask = imagesRef.child("firebase" + localPath).putFile(Uri.parse(localPath));
+            }
+
             if (ItemUtility.validateItemFields(itemNameInput, purchaseDateInput ,descriptionInput,
                     makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput, "", itemViewModel)) {
                 // Get data from input fields
@@ -189,7 +212,8 @@ public class addItemFragment extends Fragment {
                 String estimateValue = estimatedValueInput.getText().toString();
                 String comment = commentInput.getText().toString();
 
-                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment);
+
+                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, this.imageUrls);
 
                 // Add the new item to the shared ViewModel
                 itemViewModel.addItem(newItem);

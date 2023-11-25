@@ -10,7 +10,7 @@ import com.example.inventorymanager.ui.editItem.EditItemFragment;
  * A view model to manage the data for the createTagFragment.
  * Not used very much for the initial functionality of the project.
  * @author Kareem Assaf, Tomasz Ayobahan, Tyler Hoekstra, Isaac Joffe, David Onchuru, Sumaiya Salsabil
- * @see EditItemFragment
+ * @see createTagFragment
  */
 public class createTagViewModel extends ViewModel {
     private final MutableLiveData<String> mText;

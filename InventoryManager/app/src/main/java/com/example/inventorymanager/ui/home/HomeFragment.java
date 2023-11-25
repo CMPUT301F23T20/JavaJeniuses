@@ -25,6 +25,7 @@ import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
 
 import java.text.NumberFormat;
@@ -45,6 +46,7 @@ public class HomeFragment extends Fragment {
 
     // No accessors and modifier methods. If you want to get items, instantiate itemViewModel and pull from database (same results)
     private ArrayList<Item> items, selectedItems;
+    private ArrayList<Tag> tags;
 
     /**
      * Provides the user interface of the fragment.
@@ -155,9 +157,6 @@ public class HomeFragment extends Fragment {
             // navigate to the add tag fragment
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.addTagFragment, bundle);
-//
-//            for (Item item : selectedItems) {
-//            }
 
         });
 

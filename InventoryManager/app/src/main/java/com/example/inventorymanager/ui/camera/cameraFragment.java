@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.databinding.FragmentCameraBinding;
-import com.example.inventorymanager.ui.addItem.addItemViewModel;
+//import com.example.inventorymanager.ui.addItem.addItemViewModel;
 
 public class cameraFragment extends Fragment {
 
@@ -22,7 +22,6 @@ public class cameraFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentCameraBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
 
         return root;
     }

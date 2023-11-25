@@ -101,7 +101,7 @@ public class addItemFragment extends Fragment {
         ImageView itemImage0 = binding.itemImage;
         ImageView itemImage1 = binding.itemImage;
         ImageView itemImage2 = binding.itemImage;
-        Button addImageButton = binding.addImageButton;
+        Button takePictureButton = binding.takePictureButton;
 
         // populate our localImagePaths so that we can render the pictures for that item instantly
 //        localImagePaths = getArguments().getStringArrayList("localImagePaths");
@@ -180,7 +180,7 @@ public class addItemFragment extends Fragment {
 
         // ##### ADDING IMAGE SECTION ########
         // when you click the Add Image button, navigate to the camera fragment
-        addImageButton.setOnClickListener( v -> {
+        takePictureButton.setOnClickListener( v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.cameraFragment);
                 });

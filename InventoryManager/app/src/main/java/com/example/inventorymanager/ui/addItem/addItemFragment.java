@@ -1,11 +1,16 @@
 package com.example.inventorymanager.ui.addItem;
 
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -16,20 +21,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
+import android.Manifest;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
@@ -61,6 +67,10 @@ public class addItemFragment extends Fragment {
     private FragmentAddItemBinding binding;
     private ArrayList<String> localImagePaths = new ArrayList<String>();
     private ArrayList<String> imageUrls = new ArrayList<String>();
+    private ImageView imageView;
+    private static final int REQUEST_CODE = 22;
+
+
 
     /**
      * Generates the user interface of the fragment.
@@ -98,10 +108,11 @@ public class addItemFragment extends Fragment {
         Button addItemButton = binding.addItemButton;
 
         // enforcing a maximum of 3 images per item
-        ImageView itemImage0 = binding.itemImage;
-        ImageView itemImage1 = binding.itemImage;
-        ImageView itemImage2 = binding.itemImage;
+      //  ImageView itemImage0 = binding.itemImage;
+        //ImageView itemImage1 = binding.itemImage;
+       // ImageView itemImage2 = binding.itemImage;
         Button takePictureButton = binding.takePictureButton;
+        imageView = binding.itemImage;
 
         // populate our localImagePaths so that we can render the pictures for that item instantly
 //        localImagePaths = getArguments().getStringArrayList("localImagePaths");
@@ -178,11 +189,27 @@ public class addItemFragment extends Fragment {
             return false;
         });
 
+
+
         // ##### ADDING IMAGE SECTION ########
         // when you click the Add Image button, navigate to the camera fragment
         takePictureButton.setOnClickListener( v -> {
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.cameraFragment);
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{
+                        Manifest.permission.CAMERA
+                },REQUEST_CODE);
+            }
+
+
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, REQUEST_CODE);
+
+          //  CameraUtils.dispatchTakePictureIntent(requireActivity());
+
+
+            // NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            //navController.navigate(R.id.cameraFragment);
                 });
 
         // once user takes picture, store it in 2 places: locally and in Firebase Cloud Storage
@@ -230,6 +257,23 @@ public class addItemFragment extends Fragment {
         });
 
         return root;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(photo);
+            System.out.println(photo);
+        }
+        else{
+            Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+        }
+
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+
     }
 
     /**

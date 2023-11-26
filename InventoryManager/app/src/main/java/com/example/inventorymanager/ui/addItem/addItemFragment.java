@@ -193,6 +193,11 @@ public class addItemFragment extends Fragment {
 
         // ##### ADDING IMAGE SECTION ########
 
+        // Users are crazy, and will often try unconventional things like adding a pic to the second image placeholder before the first
+        // we're gonna enforce sequential image input
+        addImage1Button.setVisibility(View.GONE);
+        addImage2Button.setVisibility(View.GONE);
+
         // when you click the respective Add Image button, navigate to the camera page
         addImage0Button.setOnClickListener( v -> {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
@@ -206,6 +211,7 @@ public class addItemFragment extends Fragment {
             startActivityForResult(cameraIntent, REQUEST_CODE);
 
             addImage0Button.setVisibility(View.GONE);
+            addImage1Button.setVisibility(View.VISIBLE);
         });
 
         addImage1Button.setOnClickListener( v -> {
@@ -220,6 +226,9 @@ public class addItemFragment extends Fragment {
             startActivityForResult(cameraIntent, REQUEST_CODE);
 
             addImage1Button.setVisibility(View.GONE);
+
+            // allow user to add pic to second placeholder
+            addImage2Button.setVisibility(View.VISIBLE);
         });
 
         addImage2Button.setOnClickListener( v -> {

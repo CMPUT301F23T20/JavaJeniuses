@@ -15,7 +15,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 
+import org.checkerframework.checker.units.qual.A;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -87,6 +91,19 @@ public class ItemViewModel extends ViewModel {
                         for (int i = 0; i < cleanedData.size(); i++) {
                             DocumentSnapshot rawItem = cleanedData.get(i);
                             // translate database format to the Item class
+
+                            ArrayList<String> imageUrls = new ArrayList<String>();
+                            if (rawItem.get("imageUrls") != null){
+                                if (rawItem.get("imageUrls") instanceof ArrayList) {
+                                    imageUrls = (ArrayList<String>) rawItem.get("imageUrls");
+                                } else if (rawItem.get("imageUrls") instanceof String) {
+                                    // Split the string into individual URLs
+                                    String rawImageUrls = (String) rawItem.get("imageUrls");
+                                    String[] urlsArray = rawImageUrls.split(", ");
+                                    imageUrls.addAll(Arrays.asList(urlsArray));
+                                }
+                            }
+
                             Item cleanedItem = new Item(
                                     (String) rawItem.get("name"),
                                     (String) rawItem.get("date"),
@@ -96,7 +113,8 @@ public class ItemViewModel extends ViewModel {
                                     (String) rawItem.get("number"),
                                     (String) rawItem.get("value"),
                                     (String) rawItem.get("comment"),
-                                    null);
+                                    imageUrls
+                            );
                             items.add(cleanedItem);
                         }
                         // update the items being shown to the what was fetched

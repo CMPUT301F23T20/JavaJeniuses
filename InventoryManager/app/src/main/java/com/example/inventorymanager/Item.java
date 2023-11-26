@@ -236,6 +236,7 @@ public class Item implements Parcelable {
     }
 
     /**
+     * TODO: Update tests because hashmap mapping has changed from <String, String> to <String, Object>. That's what's causing the related problems warning
      * Retrieves a dictionary representation of the original item.
      * The mapping returned is in the proper format for storage in the database.
      * Each field is represented as a String key associated with a String value.
@@ -253,9 +254,6 @@ public class Item implements Parcelable {
         doc.put("number", this.getSerialNumber());
         doc.put("value", this.getEstimatedValue());
         doc.put("comment", this.getComment());
-
-//        // Convert imageUrls ArrayList to a comma-separated string (suitable for Firestore)
-//        String imageUrlsString = TextUtils.join(",", this.getImageUrls());
         doc.put("imageUrls", this.getImageUrls());
         return doc;
     }

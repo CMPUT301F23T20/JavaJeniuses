@@ -1,7 +1,5 @@
 package com.example.inventorymanager.ui.viewItem;
 
-import static java.lang.Thread.sleep;
-
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -23,6 +21,8 @@ import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentViewItemBinding;
+
+import com.bumptech.glide.Glide;
 
 /**
  * Shows the details of a single item.
@@ -59,6 +59,10 @@ public class ViewItemFragment extends Fragment {
         // fetch the full item from the database
         Item item = itemViewModel.getItem(key);
 
+        // DEBUG statements
+        System.out.println("item name" + item.getItemName());
+        System.out.println("Image urls size" + item.getImageUrls().size());
+
         // Bind UI elements to variables
         ScrollView viewItemScrollView = binding.ViewItemScrollView;
 
@@ -87,6 +91,21 @@ public class ViewItemFragment extends Fragment {
         serialNumberValue.setText(item.getSerialNumber());
         estimatedValueValue.setText(item.getEstimatedValue());
         commentValue.setText(item.getComment());
+
+        System.out.println("Image urls size" + item.getImageUrls().size());
+
+        // Use Glide API to fetch, resize and embed the picture into the imageView
+        if (item.getImageUrls().size() >= 1) {
+            Glide.with(this).load(item.getImageUrls().get(0)).into(imageView0);
+        }
+
+        if (item.getImageUrls().size() >= 2) {
+            Glide.with(this).load(item.getImageUrls().get(1)).into(imageView1);
+        }
+
+        if (item.getImageUrls().size() >= 3) {
+            Glide.with(this).load(item.getImageUrls().get(2)).into(imageView2);
+        }
 
         // add effect of the edit button when pressed (edit details)
         editButton.setOnClickListener(v -> {

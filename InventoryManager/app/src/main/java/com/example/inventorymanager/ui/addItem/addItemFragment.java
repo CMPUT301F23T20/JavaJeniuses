@@ -201,15 +201,15 @@ public class addItemFragment extends Fragment {
         // when you click the respective Add Image button, navigate to the camera page
         addImage0Button.setOnClickListener( v -> {
             showImageOptionsDialog();
-           // handleCameraIntent();
+
         });
 
         addImage1Button.setOnClickListener( v -> {
-            handleCameraIntent();
+            showImageOptionsDialog();
         });
 
         addImage2Button.setOnClickListener( v -> {
-            handleCameraIntent();
+            showImageOptionsDialog();
         });
 
 
@@ -412,8 +412,11 @@ public class addItemFragment extends Fragment {
         imageOptionsFragment.setOnImageOptionClickListener(new ImageSelectionFragment.OnImageOptionClickListener() {
             @Override
             public void onOptionClick(int choice) {
-                Log.d("ImageOptions", "CHOICE: " + choice);
-                // Handle the choice here or call a method to handle it
+                if (choice == 1){
+                    // Gallery
+                } else if (choice == 2){
+                     handleCameraIntent();
+                }
             }
         });
 
@@ -441,14 +444,6 @@ public class addItemFragment extends Fragment {
                 e.printStackTrace(); // Log the exception for debugging purposes.
             }
     }
-
-
-
-
-
-
-
-
 
 
     /**

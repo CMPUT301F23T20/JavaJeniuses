@@ -122,7 +122,7 @@ public class SortOptionsFragment extends Fragment {
             comparators.add(createComparator(sortBy, ascending));
         }
 
-        // create a composite comparator that performs multisort
+        // create a composite comparator that performs multi-sort
         Comparator<Item> multiComparator = (item1, item2) -> {
             for (Comparator<Item> comparator : comparators) {
                 int result = comparator.compare(item1, item2);
@@ -178,7 +178,7 @@ public class SortOptionsFragment extends Fragment {
                 };
                 break;
             case "Tag":
-                comparator = Comparator.comparing(item -> item.getTags().get(0).getText());
+                comparator = Comparator.comparing(item -> item.getFirstTag().getText());
             default:
                 // handle invalid sortBy value
                 break;

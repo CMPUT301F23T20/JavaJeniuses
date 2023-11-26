@@ -242,6 +242,8 @@ public class Item implements Parcelable {
         return tags;
     }
 
+    public Tag getFirstTag() {return tags.get(0); }
+
 //    public void setTags(ArrayList<Tag> tags) {
 //        this.tags = tags;
 //    }

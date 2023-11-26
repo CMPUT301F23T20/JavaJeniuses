@@ -65,6 +65,7 @@ public class SortOptionsFragment extends Fragment {
         ToggleButton descriptionButton = binding.sortDescriptionButton;
         ToggleButton makeButton = binding.sortMakeButton;
         ToggleButton valueButton = binding.sortValueButton;
+        ToggleButton tagButton = binding.sortTagButton;
         ToggleButton ascendingButton = binding.ascendingButton;
         Button doneButton = binding.sortDone;
 
@@ -86,6 +87,7 @@ public class SortOptionsFragment extends Fragment {
         descriptionButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Description"); });
         makeButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Make"); });
         valueButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Value"); });
+        tagButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Tag"); });
 
         // handle done button click
         doneButton.setOnClickListener( v -> {
@@ -175,6 +177,8 @@ public class SortOptionsFragment extends Fragment {
                     return Double.compare(value1, value2);
                 };
                 break;
+            case "Tag":
+                comparator = Comparator.comparing(item -> item.getTags().get(0).getText());
             default:
                 // handle invalid sortBy value
                 break;

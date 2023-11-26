@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +28,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.example.inventorymanager.ImageSelectionFragment;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import android.Manifest;
@@ -190,9 +193,6 @@ public class addItemFragment extends Fragment {
             return false;
         });
 
-
-        // ##### ADDING IMAGE SECTION ########
-
         // Users are crazy, and will often try unconventional things like adding a pic to the second image placeholder before the first
         // we're gonna ENFORCE sequential image input
         addImage1Button.setVisibility(View.GONE);
@@ -200,7 +200,8 @@ public class addItemFragment extends Fragment {
 
         // when you click the respective Add Image button, navigate to the camera page
         addImage0Button.setOnClickListener( v -> {
-            handleCameraIntent();
+            showImageOptionsDialog();
+           // handleCameraIntent();
         });
 
         addImage1Button.setOnClickListener( v -> {
@@ -400,7 +401,30 @@ public class addItemFragment extends Fragment {
         }
     }
 
+    /**
+     * Displays a dialog fragment for selecting image options, such as choosing from the gallery
+     * or capturing a photo
+     */
+    private void showImageOptionsDialog() {
+        FragmentManager fragmentManager = getChildFragmentManager();
+        ImageSelectionFragment imageOptionsFragment = new ImageSelectionFragment();
 
+        imageOptionsFragment.setOnImageOptionClickListener(new ImageSelectionFragment.OnImageOptionClickListener() {
+            @Override
+            public void onOptionClick(int choice) {
+                Log.d("ImageOptions", "CHOICE: " + choice);
+                // Handle the choice here or call a method to handle it
+            }
+        });
+
+        imageOptionsFragment.show(fragmentManager, "ImageOptionsFragment");
+    }
+
+
+    /**
+     * Handles the camera intent by checking for CAMERA permission, requesting it if necessary,
+     * and launching the camera application to capture an image.
+     */
     private void handleCameraIntent(){
         try {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)

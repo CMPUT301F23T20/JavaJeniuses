@@ -194,7 +194,7 @@ public class addItemFragment extends Fragment {
         // ##### ADDING IMAGE SECTION ########
 
         // Users are crazy, and will often try unconventional things like adding a pic to the second image placeholder before the first
-        // we're gonna enforce sequential image input
+        // we're gonna ENFORCE sequential image input
         addImage1Button.setVisibility(View.GONE);
         addImage2Button.setVisibility(View.GONE);
 
@@ -207,11 +207,9 @@ public class addItemFragment extends Fragment {
                 },REQUEST_CODE);
             }
 
+            // opens native camera page and fetches the photo taken
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, REQUEST_CODE);
-
-            addImage0Button.setVisibility(View.GONE);
-            addImage1Button.setVisibility(View.VISIBLE);
         });
 
         addImage1Button.setOnClickListener( v -> {
@@ -224,11 +222,6 @@ public class addItemFragment extends Fragment {
 
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, REQUEST_CODE);
-
-            addImage1Button.setVisibility(View.GONE);
-
-            // allow user to add pic to second placeholder
-            addImage2Button.setVisibility(View.VISIBLE);
         });
 
         addImage2Button.setOnClickListener( v -> {
@@ -241,8 +234,6 @@ public class addItemFragment extends Fragment {
 
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, REQUEST_CODE);
-
-            addImage2Button.setVisibility(View.GONE);
         });
 
 
@@ -370,6 +361,22 @@ public class addItemFragment extends Fragment {
 
             // Enable the "Add Image" button for the current image
             currentAddImageButton.setEnabled(true);
+
+            // ENFORCING sequential image input
+            // and accounting for the case where user opens camera page and cancels without actually taking the pic
+            System.out.println("local image paths size: " + localImagePaths.size());
+            if (localImagePaths.size() == 0){
+                addImage0Button.setVisibility(View.VISIBLE);
+            }
+            else if (localImagePaths.size() == 1){
+                addImage0Button.setVisibility(View.GONE);
+                addImage1Button.setVisibility(View.VISIBLE);
+            }
+            else if (localImagePaths.size() == 2){
+                addImage1Button.setVisibility(View.GONE);
+                addImage2Button.setVisibility(View.VISIBLE);
+            }
+
         } else {
             Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show();
         }

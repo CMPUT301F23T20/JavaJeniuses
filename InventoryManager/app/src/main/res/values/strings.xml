@@ -21,7 +21,7 @@
     <string name="model_label">Model</string>
     <string name="model_hint">Enter Model</string>
 
-    <string name="serial_number">Serial Number (if applicable)</string>
+    <string name="serial_number">Serial Number</string>
     <string name="serial_number_hint">Enter serial number</string>
 
     <string name="estimate_value">Estimate Value</string>

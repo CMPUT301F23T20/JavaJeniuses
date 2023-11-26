@@ -2,6 +2,7 @@ package com.example.inventorymanager;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -230,7 +231,7 @@ public class Item implements Parcelable {
         this.imageUrls = imageUrls;
     }
 
-    public ArrayList<String> getImageUrls(ArrayList<String> imageUrls){
+    public ArrayList<String> getImageUrls(){
         return this.imageUrls;
     }
 
@@ -240,9 +241,9 @@ public class Item implements Parcelable {
      * Each field is represented as a String key associated with a String value.
      * @return A representation of the item that can be stored in the database.
      */
-    public HashMap<String, String> getDocument() {
+    public HashMap<String, Object> getDocument() {
         // data should be key-value mapping of String to String
-        HashMap<String, String> doc = new HashMap<>();
+        HashMap<String, Object> doc = new HashMap<>();
         // add fields one by one
         doc.put("name", this.getItemName());
         doc.put("date", this.getPurchaseDate());
@@ -252,6 +253,10 @@ public class Item implements Parcelable {
         doc.put("number", this.getSerialNumber());
         doc.put("value", this.getEstimatedValue());
         doc.put("comment", this.getComment());
+
+//        // Convert imageUrls ArrayList to a comma-separated string (suitable for Firestore)
+//        String imageUrlsString = TextUtils.join(",", this.getImageUrls());
+        doc.put("imageUrls", this.getImageUrls());
         return doc;
     }
 

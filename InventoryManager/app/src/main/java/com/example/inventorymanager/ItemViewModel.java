@@ -70,7 +70,7 @@ public class ItemViewModel extends ViewModel {
 
     /**
      * Fetches the entire list of items being tracked inside the database.
-     * Updates the local copy of the entire set of objects being tracked for speed and use across all of the application.
+     * Updates the local copy of the entire set of objects being tracked for speed and use across the whole application.
      */
     public void fetchItems() {
         // query database to get all items indiscriminately
@@ -133,7 +133,7 @@ public class ItemViewModel extends ViewModel {
      * @param item The item to be added to the database.
      */
     public void addItem(Item item) {
-        // get the current items being tracked
+        // get items currently on home page
         fetchItems();
         ArrayList<Item> items = getItemsLiveData().getValue();
 

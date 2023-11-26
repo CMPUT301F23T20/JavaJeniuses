@@ -1,8 +1,6 @@
 package com.example.inventorymanager.ui.addItem;
 
-
 import static android.app.Activity.RESULT_OK;
-
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +40,9 @@ import com.example.inventorymanager.Item;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,10 +68,15 @@ public class addItemFragment extends Fragment {
     private FragmentAddItemBinding binding;
     private ArrayList<String> localImagePaths = new ArrayList<String>();
     private ArrayList<String> imageUrls = new ArrayList<String>();
-    private ImageView imageView;
+    private ImageView imageView0;
+    private Button addImage0Button;
+    private ImageView imageView1;
+    private Button addImage1Button;
+
+    private ImageView imageView2;
+    private Button addImage2Button;
+
     private static final int REQUEST_CODE = 22;
-
-
 
     /**
      * Generates the user interface of the fragment.
@@ -108,18 +114,13 @@ public class addItemFragment extends Fragment {
         Button addItemButton = binding.addItemButton;
 
         // enforcing a maximum of 3 images per item
-      //  ImageView itemImage0 = binding.itemImage;
-        //ImageView itemImage1 = binding.itemImage;
-       // ImageView itemImage2 = binding.itemImage;
-        Button takePictureButton = binding.takePictureButton;
-        imageView = binding.itemImage;
+        imageView0 = binding.itemImage0;
+        imageView1 = binding.itemImage1;
+        imageView2 = binding.itemImage2;
 
-        // populate our localImagePaths so that we can render the pictures for that item instantly
-//        localImagePaths = getArguments().getStringArrayList("localImagePaths");
-
-//        itemImage0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
-//        itemImage1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
-//        itemImage2.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(2)));
+        addImage0Button = binding.addImage0Button;
+        addImage1Button = binding.addImage1Button;
+        addImage2Button = binding.addImage2Button;
 
         // Set up calendar to pop up and allow user to choose date
         purchaseDateInput.setOnClickListener(v -> {
@@ -190,10 +191,10 @@ public class addItemFragment extends Fragment {
         });
 
 
-
         // ##### ADDING IMAGE SECTION ########
-        // when you click the Add Image button, navigate to the camera fragment
-        takePictureButton.setOnClickListener( v -> {
+
+        // when you click the respective Add Image button, navigate to the camera page
+        addImage0Button.setOnClickListener( v -> {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(requireActivity(), new String[]{
@@ -201,32 +202,43 @@ public class addItemFragment extends Fragment {
                 },REQUEST_CODE);
             }
 
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, REQUEST_CODE);
+
+            addImage0Button.setVisibility(View.GONE);
+        });
+
+        addImage1Button.setOnClickListener( v -> {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{
+                        Manifest.permission.CAMERA
+                },REQUEST_CODE);
+            }
 
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, REQUEST_CODE);
 
-          //  CameraUtils.dispatchTakePictureIntent(requireActivity());
+            addImage1Button.setVisibility(View.GONE);
+        });
 
+        addImage2Button.setOnClickListener( v -> {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{
+                        Manifest.permission.CAMERA
+                },REQUEST_CODE);
+            }
 
-            // NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            //navController.navigate(R.id.cameraFragment);
-                });
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, REQUEST_CODE);
 
-        // once user takes picture, store it in 2 places: locally and in Firebase Cloud Storage
-        // Currently enforcing that user can only take picture once (no retaking)
+            addImage2Button.setVisibility(View.GONE);
+        });
 
-        // TODO: We need to populate our localImagePaths
 
         // add effect of the add button when pressed (add this item to the list)
         addItemButton.setOnClickListener(v -> {
-            for (String localPath : this.localImagePaths) {
-                // to be sent to Firestore db
-                this.imageUrls.add(localPath);
-
-                // storing to firebase cloud storage
-                UploadTask uploadTask = imagesRef.child("firebase" + localPath).putFile(Uri.parse(localPath));
-            }
-
             if (ItemUtility.validateItemFields(itemNameInput, purchaseDateInput ,descriptionInput,
                     makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput, "", itemViewModel)) {
                 // Get data from input fields
@@ -239,18 +251,60 @@ public class addItemFragment extends Fragment {
                 String estimateValue = estimatedValueInput.getText().toString();
                 String comment = commentInput.getText().toString();
 
+                // we have to upload all the item's pictures to Firebase cloud storage before creating an item and adding that to Firestore DB
+                for (int i = 0; i < this.localImagePaths.size(); i++) {
 
-                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, this.imageUrls);
+                    // fetch the path to the image
+                    String localPath = this.localImagePaths.get(i);
 
-                // Add the new item to the shared ViewModel
-                itemViewModel.addItem(newItem);
+                    // Create a unique name for each image
+                    String imageName = "firebase_" + itemName + "_image" + i + ".jpg";
 
-                // Navigate back to the home fragment
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                navController.navigate(R.id.navigation_home);
+                    // Create a new StorageReference for each image
+                    StorageReference imageRef = imagesRef.child(imageName);
 
-                ItemUtility.clearTextFields(itemNameInput, purchaseDateInput ,descriptionInput,
-                        makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+                    // Create a new file from the image and Store to Firebase Cloud Storage
+                    UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localPath)));
+
+                    // to check which item we're waiting to send to firebase
+                    int finalIndex = i;
+
+                    // Register observers to listen for when the upload is done or if it fails
+                    uploadTask.addOnSuccessListener(taskSnapshot -> {
+                        // If Firebase upload was successful, download the URL to the file
+                        imageRef.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
+                            String imageUrl = downloadUrl.toString();
+                            System.out.println(imageUrl);
+                            this.imageUrls.add(imageUrl);
+
+                            System.out.println("before printing image urls");
+                            for (String url: imageUrls){
+                                System.out.print(url);
+                            }
+
+                            // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asychronous
+                            // We have to wait until the url for the last image has been generated before taking the user back to the home page
+                            // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images linked to that item
+                            if (finalIndex == this.localImagePaths.size() - 1) {
+                                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, this.imageUrls);
+                                // Add the new item to the shared ViewModel
+                                itemViewModel.addItem(newItem);
+
+                                // Navigate back to the home fragment
+                                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                                navController.navigate(R.id.navigation_home);
+
+                                ItemUtility.clearTextFields(itemNameInput, purchaseDateInput ,descriptionInput,
+                                        makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+                            }
+                        });
+                    }).addOnFailureListener(exception -> {
+                        // If upload was unsuccessful
+                        System.out.println("Upload to Firebase was unsuccessful");
+                    });
+                }
+
+                // if user didn't populate the add item fields as expected
             } else {
                 Toast.makeText(requireContext(), "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show(); // A pop-up message to ensure validity of input
             }
@@ -258,23 +312,116 @@ public class addItemFragment extends Fragment {
 
         return root;
     }
+
+    /**
+     * Sets the picture taken from the camera page to the respective ImageView
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode The integer result code returned by the child activity
+     *                   through its setResult().
+     * @param data An Intent, which can return result data to the caller
+     *               (various data can be attached to Intent "extras").
+     *
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
-
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(photo);
-            System.out.println(photo);
-        }
-        else{
+            int imageCounter = localImagePaths.size(); // Get the current number of images
+
+            ImageView currentImageView;
+            Button currentAddImageButton;
+
+            // determine the appropriate ImageView to put our picture based on the counter
+            switch (imageCounter) {
+                case 0:
+                    currentImageView = imageView0;
+                    currentAddImageButton = addImage0Button;
+                    break;
+                case 1:
+                    currentImageView = imageView1;
+                    currentAddImageButton = addImage1Button;
+                    break;
+                case 2:
+                    currentImageView = imageView2;
+                    currentAddImageButton = addImage2Button;
+                    break;
+                default:
+                    // if we have more than 3 images (not possible for now tho)
+                    return;
+            }
+
+            // Set the photo to the current ImageView
+            currentImageView.setImageBitmap(photo);
+
+            // Update the localImagePaths list
+            String imagePath = saveImageLocally(photo, "image" + imageCounter + ".jpg");
+            localImagePaths.add(imagePath);
+
+            // Enable the "Add Image" button for the current image
+            currentAddImageButton.setEnabled(true);
+        } else {
             Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show();
         }
 
-
         super.onActivityResult(requestCode, resultCode, data);
-
-
     }
+
+    /**
+     * Helper method to save the image locally and return the path (where that image has been stored)
+     * @param bitmap
+     * @param fileName
+     * @return
+     */
+    private String saveImageLocally(Bitmap bitmap, String fileName) {
+        try {
+            // Get the app's internal storage directory
+            File internalStorageDir = requireContext().getFilesDir();
+
+            // Create a directory named "images" if it doesn't exist
+            File imagesDir = new File(internalStorageDir, "images");
+            if (!imagesDir.exists()) {
+                imagesDir.mkdir();
+            }
+
+            // Create a File object for the image file
+            File imageFile = new File(imagesDir, fileName);
+
+            // Create a FileOutputStream to write the bitmap to the file
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+
+            // Compress the bitmap and write it to the file
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+
+            // Flush and close the stream
+            outputStream.flush();
+            outputStream.close();
+
+            // Return the absolute path to the saved image file so that we can display it on the add item page that the user is still working on
+            return imageFile.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ""; // Return an empty string if there's an error
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Kills the fragment.

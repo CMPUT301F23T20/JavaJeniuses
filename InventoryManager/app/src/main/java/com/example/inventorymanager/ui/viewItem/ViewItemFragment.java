@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -60,6 +61,7 @@ public class ViewItemFragment extends Fragment {
 
         // Bind UI elements to variables
         ScrollView viewItemScrollView = binding.ViewItemScrollView;
+
         TextView itemNameValue = binding.itemNameValue;
         TextView purchaseDateValue = binding.purchaseDateValue;
         TextView descriptionValue = binding.descriptionValue;
@@ -68,6 +70,11 @@ public class ViewItemFragment extends Fragment {
         TextView serialNumberValue = binding.serialNumberValue;
         TextView estimatedValueValue = binding.estimatedValueValue;
         TextView commentValue = binding.commentValue;
+
+        ImageView imageView0 = binding.itemImage0;
+        ImageView imageView1 = binding.itemImage1;
+        ImageView imageView2 = binding.itemImage2;
+
         Button editButton = binding.editButton;
         Button deleteButton = binding.deleteButton;
 

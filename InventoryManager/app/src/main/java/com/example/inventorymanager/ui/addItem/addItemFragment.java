@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -50,6 +51,7 @@ import com.example.inventorymanager.Item;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -63,6 +65,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -75,6 +78,9 @@ import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 /**
@@ -295,6 +301,13 @@ public class addItemFragment extends Fragment {
                     .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
                         @Override
                         public void onSuccess(List<Barcode> barcodes) {
+                            // ensure that barcodes are found before proceeding in analysis
+                            if (barcodes.size() == 0) {
+                                // display error message to the user
+                                Toast.makeText(requireContext(), "Could not read barcode.", Toast.LENGTH_SHORT).show();
+                                return;    // no use proceeding
+                            }
+
                             // check each barcode detected
                             for (int i = 0; i < barcodes.size(); i++) {
                                 // these four formats are supported by the barcode lookup database
@@ -304,22 +317,52 @@ public class addItemFragment extends Fragment {
                                         (barcodes.get(i).getFormat() == Barcode.FORMAT_EAN_13)) {
                                     // try to fetch data for this barcode
                                     try {
+                                        // format the database search query for barcode and API key
+                                        String API_KEY = "m5wk8qavhnvw7wy9l1l161arzk49ru";
+                                        String query = String.format(
+                                                "https://api.barcodelookup.com/v3/products?barcode=%1$s&formatted=y&key=%2$s",
+                                                barcodes.get(i).getRawValue(),
+                                                API_KEY);
+                                        URL url = new URL(query);
 
-                                        Toast.makeText(requireContext(), barcodes.get(i).toString(), Toast.LENGTH_SHORT).show();
+                                        // ensure that network calls are allowed to be made in the main thread
+                                        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
+
+                                        // read the response to this search query
+                                        BufferedReader searchResultsReader = new BufferedReader(new InputStreamReader(url.openStream()));
+                                        String nextLine = "";    // next line of data to fetch
+                                        StringBuilder searchResultsBuilder = new StringBuilder();    // total cumulative data
+                                        // read in all response lines until no data is left
+                                        while ((nextLine = searchResultsReader.readLine()) != null) {
+                                            // track each new line
+                                            searchResultsBuilder.append(nextLine);
+                                        }
+                                        String searchResults = searchResultsBuilder.toString();
+
+                                        // parse the JSON object returned from the API
+                                        JSONObject originalJsonObject = new JSONObject(searchResults.toString());
+                                        // retrieve the array of products, which is all that is inside the original objects
+                                        JSONArray jsonArray = originalJsonObject.getJSONArray("products");
+                                        // only the first object in this array matters (usually length 1 anyways)
+                                        JSONObject mainJsonObject = jsonArray.getJSONObject(0);
+                                        // fetch relevant information about the object to form description
+                                        String description = mainJsonObject.get("title").toString();
+
+                                        // update the description text to match the new keywords
+                                        ((EditText) binding.descriptionInput).setText(description);
+                                        // inform user of successful operation
+                                        Toast.makeText(requireContext(), "Description keywords automatically entered successfully.", Toast.LENGTH_SHORT).show();
+
+                                    // inform the users if any issue arises that prevent data from being automatically parsed
                                     } catch (Exception e) {
                                         // display error message to the user
                                         Toast.makeText(requireContext(), "Could not fetch barcode data.", Toast.LENGTH_SHORT).show();
                                         // log details of failure
                                         e.printStackTrace();
                                     }
-                                    break;
+                                    break;    // only consider the first barcode detected
                                 }
                             }
-
-                            // update the description text to match the new keywords
-                            ((EditText) binding.descriptionInput).setText("Barcode scanned!");
-                            // inform user of successful operation
-                            Toast.makeText(requireContext(), "Description keywords automatically entered successfully.", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

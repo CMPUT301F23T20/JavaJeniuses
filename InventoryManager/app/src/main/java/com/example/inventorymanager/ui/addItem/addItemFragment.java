@@ -199,10 +199,6 @@ public class addItemFragment extends Fragment {
             return false;
         });
 
-        // ##### ADDING IMAGE SECTION ########
-
-        // ###################
-
         // add effect of the scan description button when pressed (open camera and scan barcode)
         scanDescriptionButton.setOnClickListener(v -> {
             // ensure app permissions have enabled use of the camera
@@ -271,7 +267,11 @@ public class addItemFragment extends Fragment {
     }
 
     /**
-     *
+     * Performs operations on the image returned from the camera activity.
+     * Depending on the mode of operation (a class field), different operations are undertaken.
+     * @param requestCode The integer request code originally given to startActivityForResult(), allowing identification of source.
+     * @param resultCode The integer result code returned by the camera activity by setResult().
+     * @param data An Intent() that can return extra data to the caller.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -285,9 +285,9 @@ public class addItemFragment extends Fragment {
 
                 // set up a default barcode scanner to use
                 BarcodeScannerOptions options =
-                        new BarcodeScannerOptions.Builder()
-                                .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
-                                .build();
+                    new BarcodeScannerOptions.Builder()
+                        .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
+                        .build();
                 BarcodeScanner scanner = BarcodeScanning.getClient(options);
 
                 // set up a task that uses the scanner to parse and analyze the image for any barcodes
@@ -350,7 +350,7 @@ public class addItemFragment extends Fragment {
                                 // fetch the text read and store it
                                 String resultText = visionText.getText();
                                 // update the description text to match the new keywords
-                                ((EditText) binding.serialNumberInput).setText("Number read!");
+                                ((EditText) binding.serialNumberInput).setText(resultText);
                                 // inform user of successful operation
                                 Toast.makeText(requireContext(), "Serial number automatically entered successfully.", Toast.LENGTH_SHORT).show();
                             }

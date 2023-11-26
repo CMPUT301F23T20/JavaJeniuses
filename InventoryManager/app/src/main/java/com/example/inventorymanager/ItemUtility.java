@@ -94,8 +94,8 @@ public class ItemUtility {
 
         // ----------- OPTIONAL FIELDS ------------
         // Description Checks
-        if (description.length() >= 21) {
-            descriptionInput.setError("Up to 20 characters");
+        if (description.length() >= 31) {
+            descriptionInput.setError("Up to 30 characters");
             isAllFieldsChecked = false;
         }
 

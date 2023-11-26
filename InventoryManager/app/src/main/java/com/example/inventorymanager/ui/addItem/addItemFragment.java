@@ -200,40 +200,15 @@ public class addItemFragment extends Fragment {
 
         // when you click the respective Add Image button, navigate to the camera page
         addImage0Button.setOnClickListener( v -> {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{
-                        Manifest.permission.CAMERA
-                },REQUEST_CODE);
-            }
-
-            // opens native camera page and fetches the photo taken
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, REQUEST_CODE);
+            handleCameraIntent();
         });
 
         addImage1Button.setOnClickListener( v -> {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{
-                        Manifest.permission.CAMERA
-                },REQUEST_CODE);
-            }
-
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, REQUEST_CODE);
+            handleCameraIntent();
         });
 
         addImage2Button.setOnClickListener( v -> {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED){
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{
-                        Manifest.permission.CAMERA
-                },REQUEST_CODE);
-            }
-
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, REQUEST_CODE);
+            handleCameraIntent();
         });
 
 
@@ -327,57 +302,60 @@ public class addItemFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            int imageCounter = localImagePaths.size(); // Get the current number of images
+            if (data != null && data.getExtras() != null) {
 
-            ImageView currentImageView;
-            Button currentAddImageButton;
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                int imageCounter = localImagePaths.size(); // Get the current number of images
 
-            // determine the appropriate ImageView to put our picture based on the counter
-            switch (imageCounter) {
-                case 0:
-                    currentImageView = imageView0;
-                    currentAddImageButton = addImage0Button;
-                    break;
-                case 1:
-                    currentImageView = imageView1;
-                    currentAddImageButton = addImage1Button;
-                    break;
-                case 2:
-                    currentImageView = imageView2;
-                    currentAddImageButton = addImage2Button;
-                    break;
-                default:
-                    // if we have more than 3 images (not possible for now tho)
-                    return;
+                ImageView currentImageView;
+                Button currentAddImageButton;
+
+                // determine the appropriate ImageView to put our picture based on the counter
+                switch (imageCounter) {
+                    case 0:
+                        currentImageView = imageView0;
+                        currentAddImageButton = addImage0Button;
+                        break;
+                    case 1:
+                        currentImageView = imageView1;
+                        currentAddImageButton = addImage1Button;
+                        break;
+                    case 2:
+                        currentImageView = imageView2;
+                        currentAddImageButton = addImage2Button;
+                        break;
+                    default:
+                        // if we have more than 3 images (not possible for now tho)
+                        return;
+                }
+
+                // Set the photo to the current ImageView
+                currentImageView.setImageBitmap(photo);
+
+                // Update the localImagePaths list
+                String imagePath = saveImageLocally(photo, "image" + imageCounter + ".jpg");
+                localImagePaths.add(imagePath);
+
+                // Enable the "Add Image" button for the current image
+                currentAddImageButton.setEnabled(true);
+
+                // ENFORCING sequential image input
+                // and accounting for the case where user opens camera page and cancels without actually taking the pic
+                System.out.println("local image paths size: " + localImagePaths.size());
+                if (localImagePaths.size() == 0) {
+                    addImage0Button.setVisibility(View.VISIBLE);
+                } else if (localImagePaths.size() == 1) {
+                    addImage0Button.setVisibility(View.GONE);
+                    addImage1Button.setVisibility(View.VISIBLE);
+                } else if (localImagePaths.size() == 2) {
+                    addImage1Button.setVisibility(View.GONE);
+                    addImage2Button.setVisibility(View.VISIBLE);
+                } else if (localImagePaths.size() == 3) {
+                    addImage2Button.setVisibility(View.GONE);
+                }
             }
-
-            // Set the photo to the current ImageView
-            currentImageView.setImageBitmap(photo);
-
-            // Update the localImagePaths list
-            String imagePath = saveImageLocally(photo, "image" + imageCounter + ".jpg");
-            localImagePaths.add(imagePath);
-
-            // Enable the "Add Image" button for the current image
-            currentAddImageButton.setEnabled(true);
-
-            // ENFORCING sequential image input
-            // and accounting for the case where user opens camera page and cancels without actually taking the pic
-            System.out.println("local image paths size: " + localImagePaths.size());
-            if (localImagePaths.size() == 0){
-                addImage0Button.setVisibility(View.VISIBLE);
-            }
-            else if (localImagePaths.size() == 1){
-                addImage0Button.setVisibility(View.GONE);
-                addImage1Button.setVisibility(View.VISIBLE);
-            }
-            else if (localImagePaths.size() == 2){
-                addImage1Button.setVisibility(View.GONE);
-                addImage2Button.setVisibility(View.VISIBLE);
-            }
-
-        } else {
+        }
+        else {
             Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show();
         }
 
@@ -423,12 +401,22 @@ public class addItemFragment extends Fragment {
     }
 
 
+    private void handleCameraIntent(){
+        try {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{
+                        Manifest.permission.CAMERA
+                }, REQUEST_CODE);
+            }
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, REQUEST_CODE);
 
-
-
-
-
-
+            } catch (SecurityException e) {
+                // Handle the exception, e.g., request the permission or show a message to the user.
+                e.printStackTrace(); // Log the exception for debugging purposes.
+            }
+    }
 
 
 

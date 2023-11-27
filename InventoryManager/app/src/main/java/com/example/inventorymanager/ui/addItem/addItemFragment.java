@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -53,6 +54,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.UUID;
 
 
 /**
@@ -75,11 +77,14 @@ public class addItemFragment extends Fragment {
     private ArrayList<String> imageUrls = new ArrayList<String>();
     private ImageView imageView0;
     private Button addImage0Button;
+    private Button deleteImage0Button;
     private ImageView imageView1;
     private Button addImage1Button;
+    private Button deleteImage1Button;
 
     private ImageView imageView2;
     private Button addImage2Button;
+    private Button deleteImage2Button;
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_CAMERA = 2;
@@ -129,6 +134,10 @@ public class addItemFragment extends Fragment {
         addImage0Button = binding.addImage0Button;
         addImage1Button = binding.addImage1Button;
         addImage2Button = binding.addImage2Button;
+
+        deleteImage0Button = binding.deleteImage0Button;
+        deleteImage1Button = binding.deleteImage1Button;
+        deleteImage2Button = binding.deleteImage2Button;
 
         // Set up calendar to pop up and allow user to choose date
         purchaseDateInput.setOnClickListener(v -> {
@@ -203,7 +212,11 @@ public class addItemFragment extends Fragment {
         addImage1Button.setVisibility(View.GONE);
         addImage2Button.setVisibility(View.GONE);
 
-        // when you click the respective Add Image button, navigate to the camera page
+        deleteImage0Button.setVisibility(View.GONE);
+        deleteImage1Button.setVisibility(View.GONE);
+        deleteImage2Button.setVisibility(View.GONE);
+
+        // when you click the respective Add Image button, choose if you're gonna add from gallery or take a pic with camera
         addImage0Button.setOnClickListener( v -> {
             showImageOptionsDialog();
 
@@ -292,10 +305,36 @@ public class addItemFragment extends Fragment {
         });
 
 
-        // TODO: Delete functionality
+        // User should be able to delete a picture after they have taken it but haven't submitted the "Add item" form
+        deleteImage0Button.setOnClickListener( v -> {
+            // update localImagePaths
+            updateLocalImagePaths(0);
+        });
+
+        deleteImage1Button.setOnClickListener( v -> {
+            // update localImagePaths
+            updateLocalImagePaths(1);
+        });
+
+        deleteImage2Button.setOnClickListener( v -> {
+            // update localImagePaths
+            updateLocalImagePaths(2);
+        });
 
         return root;
     }
+
+    void updateLocalImagePaths(int imageToDelete){
+
+        if (imageToDelete >= 0 && imageToDelete < localImagePaths.size()) {
+            localImagePaths.remove(imageToDelete);
+        }
+
+        // Determine the appropriate ImageView to update based on the counter
+        displayImages(localImagePaths.size());
+
+    }
+
 
     /**
      * Sets the picture taken from the camera page to the respective ImageView
@@ -393,8 +432,15 @@ public class addItemFragment extends Fragment {
         currentImageView.setImageBitmap(photo);
 
         // Update the localImagePaths list
-        String imagePath = saveImageLocally(photo, "image" + imageCounter + ".jpg");
-        localImagePaths.add(imagePath);
+        String uniqueId = UUID.randomUUID().toString();
+        String imagePath = saveImageLocally(photo, "image" + uniqueId + ".jpg");
+        if (imageCounter < localImagePaths.size()) {
+            // Replace existing path if the counter is within the bounds
+            localImagePaths.set(imageCounter, imagePath);
+        } else {
+            // Otherwise, add a new path
+            localImagePaths.add(imagePath);
+        }
 
         // Enable the "Add Image" button for the current image
         currentAddImageButton.setEnabled(true);
@@ -402,16 +448,42 @@ public class addItemFragment extends Fragment {
         // ENFORCING sequential image input
         // and accounting for the case where the user opens the camera page and cancels without actually taking the pic
         System.out.println("local image paths size: " + localImagePaths.size());
-        if (localImagePaths.size() == 0) {
+        for (String i : localImagePaths){
+            System.out.print(i);
+        }
+        displayImages(localImagePaths.size());
+    }
+
+
+    // code to render our images (during add and delete operations)
+    void displayImages(int imageCounter) {
+        if (imageCounter == 0) {
             addImage0Button.setVisibility(View.VISIBLE);
-        } else if (localImagePaths.size() == 1) {
-            addImage0Button.setVisibility(View.GONE);
-            addImage1Button.setVisibility(View.VISIBLE);
-        } else if (localImagePaths.size() == 2) {
+            deleteImage0Button.setVisibility(View.GONE);
             addImage1Button.setVisibility(View.GONE);
-            addImage2Button.setVisibility(View.VISIBLE);
-        } else if (localImagePaths.size() == 3) {
+            imageView0.setImageBitmap(null);
+        } else if (imageCounter == 1) {
+            imageView1.setImageBitmap(null);
+            addImage0Button.setVisibility(View.GONE);
+            deleteImage0Button.setVisibility(View.VISIBLE);
+            addImage1Button.setVisibility(View.VISIBLE);
+            deleteImage1Button.setVisibility(View.GONE);
             addImage2Button.setVisibility(View.GONE);
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
+        } else if (imageCounter == 2) {
+            imageView2.setImageBitmap(null);
+            addImage1Button.setVisibility(View.GONE);
+            deleteImage1Button.setVisibility(View.VISIBLE);
+            addImage2Button.setVisibility(View.VISIBLE);
+            deleteImage2Button.setVisibility(View.GONE);
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
+            imageView1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
+        } else if (imageCounter == 3) {
+            addImage2Button.setVisibility(View.GONE);
+            deleteImage2Button.setVisibility(View.VISIBLE);
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
+            imageView1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
+            imageView2.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(2)));
         }
     }
 

@@ -33,7 +33,6 @@ android {
 }
 
 dependencies {
-
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -73,4 +72,8 @@ dependencies {
     implementation 'com.google.mlkit:text-recognition:16.0.0'
     // for barcode api
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    // for ui tests with camera
+    androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
 }

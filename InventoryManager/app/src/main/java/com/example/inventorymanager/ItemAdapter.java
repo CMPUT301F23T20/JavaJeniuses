@@ -71,9 +71,15 @@ public class ItemAdapter extends ArrayAdapter{
         TextView purchaseDate = view.findViewById(R.id.purchaseDateTextView);
         CheckBox checkBox = view.findViewById(R.id.checkBox);
 
+        // apply algorithm to ensure item description is not too long
+        String descriptionText = item.getDescription();
+        if (descriptionText.length() > 25) {
+            descriptionText = descriptionText.substring(0, 20).strip() + "...";
+        }
+
         // display the most relevant fields for each item
         itemName.setText(item.getItemName());
-        description.setText(item.getDescription());
+        description.setText(descriptionText);
         estimateValue.setText(item.getEstimatedValue());
         purchaseDate.setText(item.getPurchaseDate());
         checkBox.setChecked(isChecked.get(item.getItemName()));

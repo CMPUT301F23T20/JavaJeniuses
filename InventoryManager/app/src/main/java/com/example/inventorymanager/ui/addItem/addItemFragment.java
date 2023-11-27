@@ -347,6 +347,8 @@ public class addItemFragment extends Fragment {
                                         JSONObject mainJsonObject = jsonArray.getJSONObject(0);
                                         // fetch relevant information about the object to form description
                                         String description = mainJsonObject.get("title").toString();
+                                        // trim string so it can fit inside the description field
+                                        description = description.substring(0, 40);
 
                                         // update the description text to match the new keywords
                                         ((EditText) binding.descriptionInput).setText(description);

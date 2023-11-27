@@ -1,6 +1,8 @@
 package com.example.inventorymanager.ui.addItem;
 
 import static android.app.Activity.RESULT_OK;
+
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -79,7 +81,10 @@ public class addItemFragment extends Fragment {
     private ImageView imageView2;
     private Button addImage2Button;
 
-    private static final int REQUEST_CODE = 22;
+    private static final int REQUEST_CAMERA_PERMISSION = 1;
+    private static final int REQUEST_CAMERA = 2;
+    private static final int REQUEST_GALLERY_PERMISSION = 3;
+    private static final int REQUEST_GALLERY = 4;
 
     /**
      * Generates the user interface of the fragment.
@@ -301,67 +306,112 @@ public class addItemFragment extends Fragment {
      *
      */
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            if (data != null && data.getExtras() != null) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                int imageCounter = localImagePaths.size(); // Get the current number of images
-
-                ImageView currentImageView;
-                Button currentAddImageButton;
-
-                // determine the appropriate ImageView to put our picture based on the counter
-                switch (imageCounter) {
-                    case 0:
-                        currentImageView = imageView0;
-                        currentAddImageButton = addImage0Button;
-                        break;
-                    case 1:
-                        currentImageView = imageView1;
-                        currentAddImageButton = addImage1Button;
-                        break;
-                    case 2:
-                        currentImageView = imageView2;
-                        currentAddImageButton = addImage2Button;
-                        break;
-                    default:
-                        // if we have more than 3 images (not possible for now tho)
-                        return;
-                }
-
-                // Set the photo to the current ImageView
-                currentImageView.setImageBitmap(photo);
-
-                // Update the localImagePaths list
-                String imagePath = saveImageLocally(photo, "image" + imageCounter + ".jpg");
-                localImagePaths.add(imagePath);
-
-                // Enable the "Add Image" button for the current image
-                currentAddImageButton.setEnabled(true);
-
-                // ENFORCING sequential image input
-                // and accounting for the case where user opens camera page and cancels without actually taking the pic
-                System.out.println("local image paths size: " + localImagePaths.size());
-                if (localImagePaths.size() == 0) {
-                    addImage0Button.setVisibility(View.VISIBLE);
-                } else if (localImagePaths.size() == 1) {
-                    addImage0Button.setVisibility(View.GONE);
-                    addImage1Button.setVisibility(View.VISIBLE);
-                } else if (localImagePaths.size() == 2) {
-                    addImage1Button.setVisibility(View.GONE);
-                    addImage2Button.setVisibility(View.VISIBLE);
-                } else if (localImagePaths.size() == 3) {
-                    addImage2Button.setVisibility(View.GONE);
-                }
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CAMERA) {
+                handleCameraResult(data);
+            } else if (requestCode == REQUEST_GALLERY) {
+                handleGalleryResult(data);
             }
-        }
-        else {
+        } else {
             Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show();
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
+
+    /**
+     * Handles the result from the camera activity. Takes the selected photo and converts it to
+     * Bitmap in order for it to be processed an inserted to a imageView
+     *
+     * @param data The Intent containing the result data from the camera activity.
+     */
+    private void handleCameraResult(Intent data) {
+        if (data != null && data.getExtras() != null) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            processImageResult(photo);
+        } else {
+            Toast.makeText(requireContext(), "Invalid Camera Data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Handles the result from the gallery activity. Takes the selected photo and converts it to
+     * Bitmap in order for it to be processed an inserted to a imageView
+     *
+     * @param data The Intent containing the result data from the gallery activity.
+     */
+    private void handleGalleryResult(Intent data) {
+        if (data != null && data.getData() != null) {
+            Uri selectedImageUri = data.getData();
+            try {
+                Bitmap photo = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImageUri);
+                processImageResult(photo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(requireContext(), "Invalid Gallery Data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Processes the result of selecting or capturing an image. Handles the flow of which
+     * imageView to insert the photo and handles the saving locally of the images
+     *
+     * @param photo The Bitmap representing the selected or captured image.
+     */
+    private void processImageResult(Bitmap photo) {
+        int imageCounter = localImagePaths.size(); // Get the current number of images
+
+        ImageView currentImageView;
+        Button currentAddImageButton;
+
+        // determine the appropriate ImageView to put our picture based on the counter
+        switch (imageCounter) {
+            case 0:
+                currentImageView = imageView0;
+                currentAddImageButton = addImage0Button;
+                break;
+            case 1:
+                currentImageView = imageView1;
+                currentAddImageButton = addImage1Button;
+                break;
+            case 2:
+                currentImageView = imageView2;
+                currentAddImageButton = addImage2Button;
+                break;
+            default:
+                // if we have more than 3 images (not possible for now tho)
+                return;
+        }
+
+        // Set the photo to the current ImageView
+        currentImageView.setImageBitmap(photo);
+
+        // Update the localImagePaths list
+        String imagePath = saveImageLocally(photo, "image" + imageCounter + ".jpg");
+        localImagePaths.add(imagePath);
+
+        // Enable the "Add Image" button for the current image
+        currentAddImageButton.setEnabled(true);
+
+        // ENFORCING sequential image input
+        // and accounting for the case where the user opens the camera page and cancels without actually taking the pic
+        System.out.println("local image paths size: " + localImagePaths.size());
+        if (localImagePaths.size() == 0) {
+            addImage0Button.setVisibility(View.VISIBLE);
+        } else if (localImagePaths.size() == 1) {
+            addImage0Button.setVisibility(View.GONE);
+            addImage1Button.setVisibility(View.VISIBLE);
+        } else if (localImagePaths.size() == 2) {
+            addImage1Button.setVisibility(View.GONE);
+            addImage2Button.setVisibility(View.VISIBLE);
+        } else if (localImagePaths.size() == 3) {
+            addImage2Button.setVisibility(View.GONE);
+        }
+    }
+
 
     /**
      * Helper method to save the image locally and return the path (where that image has been stored)
@@ -406,14 +456,18 @@ public class addItemFragment extends Fragment {
      * or capturing a photo
      */
     private void showImageOptionsDialog() {
+        // Obtain the fragment manager for handling fragments within this fragment
         FragmentManager fragmentManager = getChildFragmentManager();
+        // Create an instance of ImageSelectionFragment, which provides the image selection options
         ImageSelectionFragment imageOptionsFragment = new ImageSelectionFragment();
 
         imageOptionsFragment.setOnImageOptionClickListener(new ImageSelectionFragment.OnImageOptionClickListener() {
             @Override
             public void onOptionClick(int choice) {
+                // Handle the user's choice based on the selected option
                 if (choice == 1){
-                    // Gallery
+                    handleGalleryIntent();
+
                 } else if (choice == 2){
                      handleCameraIntent();
                 }
@@ -430,20 +484,42 @@ public class addItemFragment extends Fragment {
      */
     private void handleCameraIntent(){
         try {
+
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(requireActivity(), new String[]{
                         Manifest.permission.CAMERA
-                }, REQUEST_CODE);
+                }, REQUEST_CAMERA_PERMISSION);
+            }else {
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, REQUEST_CAMERA);
             }
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, REQUEST_CODE);
 
             } catch (SecurityException e) {
                 // Handle the exception, e.g., request the permission or show a message to the user.
                 e.printStackTrace(); // Log the exception for debugging purposes.
             }
     }
+
+    /**
+     * Handles the gallery intent by launching the gallery to allow the user to select from the
+     * photo gallery
+     */
+    private void handleGalleryIntent() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryIntent.setType("image/*");
+        startActivityForResult(galleryIntent, REQUEST_GALLERY);
+
+        // I tried implementing the permissions here but for some reason when I would check the permissions
+        // Nothing would pop up
+
+        // The gallery is also kind of buggy, randomly when I go to select some images Ill get a toast
+        // That I never made from the emulator saying "Error getting selected files" and in the photos app
+        // on the emulator I can't delete those pictures, I have a vid showing it
+
+    }
+
+
 
 
     /**

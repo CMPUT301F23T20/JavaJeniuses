@@ -180,6 +180,114 @@
                 android:hint="@string/comment_hint"
                 android:imeOptions="actionDone"
                 android:inputType="text"/>
+
+
+            <!-- Add images -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/image_constraint_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/image0Constraint"
+                    android:layout_width="115dp"
+                    android:layout_height="151dp"
+                    android:background="#A5A5A5"
+                    app:layout_constraintTop_toBottomOf="@id/galleryButton"
+                    app:layout_constraintHorizontal_bias="0.145"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/image1Constraint"
+                    >
+
+                    <ImageView
+                        android:id="@+id/itemImage0"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#A5A5A5"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/addImage0Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/image1Constraint"
+                    android:layout_width="115dp"
+                    android:layout_height="151dp"
+                    android:background="#A5A5A5"
+                    app:layout_constraintTop_toBottomOf="@id/galleryButton"
+                    app:layout_constraintHorizontal_bias="0.145"
+                    app:layout_constraintStart_toEndOf="@id/image0Constraint"
+                    app:layout_constraintEnd_toStartOf="@id/image2Constraint">
+
+                    <ImageView
+                        android:id="@+id/itemImage1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#A5A5A5"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/addImage1Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/image2Constraint"
+                    android:layout_width="115dp"
+                    android:layout_height="151dp"
+                    android:background="#A5A5A5"
+                    app:layout_constraintTop_toBottomOf="@id/galleryButton"
+                    app:layout_constraintHorizontal_bias="0.145"
+                    app:layout_constraintStart_toEndOf="@id/image1Constraint"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <ImageView
+                        android:id="@+id/itemImage2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#A5A5A5"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/addImage2Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

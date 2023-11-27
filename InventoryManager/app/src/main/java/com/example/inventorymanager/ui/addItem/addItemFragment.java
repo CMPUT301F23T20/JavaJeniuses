@@ -263,9 +263,9 @@ public class addItemFragment extends Fragment {
                                 System.out.print(url);
                             }
 
-                            // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asychronous
+                            // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asynchronous
                             // We have to wait until the url for the last image has been generated before taking the user back to the home page
-                            // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images linked to that item
+                            // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images for that item
                             if (finalIndex == this.localImagePaths.size() - 1) {
                                 Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, this.imageUrls);
                                 // Add the new item to the shared ViewModel
@@ -290,6 +290,9 @@ public class addItemFragment extends Fragment {
                 Toast.makeText(requireContext(), "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show(); // A pop-up message to ensure validity of input
             }
         });
+
+
+        // TODO: Delete functionality
 
         return root;
     }
@@ -415,8 +418,8 @@ public class addItemFragment extends Fragment {
 
     /**
      * Helper method to save the image locally and return the path (where that image has been stored)
-     * @param bitmap
-     * @param fileName
+     * @param bitmap The file's bitmap
+     * @param fileName What you want to name the file as
      * @return
      */
     private String saveImageLocally(Bitmap bitmap, String fileName) {

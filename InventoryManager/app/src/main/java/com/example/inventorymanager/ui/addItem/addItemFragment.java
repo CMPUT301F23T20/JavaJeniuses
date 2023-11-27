@@ -219,7 +219,6 @@ public class addItemFragment extends Fragment {
         // when you click the respective Add Image button, choose if you're gonna add from gallery or take a pic with camera
         addImage0Button.setOnClickListener( v -> {
             showImageOptionsDialog();
-
         });
 
         addImage1Button.setOnClickListener( v -> {
@@ -307,23 +306,24 @@ public class addItemFragment extends Fragment {
 
         // User should be able to delete a picture after they have taken it but haven't submitted the "Add item" form
         deleteImage0Button.setOnClickListener( v -> {
-            // update localImagePaths
             updateLocalImagePaths(0);
         });
 
         deleteImage1Button.setOnClickListener( v -> {
-            // update localImagePaths
             updateLocalImagePaths(1);
         });
 
         deleteImage2Button.setOnClickListener( v -> {
-            // update localImagePaths
             updateLocalImagePaths(2);
         });
 
         return root;
     }
 
+    /**
+     * Updating our local image paths arrayList
+     * @param imageToDelete
+     */
     void updateLocalImagePaths(int imageToDelete){
 
         if (imageToDelete >= 0 && imageToDelete < localImagePaths.size()) {
@@ -332,7 +332,6 @@ public class addItemFragment extends Fragment {
 
         // Determine the appropriate ImageView to update based on the counter
         displayImages(localImagePaths.size());
-
     }
 
 
@@ -431,7 +430,7 @@ public class addItemFragment extends Fragment {
         // Set the photo to the current ImageView
         currentImageView.setImageBitmap(photo);
 
-        // Update the localImagePaths list
+        // Create a unique ID for each image file and Update the localImagePaths list
         String uniqueId = UUID.randomUUID().toString();
         String imagePath = saveImageLocally(photo, "image" + uniqueId + ".jpg");
         if (imageCounter < localImagePaths.size()) {
@@ -455,7 +454,7 @@ public class addItemFragment extends Fragment {
     }
 
 
-    // code to render our images (during add and delete operations)
+    // Rendering our images and buttons (during add and delete operations)
     void displayImages(int imageCounter) {
         if (imageCounter == 0) {
             addImage0Button.setVisibility(View.VISIBLE);
@@ -486,7 +485,6 @@ public class addItemFragment extends Fragment {
             imageView2.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(2)));
         }
     }
-
 
     /**
      * Helper method to save the image locally and return the path (where that image has been stored)

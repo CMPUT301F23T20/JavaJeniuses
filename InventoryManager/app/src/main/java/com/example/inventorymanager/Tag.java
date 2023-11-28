@@ -91,4 +91,10 @@ public class Tag implements Parcelable{
             return new Tag[size];
         }
     };
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.getText();
+    }
 }

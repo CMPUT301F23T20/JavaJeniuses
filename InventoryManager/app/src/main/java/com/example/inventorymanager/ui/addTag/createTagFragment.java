@@ -102,6 +102,7 @@ public class createTagFragment extends Fragment {
 
         // add colour in a Hashmap to make into a field
         Map<String, Object> addTagColour = new HashMap<>();
+        addTagColour.put("name", tagName);
         addTagColour.put("colour", tagColour);
 
         // add tag colour as a field to the database, updates the colour of a tag that already exists

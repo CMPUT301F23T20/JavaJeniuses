@@ -30,6 +30,13 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    // for getting sample image files
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {

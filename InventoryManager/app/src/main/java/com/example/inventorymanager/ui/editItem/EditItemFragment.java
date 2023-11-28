@@ -394,6 +394,7 @@ public class EditItemFragment extends Fragment {
                             public void onSuccess(Text visionText) {
                                 // fetch the text read and store it
                                 String resultText = visionText.getText();
+                                resultText = resultText.substring(0, resultText.indexOf("\n"));
                                 // update the description text to match the new keywords
                                 ((EditText) binding.serialNumberInput).setText(resultText);
                                 // inform user of successful operation

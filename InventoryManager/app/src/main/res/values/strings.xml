@@ -13,7 +13,7 @@
     <string name="purchase_date_hint">Enter date</string>
 
     <string name="description">Brief Description</string>
-    <string name="description_hint">Enter name of item</string>
+    <string name="description_hint">Enter description</string>
 
     <string name="make_label">Make</string>
     <string name="make_hint">Enter Make</string>

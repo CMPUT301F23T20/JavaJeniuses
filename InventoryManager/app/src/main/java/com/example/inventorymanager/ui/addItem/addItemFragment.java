@@ -244,59 +244,74 @@ public class addItemFragment extends Fragment {
                 String estimateValue = estimatedValueInput.getText().toString();
                 String comment = commentInput.getText().toString();
 
-                // we have to upload all the item's pictures to Firebase cloud storage before creating an item and adding that to Firestore DB
-                for (int i = 0; i < this.localImagePaths.size(); i++) {
+                // if there are images to add
+                if (this.localImagePaths.size() > 0) {
+                    // we have to upload all the item's pictures to Firebase cloud storage before creating an item and adding that to Firestore DB
+                    for (int i = 0; i < this.localImagePaths.size(); i++) {
 
-                    // fetch the path to the image
-                    String localPath = this.localImagePaths.get(i);
+                        // fetch the path to the image
+                        String localPath = this.localImagePaths.get(i);
 
-                    // Create a unique name for each image
-                    String imageName = "firebase_" + itemName + "_image" + i + ".jpg";
+                        // Create a unique name for each image
+                        String imageName = "firebase_" + itemName + "_image" + i + ".jpg";
 
-                    // Create a new StorageReference for each image
-                    StorageReference imageRef = imagesRef.child(imageName);
+                        // Create a new StorageReference for each image
+                        StorageReference imageRef = imagesRef.child(imageName);
 
-                    // Create a new file from the image and Store to Firebase Cloud Storage
-                    UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localPath)));
+                        // Create a new file from the image and Store to Firebase Cloud Storage
+                        UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localPath)));
 
-                    // to check which item we're waiting to send to firebase
-                    int finalIndex = i;
+                        // to check which item we're waiting to send to firebase
+                        int finalIndex = i;
 
-                    // Register observers to listen for when the upload is done or if it fails
-                    uploadTask.addOnSuccessListener(taskSnapshot -> {
-                        // If Firebase upload was successful, download the URL to the file
-                        imageRef.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
-                            String imageUrl = downloadUrl.toString();
-                            System.out.println(imageUrl);
-                            this.imageUrls.add(imageUrl);
+                        // Register observers to listen for when the upload is done or if it fails
+                        uploadTask.addOnSuccessListener(taskSnapshot -> {
+                            // If Firebase upload was successful, download the URL to the file
+                            imageRef.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
+                                String imageUrl = downloadUrl.toString();
+                                System.out.println(imageUrl);
+                                this.imageUrls.add(imageUrl);
 
-                            System.out.println("before printing image urls");
-                            for (String url: imageUrls){
-                                System.out.print(url);
-                            }
+                                System.out.println("before printing image urls");
+                                for (String url : imageUrls) {
+                                    System.out.print(url);
+                                }
 
-                            // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asynchronous
-                            // We have to wait until the url for the last image has been generated before taking the user back to the home page
-                            // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images for that item
-                            if (finalIndex == this.localImagePaths.size() - 1) {
-                                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, this.imageUrls);
-                                // Add the new item to the shared ViewModel
-                                itemViewModel.addItem(newItem);
+                                // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asynchronous
+                                // We have to wait until the url for the last image has been generated before taking the user back to the home page
+                                // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images for that item
+                                if (finalIndex == this.localImagePaths.size() - 1) {
+                                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, this.imageUrls);
+                                    // Add the new item to the shared ViewModel
+                                    itemViewModel.addItem(newItem);
 
-                                // Navigate back to the home fragment
-                                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                                navController.navigate(R.id.navigation_home);
+                                    // Navigate back to the home fragment
+                                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                                    navController.navigate(R.id.navigation_home);
 
-                                ItemUtility.clearTextFields(itemNameInput, purchaseDateInput ,descriptionInput,
-                                        makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
-                            }
+                                    ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
+                                            makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+                                }
+                            });
+                        }).addOnFailureListener(exception -> {
+                            // If upload was unsuccessful
+                            System.out.println("Upload to Firebase was unsuccessful");
                         });
-                    }).addOnFailureListener(exception -> {
-                        // If upload was unsuccessful
-                        System.out.println("Upload to Firebase was unsuccessful");
-                    });
-                }
+                    }
+                } else {
+                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, null);
+                    // Add the new item to the shared ViewModel
+                    itemViewModel.addItem(newItem);
 
+                    System.out.println("Just after edit item is called");
+
+                    // Navigate back to the home fragment
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                    navController.navigate(R.id.navigation_home);
+
+                    ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
+                            makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+                }
                 // if user didn't populate the add item fields as expected
             } else {
                 Toast.makeText(requireContext(), "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show(); // A pop-up message to ensure validity of input
@@ -454,8 +469,10 @@ public class addItemFragment extends Fragment {
     }
 
 
-    // Rendering our images and buttons (during add and delete operations)
-    void displayImages(int imageCounter) {
+    /**
+     * Rendering our images and buttons (during add and delete operations)
+     * @param imageCounter The number of images you want to render
+     */    void displayImages(int imageCounter) {
         if (imageCounter == 0) {
             addImage0Button.setVisibility(View.VISIBLE);
             deleteImage0Button.setVisibility(View.GONE);

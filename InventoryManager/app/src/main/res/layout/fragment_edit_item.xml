@@ -176,18 +176,19 @@
                 android:id="@+id/commentInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="100dp"
+                android:layout_marginBottom="50dp"
                 android:hint="@string/comment_hint"
                 android:imeOptions="actionDone"
                 android:inputType="text"/>
 
 
-            <!-- Add images -->
+            <!-- Edit images -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/image_constraint_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp">
+                android:layout_marginBottom="50dp"
+                app:layout_constraintTop_toBottomOf="@id/commentInput" >
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -195,11 +196,24 @@
                     android:layout_width="115dp"
                     android:layout_height="151dp"
                     android:background="#A5A5A5"
-                    app:layout_constraintTop_toBottomOf="@id/galleryButton"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_bias="0.145"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/image1Constraint"
                     >
+
+                    <Button
+                        android:id="@+id/deleteImage0Button"
+                        android:layout_width="30dp"
+                        android:layout_height="29dp"
+                        android:background="@drawable/baseline_cancel_24"
+                        android:elevation="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <ImageView
                         android:id="@+id/itemImage0"
@@ -208,14 +222,16 @@
                         android:background="#A5A5A5"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <Button
                         android:id="@+id/addImage0Button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+"
+                        android:layout_width="48dp"
+                        android:layout_height="47dp"
+                        android:background="@drawable/baseline_add_photo_alternate_24"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -228,10 +244,23 @@
                     android:layout_width="115dp"
                     android:layout_height="151dp"
                     android:background="#A5A5A5"
-                    app:layout_constraintTop_toBottomOf="@id/galleryButton"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_bias="0.145"
                     app:layout_constraintStart_toEndOf="@id/image0Constraint"
                     app:layout_constraintEnd_toStartOf="@id/image2Constraint">
+
+                    <Button
+                        android:id="@+id/deleteImage1Button"
+                        android:layout_width="30dp"
+                        android:layout_height="29dp"
+                        android:background="@drawable/baseline_cancel_24"
+                        android:elevation="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <ImageView
                         android:id="@+id/itemImage1"
@@ -245,9 +274,9 @@
 
                     <Button
                         android:id="@+id/addImage1Button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+"
+                        android:layout_width="48dp"
+                        android:layout_height="47dp"
+                        android:background="@drawable/baseline_add_photo_alternate_24"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -260,10 +289,23 @@
                     android:layout_width="115dp"
                     android:layout_height="151dp"
                     android:background="#A5A5A5"
-                    app:layout_constraintTop_toBottomOf="@id/galleryButton"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_bias="0.145"
                     app:layout_constraintStart_toEndOf="@id/image1Constraint"
                     app:layout_constraintEnd_toEndOf="parent">
+
+                    <Button
+                        android:id="@+id/deleteImage2Button"
+                        android:layout_width="30dp"
+                        android:layout_height="29dp"
+                        android:background="@drawable/baseline_cancel_24"
+                        android:elevation="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <ImageView
                         android:id="@+id/itemImage2"
@@ -277,9 +319,9 @@
 
                     <Button
                         android:id="@+id/addImage2Button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="+"
+                        android:layout_width="48dp"
+                        android:layout_height="47dp"
+                        android:background="@drawable/baseline_add_photo_alternate_24"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

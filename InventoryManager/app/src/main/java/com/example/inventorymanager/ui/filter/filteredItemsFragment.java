@@ -103,6 +103,18 @@ public class filteredItemsFragment extends Fragment {
             }
         });
 
+        // sort items from filtered items page
+        Button sortButton = root.findViewById(R.id.sort_button);
+        sortButton.setOnClickListener(v -> {
+            // send bundle with the list of items
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("items", items);
+
+            // navigate to the sort options fragment
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.sortOptionsFragment, bundle);
+        });
+
         return root;
     }
 

@@ -37,6 +37,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.inventorymanager.ImageSelectionFragment;
+import com.example.inventorymanager.ImageUtility;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import android.Manifest;
@@ -80,6 +81,7 @@ public class addItemFragment extends Fragment {
     private FragmentAddItemBinding binding;
     private ArrayList<String> localImagePaths = new ArrayList<String>();
     private ArrayList<String> imageUrls = new ArrayList<String>();
+    private ImageUtility imageUtility;
     private ImageView imageView0;
     private Button addImage0Button;
     private Button deleteImage0Button;
@@ -91,10 +93,9 @@ public class addItemFragment extends Fragment {
     private Button addImage2Button;
     private Button deleteImage2Button;
 
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_CAMERA = 2;
-    private static final int REQUEST_GALLERY_PERMISSION = 3;
-    private static final int REQUEST_GALLERY = 4;
+    private static final int REQUEST_GALLERY = 3;
+
 
     /**
      * Generates the user interface of the fragment.
@@ -222,17 +223,11 @@ public class addItemFragment extends Fragment {
         deleteImage2Button.setVisibility(View.GONE);
 
         // when you click the respective Add Image button, choose if you're gonna add from gallery or take a pic with camera
-        addImage0Button.setOnClickListener( v -> {
-            showImageOptionsDialog();
-        });
+        imageUtility = new ImageUtility(this);
+        addImage0Button.setOnClickListener(v -> imageUtility.showImageOptionsDialog());
+        addImage1Button.setOnClickListener(v -> imageUtility.showImageOptionsDialog());
+        addImage2Button.setOnClickListener(v -> imageUtility.showImageOptionsDialog());
 
-        addImage1Button.setOnClickListener( v -> {
-            showImageOptionsDialog();
-        });
-
-        addImage2Button.setOnClickListener( v -> {
-            showImageOptionsDialog();
-        });
 
 
         // add effect of the add button when pressed (add this item to the list)
@@ -570,77 +565,6 @@ public class addItemFragment extends Fragment {
             return ""; // Return an empty string if there's an error
         }
     }
-
-    /**
-     * Displays a dialog fragment for selecting image options, such as choosing from the gallery
-     * or capturing a photo
-     */
-    private void showImageOptionsDialog() {
-        // Obtain the fragment manager for handling fragments within this fragment
-        FragmentManager fragmentManager = getChildFragmentManager();
-        // Create an instance of ImageSelectionFragment, which provides the image selection options
-        ImageSelectionFragment imageOptionsFragment = new ImageSelectionFragment();
-
-        imageOptionsFragment.setOnImageOptionClickListener(new ImageSelectionFragment.OnImageOptionClickListener() {
-            @Override
-            public void onOptionClick(int choice) {
-                // Handle the user's choice based on the selected option
-                if (choice == 1){
-                    handleGalleryIntent();
-
-                } else if (choice == 2){
-                     handleCameraIntent();
-                }
-            }
-        });
-
-        imageOptionsFragment.show(fragmentManager, "ImageOptionsFragment");
-    }
-
-
-    /**
-     * Handles the camera intent by checking for CAMERA permission, requesting it if necessary,
-     * and launching the camera application to capture an image.
-     */
-    private void handleCameraIntent(){
-        try {
-
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{
-                        Manifest.permission.CAMERA
-                }, REQUEST_CAMERA_PERMISSION);
-            }else {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, REQUEST_CAMERA);
-            }
-
-            } catch (SecurityException e) {
-                // Handle the exception, e.g., request the permission or show a message to the user.
-                e.printStackTrace(); // Log the exception for debugging purposes.
-            }
-    }
-
-    /**
-     * Handles the gallery intent by launching the gallery to allow the user to select from the
-     * photo gallery
-     */
-    private void handleGalleryIntent() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent, REQUEST_GALLERY);
-
-        // I tried implementing the permissions here but for some reason when I would check the permissions
-        // Nothing would pop up
-
-        // The gallery is also kind of buggy, randomly when I go to select some images Ill get a toast
-        // That I never made from the emulator saying "Error getting selected files" and in the photos app
-        // on the emulator I can't delete those pictures, I have a vid showing it
-
-    }
-
-
-
 
     /**
      * Kills the fragment.

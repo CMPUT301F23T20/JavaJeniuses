@@ -221,6 +221,7 @@ public class ItemViewModel extends ViewModel {
 
     /**
      * Nonblocking method that deletes all the references of the deleted item's image from Firebase Cloud Storage
+     * It exploits Firebase asynchronicity by deleting the references in a separate process
      * @param imageUris URIs of the images to be deleted
      */
     void deleteImagesFromFirebase(ArrayList<String> imageUris){

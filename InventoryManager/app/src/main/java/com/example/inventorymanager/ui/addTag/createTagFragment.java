@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -14,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.FragmentAddTagBinding;
 import com.example.inventorymanager.databinding.FragmentCreateTagBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,9 +41,6 @@ public class createTagFragment extends Fragment {
 
     private FragmentCreateTagBinding binding;
     private String tagColour;
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private static CollectionReference publicTagsRef;
-    private static final String TAG = "AddTag";
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -66,19 +66,15 @@ public class createTagFragment extends Fragment {
         greenButton.setOnClickListener(v -> { tagColour = "green"; });
         yellowButton.setOnClickListener(v -> { tagColour = "yellow"; });
 
+        addTagViewModel publicTagViewModel = new ViewModelProvider(requireActivity()).get(addTagViewModel.class);
+
         saveButton.setOnClickListener( v -> {
             String tagName = tagNameInput.getText().toString();
-            ArrayList<String> tagInfo = new ArrayList<String>();
-            tagInfo.add(tagName);
-            tagInfo.add(tagColour);
 
-            addTag(tagName);
-
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList("tagInfo", tagInfo);
+            publicTagViewModel.addTag(tagName, tagColour);
 
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.addTagFragment, bundle);
+            navController.navigate(R.id.addTagFragment);
         });
 
         cancelButton.setOnClickListener( v -> {
@@ -87,38 +83,6 @@ public class createTagFragment extends Fragment {
         });
 
         return root;
-    }
-
-    private void addTag(String tagName) {
-        // get the user from firebase
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        // set the tags database accessed to be for this one user
-        publicTagsRef = db.collection("users")
-                .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
-                .collection("tags");
-
-        // add colour in a Hashmap to make into a field
-        Map<String, Object> addTagColour = new HashMap<>();
-        addTagColour.put("name", tagName);
-        addTagColour.put("colour", tagColour);
-
-        // add tag colour as a field to the database, updates the colour of a tag that already exists
-        publicTagsRef.document(tagName)
-                .set(addTagColour, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                    }
-                });
     }
 
     /**

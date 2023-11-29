@@ -57,8 +57,6 @@ import java.util.Locale;
 public class addTagFragment extends Fragment {
 
     private ArrayList<Item> items;
-    private ItemViewModel itemViewModel;
-    private String tagName, tagColour;
     private ArrayList<String> tagItems = new ArrayList<>();
     private String selectedItem;
     private FragmentAddTagBinding binding;
@@ -81,8 +79,9 @@ public class addTagFragment extends Fragment {
 //        itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 //
         // unpack all items sent to this fragment
-        items = getArguments().getParcelableArrayList("items");
-//        items = itemViewModel.getAllItems();
+        if (getArguments() != null) {
+            items = getArguments().getParcelableArrayList("items");
+        }
 
         Button createTagButton = binding.createTagButton;
 
@@ -92,9 +91,7 @@ public class addTagFragment extends Fragment {
             navController.navigate(R.id.createTagFragment);
         });
 
-
         autoCompleteTextView = binding.autocompleteTextview;
-//        getTags();
 
         // create a listener so that the items being displayed automatically update based on database changes
         dataObserver = new Observer<ArrayList<Tag>>() {
@@ -122,46 +119,20 @@ public class addTagFragment extends Fragment {
 
         getTags();
 
-//        // Check if the fragment has received the tagInfo bundle
-//        if (getArguments() != null && getArguments().containsKey("tagInfo")) {
-//            tagInfo = getArguments().getStringArrayList("tagInfo");
-//            if (tagInfo != null && tagInfo.size() == 2) {
-//                tagName = tagInfo.get(0);
-//                tagColour = tagInfo.get(1);
-//
-//                Tag tag = new Tag(tagName, tagColour);
-//                addTagToGlobalList(tag);
-//
-//                tagItems.add(tagName);
-//                adapterItems.notifyDataSetChanged();
-//            }
-//        }
-
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedItem = parent.getItemAtPosition(position).toString();
-//                Log.d("DEBUG", Integer.toString(position));
-//                Log.d("DEBUG", selectedItem);
                 selectedTag = findTagByName(selectedItem);
 
             }
         });
 
-        // Create an instance of the shared ViewModel that manages the list of items
-        itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
-
-//        // unpack all items sent to this fragment
-//        items = getArguments().getParcelableArrayList("items");
-//        items = itemViewModel.getAllItems();
-
         Button addTagButton = binding.addTagButton;
         addTagButton.setOnClickListener(v -> {
             if (items != null && selectedItem != null) {
                 for (Item item : items) {
-//                    Log.d("DEBUG", selectedTag.toString());
                     item.addTag(selectedTag);
-//                    selectedTag.addItem(item);
             }}
 
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
@@ -235,25 +206,12 @@ public class addTagFragment extends Fragment {
     public void getTags() {
         fetchTags();
 
-//        tagItems = new ArrayList<>();
-
-//        Tag tag1 = new Tag("Tag 1", "red");
-//        Tag tag2 = new Tag("Tag 2", "blue");
-
         ArrayList<Tag> tags = getTagsLiveData().getValue();
         // check which item corresponds to the given key and return it
         for (int i = 0; i < tags.size(); i++) {
             addTagToGlobalList(tags.get(i));
             tagItems.add(tags.get(i).getText());
         }
-
-//        adapterItems.notifyDataSetChanged();
-
-//        addTagToGlobalList(tag1);
-//        addTagToGlobalList(tag2);
-//
-//        tagItems.add(tag1.getText());
-//        tagItems.add(tag2.getText());
     }
 
 

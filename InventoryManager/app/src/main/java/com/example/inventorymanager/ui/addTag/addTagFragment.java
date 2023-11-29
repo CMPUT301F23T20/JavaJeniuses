@@ -77,11 +77,12 @@ public class addTagFragment extends Fragment {
         binding = FragmentAddTagBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Create an instance of the shared ViewModel that manages the list of items
-        itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
-
+//        // Create an instance of the shared ViewModel that manages the list of items
+//        itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+//
         // unpack all items sent to this fragment
         items = getArguments().getParcelableArrayList("items");
+//        items = itemViewModel.getAllItems();
 
         Button createTagButton = binding.createTagButton;
 
@@ -140,17 +141,27 @@ public class addTagFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedItem = parent.getItemAtPosition(position).toString();
+//                Log.d("DEBUG", Integer.toString(position));
+//                Log.d("DEBUG", selectedItem);
                 selectedTag = findTagByName(selectedItem);
+
             }
         });
 
+        // Create an instance of the shared ViewModel that manages the list of items
+        itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+
+//        // unpack all items sent to this fragment
+//        items = getArguments().getParcelableArrayList("items");
+//        items = itemViewModel.getAllItems();
+
         Button addTagButton = binding.addTagButton;
         addTagButton.setOnClickListener(v -> {
-
             if (items != null && selectedItem != null) {
                 for (Item item : items) {
+//                    Log.d("DEBUG", selectedTag.toString());
                     item.addTag(selectedTag);
-                    selectedTag.addItem(item);
+//                    selectedTag.addItem(item);
             }}
 
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
@@ -173,7 +184,10 @@ public class addTagFragment extends Fragment {
         }
     }
     private Tag findTagByName(String tagName) {
-        for (Tag tag : allTags) {
+//        Log.d("DEBUG", "HERE");
+        ArrayList<Tag> myTags= getTagsLiveData().getValue();
+        for (Tag tag : myTags) {
+//            Log.d("DEBUG", tag.getText());
             if (tag.getText().equals(tagName)) {
                 return tag;
             }

@@ -40,7 +40,6 @@ public class createTagFragment extends Fragment {
     private String tagColour;
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference publicTagsRef;
-
     private static final String TAG = "AddTag";
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

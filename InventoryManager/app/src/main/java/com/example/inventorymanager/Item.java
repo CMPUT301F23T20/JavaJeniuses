@@ -7,8 +7,22 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +30,7 @@ import java.util.Locale;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * A representation of an item within the context of an inventory management system.
@@ -43,7 +58,9 @@ public class Item implements Parcelable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
-    private ArrayList<Tag> tags;
+    private ArrayList<Tag> tags, itemTags;
+    private static final String TAG = "PrivateAddTag";
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     /**
      * Creates an Item() object with the fields passed in.
@@ -229,9 +246,39 @@ public class Item implements Parcelable {
 
     // Methods for handling tags
     public void addTag(Tag tag) {
-        if (!tags.contains(tag)) {
-            tags.add(tag);
-        }
+//        if (!tags.contains(tag)) {
+//            tags.add(tag);
+//        }
+
+        // get the user from firebase
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        // set the tags database accessed to be for this one user
+        CollectionReference privateTagsRef = db.collection("users")
+                .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
+                .collection("items").document(itemName).collection("tags");
+
+        // add colour in a Hashmap to make into a field
+        Map<String, Object> addTagColour = new HashMap<>();
+        addTagColour.put("name", tag.getText());
+        addTagColour.put("colour", tag.getColourName());
+
+        // add tag colour as a field to the database, updates the colour of a tag that already exists
+        privateTagsRef.document(tag.getText())
+                .set(addTagColour, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
     }
 
     public void removeTag(Tag tag) {
@@ -239,7 +286,42 @@ public class Item implements Parcelable {
     }
 
     public ArrayList<Tag> getTags() {
-        return tags;
+
+        // get the user from firebase
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        // set the tags database accessed to be for this one user
+        CollectionReference privateTagsRef = db.collection("users")
+                .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
+                .collection("items").document(itemName).collection("tags");
+
+//        // query database to get all items indiscriminately
+        privateTagsRef.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            // fetch the results of the blank query
+                            QuerySnapshot rawData = task.getResult();
+                            List<DocumentSnapshot> cleanedData = rawData.getDocuments();
+                            // iterate through fetched documents and make an item for each
+                            ArrayList<Tag> myTags = new ArrayList<>();
+                            for (int i = 0; i < cleanedData.size(); i++) {
+                                DocumentSnapshot rawTag = cleanedData.get(i);
+                                // translate database format to the Item class
+                                Tag cleanedTag = new Tag(
+                                        rawTag.getString("name"),
+                                        rawTag.getString("colour")
+                                );
+                                myTags.add(cleanedTag);
+                            }
+                            itemTags = myTags;
+                        }
+                    }
+                });
+        return itemTags;
+
     }
 
 //    public void setTags(ArrayList<Tag> tags) {

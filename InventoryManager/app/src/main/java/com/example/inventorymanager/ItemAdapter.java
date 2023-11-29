@@ -2,6 +2,7 @@ package com.example.inventorymanager;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,6 +86,8 @@ public class ItemAdapter extends ArrayAdapter{
         purchaseDate.setText(item.getPurchaseDate());
         checkBox.setChecked(isChecked.get(item.getItemName()));
 
+
+
         // add effect of clicking on checkbox (toggling whether the item is selected)
         checkBox.setOnClickListener(v -> {
             // toggle the state of the check box
@@ -93,7 +96,10 @@ public class ItemAdapter extends ArrayAdapter{
         });
 
         tags = item.getTags();
+//        Log.d("DEBUG", tags.get(0).getText());
         if (tags != null && !tags.isEmpty()) {
+//            Log.d("DEBUG", tags.get(0).toString());
+//            Log.d("DEBUG", "NOT HERE");
             tag = tags.get(0);
             String text = tag.getText();
             String colour = tag.getColour();

@@ -14,6 +14,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.checkerframework.checker.units.qual.A;
 
@@ -202,9 +203,11 @@ public class ItemViewModel extends ViewModel {
         // get the current items being tracked
         fetchItems();
         ArrayList<Item> items = getItemsLiveData().getValue();
+
         // find and delete the item corresponding to the given search key
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getItemName().equals(key)) {
+                deleteImagesFromFirebase(items.get(i).getImageUrls());
                 // remove item locally and from the database
                 items.remove(i);
                 itemsDB.document(key).delete();
@@ -215,6 +218,24 @@ public class ItemViewModel extends ViewModel {
             }
         }
     }
+
+    /**
+     * Nonblocking method that deletes all the references of the deleted item's image from Firebase Cloud Storage
+     * @param imageUris URIs of the images to be deleted
+     */
+    void deleteImagesFromFirebase(ArrayList<String> imageUris){
+        for (String uri : imageUris){
+            // convert the URI to a StorageReference
+            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(uri);
+
+            storageRef.delete().addOnSuccessListener(aVoid -> {
+                System.out.println(uri + " deleted successfully");
+            }).addOnFailureListener(exception -> {
+                System.out.println(uri + " delete unsuccessful");
+            });
+        }
+    }
+
 
     /**
      * Checks whether a proposed item name is legal or not.

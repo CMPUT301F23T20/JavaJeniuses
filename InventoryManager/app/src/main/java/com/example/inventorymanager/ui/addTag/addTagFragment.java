@@ -75,8 +75,6 @@ public class addTagFragment extends Fragment {
         binding = FragmentAddTagBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-//        // Create an instance of the shared ViewModel that manages the list of items
-//        itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 //
         // unpack all items sent to this fragment
         if (getArguments() != null) {

@@ -8,14 +8,11 @@ import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -27,7 +24,6 @@ import androidx.navigation.Navigation;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +37,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.inventorymanager.ImageSelectionFragment;
 import com.example.inventorymanager.Item;
@@ -49,26 +44,22 @@ import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentEditItemBinding;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 
 /**
  * Shows the details of a single item and allows a user to edit these details.
@@ -81,7 +72,9 @@ import com.bumptech.glide.request.transition.Transition;
 public class EditItemFragment extends Fragment {
 
     private FragmentEditItemBinding binding;
-    private ArrayList<String> imageLinks = new ArrayList<>();
+    private ArrayList<String> imagePaths = new ArrayList<>(); // local paths
+    private ArrayList<String> tempList = new ArrayList<String>(); // A temporary list to store our generated urls
+
 
     private ImageView imageView0;
     private Button addImage0Button;
@@ -118,7 +111,7 @@ public class EditItemFragment extends Fragment {
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
-        // get the FirebaseStorage instance
+        // get the Firebase Storage instance
         StorageReference storageRef = itemViewModel.storage.getReference();
         StorageReference imagesRef = storageRef.child("itemImages");
 
@@ -171,11 +164,10 @@ public class EditItemFragment extends Fragment {
         estimatedValueInput.setText(item.getEstimatedValue());
         commentInput.setText(item.getComment());
 
-        // TODO: Convert all links to local paths
         convertUrlsToLocalPaths(item.getImageUrls());
-        displayImages(this.imageLinks.size());
-        System.out.println(this.imageLinks.size());
-        System.out.println(this.imageLinks);
+        // render the item's images
+        displayImages(this.imagePaths.size());
+        System.out.println("Entering edit fragment" + this.imagePaths.size());
 
         purchaseDateInput.setOnClickListener(v -> {
             Calendar selectedDate = Calendar.getInstance(); // Create a Calendar instance for the current date
@@ -245,7 +237,7 @@ public class EditItemFragment extends Fragment {
             return false;
         });
 
-        // IMAGE FUNCTIONS
+        // IMAGE FUNCTIONALITY
         // when you click the respective Add Image button, choose if you're gonna add from gallery or take a pic with camera
         addImage0Button.setOnClickListener( v -> {
             showImageOptionsDialog();
@@ -286,71 +278,64 @@ public class EditItemFragment extends Fragment {
                 String estimateValue = estimatedValueInput.getText().toString();
                 String comment = commentInput.getText().toString();
 
-                // We should plan to optimize this later but for the project requirements, we should be good for now
-                // we have about 5GB on the cloud and 1 pic is ~250kb so thats about 100,000 pics
-                // TODO after meeting requirements: Delete the existing pics from firestore to avoid clogging up our storage
-
                 // if there are images to add
-                if (this.imageLinks.size() > 0) {
-                    // we have to upload all the item's pictures to Firebase cloud storage before creating an item and adding that to Firestore DB
-                    ArrayList<String> tempList = new ArrayList<String>(); // A temporary list to store our generated urls
-                    for (int i = 0; i < this.imageLinks.size(); i++) {
+                if (this.imagePaths.size() > 0) {
+                    // we have to upload all the item's pictures to Firebase cloud storage before creating an item and editing that in Firestore DB
 
+                    // store a copy of all our uploadTasks
+                    // will use to confirm if all pics have been uploaded successfully
+                    List<Task<Uri>> uploadTasks = new ArrayList<>();
+
+                    System.out.println("line 293, image paths size:::: " + imagePaths.size());
+                    for (int i = 0; i < this.imagePaths.size(); i++) {
                         // fetch the path to the image
-                        String localPath = this.imageLinks.get(i);
+                        String localPath = this.imagePaths.get(i);
 
                         // Create a unique name for each image
-                        String imageName = "firebase_" + itemName + "_image" + i + ".jpg";;
+                        String imageName = "firebase_" + itemName + "_image" + i + ".jpg";
 
                         // Create a new StorageReference for each image
                         StorageReference imageRef = imagesRef.child(imageName);
 
-                        // Create a new file from the image and Store to Firebase Cloud Storage
                         UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localPath)));
 
-                        // to check which item we're waiting to send to firebase
-                        int finalIndex = i;
-
-                        // Register observers to listen for when the upload is done or if it fails
-                        uploadTask.addOnSuccessListener(taskSnapshot -> {
-                            // If Firebase upload was successful, download the URL to the file
-                            imageRef.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
-                                String imageUrl = downloadUrl.toString();
-//                            System.out.println(imageUrl);
-                                tempList.add(imageUrl);
-
-                                System.out.println("Under save button: before printing image urls");
-                                System.out.println();
-                                System.out.println(imageLinks.size());
-                                for (String url : imageLinks) {
-                                    System.out.print(url);
-                                    System.out.println();
-                                }
-
-                                // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asynchronous
-                                // We have to wait until the url for the last image has been generated before taking the user back to the home page
-                                // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images for that item
-                                if (finalIndex == this.imageLinks.size() - 1) {
-                                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, tempList);
-                                    // Add the new item to the shared ViewModel
-                                    itemViewModel.editItem(key, newItem);
-
-                                    System.out.println("Just after edit item is called");
-
-                                    // Navigate back to the home fragment
-                                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                                    navController.navigate(R.id.navigation_home);
-
-                                    ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
-                                            makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
-                                }
-                            });
-                        }).addOnFailureListener(exception -> {
-                            // If upload was unsuccessful
-                            System.out.println("Upload to Firebase was unsuccessful");
-                        });
+                        // Register the task to the list
+                        uploadTasks.add(uploadTask.continueWithTask(task -> {
+                            if (!task.isSuccessful()) {
+                                throw Objects.requireNonNull(task.getException());
+                            }
+                            return imageRef.getDownloadUrl();
+                        }));
                     }
+
+                    // Wait for all tasks to complete
+                    // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asynchronous
+                    // We have to wait until the url for the last image has been generated before taking the user back to the home page
+                    // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images for that item
+                    Tasks.whenAllSuccess(uploadTasks).addOnSuccessListener(results -> {
+                        // Convert List<Uri> to ArrayList<String> (Our default data structure for imageUrls)
+                        ArrayList<String> imageUrls = new ArrayList<>();
+                        for (Object uri : results) {
+                            imageUrls.add(uri.toString());
+                        }
+
+                        System.out.println("line 326, url size:::: " + imageUrls.size());
+
+                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, imageUrls);
+                        itemViewModel.editItem(key, newItem);
+
+                        // Navigate back to the home fragment
+                        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                        navController.navigate(R.id.navigation_home);
+
+                        ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
+                                makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+                    }).addOnFailureListener(exception -> {
+                        // Handle failure
+                        System.out.println("One or more image uploads failed");
+                    });
                 }
+                // if there are no pics to add
                 else {
                     Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, null);
                     // Add the new item to the shared ViewModel
@@ -365,7 +350,7 @@ public class EditItemFragment extends Fragment {
                     ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
                             makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
                 }
-
+                // if user didn't populate the add item fields as expected
             } else {
                 Toast.makeText(requireContext(), "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show(); // A pop-up message to ensure validity of input
             }
@@ -385,7 +370,7 @@ public class EditItemFragment extends Fragment {
     }
 
     /**
-     * Rendering our images and buttons (during add and delete operations)
+     * This method renders our images and buttons (during add and delete operations)
      * @param imageCounter The number of images you want to render
      */
     void displayImages(int imageCounter) {
@@ -403,7 +388,7 @@ public class EditItemFragment extends Fragment {
             deleteImage2Button.setVisibility(View.GONE);
 
         } else if (imageCounter == 1) {
-            imageView0.setImageBitmap(BitmapFactory.decodeFile(imageLinks.get(0)));
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(imagePaths.get(0)));
             addImage0Button.setVisibility(View.GONE);
             deleteImage0Button.setVisibility(View.VISIBLE);
 
@@ -416,11 +401,11 @@ public class EditItemFragment extends Fragment {
             deleteImage0Button.setVisibility(View.VISIBLE);
 
         } else if (imageCounter == 2) {
-            imageView0.setImageBitmap(BitmapFactory.decodeFile(imageLinks.get(0)));
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(imagePaths.get(0)));
             addImage0Button.setVisibility(View.GONE);
             deleteImage0Button.setVisibility(View.VISIBLE);
 
-            imageView1.setImageBitmap(BitmapFactory.decodeFile(imageLinks.get(1)));
+            imageView1.setImageBitmap(BitmapFactory.decodeFile(imagePaths.get(1)));
             addImage1Button.setVisibility(View.GONE);
             deleteImage1Button.setVisibility(View.VISIBLE);
 
@@ -429,18 +414,17 @@ public class EditItemFragment extends Fragment {
             deleteImage2Button.setVisibility(View.GONE);
 
         } else if (imageCounter == 3) {
-            imageView0.setImageBitmap(BitmapFactory.decodeFile(imageLinks.get(0)));
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(imagePaths.get(0)));
             addImage0Button.setVisibility(View.GONE);
             deleteImage0Button.setVisibility(View.VISIBLE);
 
-            imageView1.setImageBitmap(BitmapFactory.decodeFile(imageLinks.get(1)));
+            imageView1.setImageBitmap(BitmapFactory.decodeFile(imagePaths.get(1)));
             addImage1Button.setVisibility(View.GONE);
             deleteImage1Button.setVisibility(View.VISIBLE);
 
-            imageView2.setImageBitmap(BitmapFactory.decodeFile(imageLinks.get(2)));
+            imageView2.setImageBitmap(BitmapFactory.decodeFile(imagePaths.get(2)));
             addImage2Button.setVisibility(View.GONE);
             deleteImage2Button.setVisibility(View.VISIBLE);
-
         }
     }
 
@@ -512,7 +496,7 @@ public class EditItemFragment extends Fragment {
      * @param photo The Bitmap representing the selected or captured image.
      */
     private void processImageResult(Bitmap photo) {
-        int imageCounter = this.imageLinks.size(); // Get the current number of images
+        int imageCounter = this.imagePaths.size(); // Get the current number of images
 
         ImageView currentImageView;
         Button currentAddImageButton;
@@ -542,12 +526,13 @@ public class EditItemFragment extends Fragment {
         // Create a unique ID for each image file and Update the localImagePaths list
         String uniqueId = UUID.randomUUID().toString();
         String imagePath = saveImageLocally(photo, "image" + uniqueId + ".jpg");
-        if (imageCounter < this.imageLinks.size()) {
+
+        if (imageCounter < this.imagePaths.size()) {
             // Replace existing path if the counter is within the bounds
-            this.imageLinks.set(imageCounter, imagePath);
+            this.imagePaths.set(imageCounter, imagePath);
         } else {
             // Otherwise, add a new path
-            this.imageLinks.add(imagePath);
+            this.imagePaths.add(imagePath);
         }
 
         // Enable the "Add Image" button for the current image
@@ -555,11 +540,11 @@ public class EditItemFragment extends Fragment {
 
         // ENFORCING sequential image input
         // and accounting for the case where the user opens the camera page and cancels without actually taking the pic
-        System.out.println("local image paths size: " + this.imageLinks.size());
-        for (String i : imageLinks){
+        System.out.println("local image paths size: " + this.imagePaths.size());
+        for (String i : imagePaths){
             System.out.print(i);
         }
-        displayImages(imageLinks.size());
+        displayImages(imagePaths.size());
     }
 
     /**
@@ -606,12 +591,12 @@ public class EditItemFragment extends Fragment {
      */
     void updateLocalImagePaths(int imageToDelete){
 
-        if (imageToDelete >= 0 && imageToDelete < this.imageLinks.size()) {
-            this.imageLinks.remove(imageToDelete);
+        if (imageToDelete >= 0 && imageToDelete < this.imagePaths.size()) {
+            this.imagePaths.remove(imageToDelete);
         }
 
         // Determine the appropriate ImageView to update based on the counter
-        displayImages(this.imageLinks.size());
+        displayImages(this.imagePaths.size());
     }
 
     /**
@@ -671,7 +656,6 @@ public class EditItemFragment extends Fragment {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, REQUEST_GALLERY);
-
     }
 
     /**
@@ -681,7 +665,7 @@ public class EditItemFragment extends Fragment {
      */
     private void convertUrlsToLocalPaths(ArrayList<String> imageUrls) {
         // Clear existing image paths
-        this.imageLinks.clear();
+        this.imagePaths.clear();
 
         for (int i = 0; i < imageUrls.size(); i++) {
             String imageUrl = imageUrls.get(i);
@@ -695,12 +679,12 @@ public class EditItemFragment extends Fragment {
                         public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
                             // Process the loaded image
                             String imagePath = saveImageLocally(bitmap, "image_" + System.currentTimeMillis() + ".jpg");
-                            imageLinks.add(imagePath);
+                            imagePaths.add(imagePath);
 
                             // Display images after all are loaded
-                            if (imageLinks.size() == imageUrls.size()) {
-                                System.out.println("After picture download:: " + imageLinks.size());
-                                displayImages(imageLinks.size());
+                            if (imagePaths.size() == imageUrls.size()) {
+                                System.out.println("After picture download:: " + imagePaths.size());
+                                displayImages(imagePaths.size());
                             }
                         }
                     });

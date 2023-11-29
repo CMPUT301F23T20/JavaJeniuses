@@ -28,7 +28,7 @@ import com.bumptech.glide.Glide;
  * Shows the details of a single item.
  * Each field of the item is labelled and displayed.
  * Users may choose to edit the details of this item or to delete this item.
- * @author Isaac Joffe
+ * @author Isaac Joffe, David Onchuru
  * @see com.example.inventorymanager.ui.home.HomeFragment
  * @see com.example.inventorymanager.ui.editItem.EditItemFragment
  */

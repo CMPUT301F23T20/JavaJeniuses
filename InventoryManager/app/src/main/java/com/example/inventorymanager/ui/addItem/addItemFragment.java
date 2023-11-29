@@ -43,6 +43,8 @@ import android.Manifest;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -53,8 +55,11 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -110,7 +115,7 @@ public class addItemFragment extends Fragment {
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
-        // get the FirebaseStorage instance
+        // get the Firebase Storage instance
         StorageReference storageRef = itemViewModel.storage.getReference();
         StorageReference imagesRef = storageRef.child("itemImages");
 
@@ -247,8 +252,10 @@ public class addItemFragment extends Fragment {
                 // if there are images to add
                 if (this.localImagePaths.size() > 0) {
                     // we have to upload all the item's pictures to Firebase cloud storage before creating an item and adding that to Firestore DB
-                    for (int i = 0; i < this.localImagePaths.size(); i++) {
 
+                    List<Task<Uri>> uploadTasks = new ArrayList<>();
+
+                    for (int i = 0; i < this.localImagePaths.size(); i++) {
                         // fetch the path to the image
                         String localPath = this.localImagePaths.get(i);
 
@@ -258,52 +265,50 @@ public class addItemFragment extends Fragment {
                         // Create a new StorageReference for each image
                         StorageReference imageRef = imagesRef.child(imageName);
 
-                        // Create a new file from the image and Store to Firebase Cloud Storage
                         UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localPath)));
 
-                        // to check which item we're waiting to send to firebase
-                        int finalIndex = i;
-
-                        // Register observers to listen for when the upload is done or if it fails
-                        uploadTask.addOnSuccessListener(taskSnapshot -> {
-                            // If Firebase upload was successful, download the URL to the file
-                            imageRef.getDownloadUrl().addOnSuccessListener(downloadUrl -> {
-                                String imageUrl = downloadUrl.toString();
-                                System.out.println(imageUrl);
-                                this.imageUrls.add(imageUrl);
-
-                                System.out.println("before printing image urls");
-                                for (String url : imageUrls) {
-                                    System.out.print(url);
-                                }
-
-                                // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asynchronous
-                                // We have to wait until the url for the last image has been generated before taking the user back to the home page
-                                // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images for that item
-                                if (finalIndex == this.localImagePaths.size() - 1) {
-                                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, this.imageUrls);
-                                    // Add the new item to the shared ViewModel
-                                    itemViewModel.addItem(newItem);
-
-                                    // Navigate back to the home fragment
-                                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                                    navController.navigate(R.id.navigation_home);
-
-                                    ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
-                                            makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
-                                }
-                            });
-                        }).addOnFailureListener(exception -> {
-                            // If upload was unsuccessful
-                            System.out.println("Upload to Firebase was unsuccessful");
-                        });
+                        // Register the task to the list
+                        uploadTasks.add(uploadTask.continueWithTask(task -> {
+                            if (!task.isSuccessful()) {
+                                throw Objects.requireNonNull(task.getException());
+                            }
+                            return imageRef.getDownloadUrl();
+                        }));
                     }
-                } else {
+
+                    // Wait for all tasks to complete
+                    // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asynchronous
+                    // We have to wait until the url for the last image has been generated before taking the user back to the home page
+                    // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images for that item
+                    Tasks.whenAllSuccess(uploadTasks).addOnSuccessListener(results -> {
+                        // Convert List<Uri> to ArrayList<String>
+                        ArrayList<String> imageUrls = new ArrayList<>();
+                        for (Object uri : results) {
+                            imageUrls.add(uri.toString());
+                        }
+
+                        // All images are uploaded successfully
+                        // Now you can create the item
+                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, imageUrls);
+                        itemViewModel.addItem(newItem);
+
+                        // Navigate back to the home fragment
+                        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                        navController.navigate(R.id.navigation_home);
+
+                        ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
+                                makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+                    }).addOnFailureListener(exception -> {
+                        // Handle failure
+                        System.out.println("One or more image uploads failed");
+                    });
+                }
+
+                // if user didn't add any images
+                else {
                     Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, null);
                     // Add the new item to the shared ViewModel
                     itemViewModel.addItem(newItem);
-
-                    System.out.println("Just after edit item is called");
 
                     // Navigate back to the home fragment
                     NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
@@ -470,36 +475,61 @@ public class addItemFragment extends Fragment {
 
 
     /**
-     * Rendering our images and buttons (during add and delete operations)
+     * This method renders our images and buttons (during add and delete operations)
      * @param imageCounter The number of images you want to render
-     */    void displayImages(int imageCounter) {
+     */
+    void displayImages(int imageCounter) {
         if (imageCounter == 0) {
+            imageView0.setImageBitmap(null);
             addImage0Button.setVisibility(View.VISIBLE);
             deleteImage0Button.setVisibility(View.GONE);
-            addImage1Button.setVisibility(View.GONE);
-            imageView0.setImageBitmap(null);
-        } else if (imageCounter == 1) {
+
             imageView1.setImageBitmap(null);
+            addImage1Button.setVisibility(View.GONE);
+            deleteImage1Button.setVisibility(View.GONE);
+
+            imageView2.setImageBitmap(null);
+            addImage2Button.setVisibility(View.GONE);
+            deleteImage2Button.setVisibility(View.GONE);
+
+        } else if (imageCounter == 1) {
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
             addImage0Button.setVisibility(View.GONE);
             deleteImage0Button.setVisibility(View.VISIBLE);
+
+            imageView1.setImageBitmap(null);
             addImage1Button.setVisibility(View.VISIBLE);
             deleteImage1Button.setVisibility(View.GONE);
-            addImage2Button.setVisibility(View.GONE);
-            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
-        } else if (imageCounter == 2) {
+
             imageView2.setImageBitmap(null);
+            addImage2Button.setVisibility(View.GONE);
+            deleteImage0Button.setVisibility(View.VISIBLE);
+
+        } else if (imageCounter == 2) {
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
+            addImage0Button.setVisibility(View.GONE);
+            deleteImage0Button.setVisibility(View.VISIBLE);
+
+            imageView1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
             addImage1Button.setVisibility(View.GONE);
             deleteImage1Button.setVisibility(View.VISIBLE);
+
+            imageView2.setImageBitmap(null);
             addImage2Button.setVisibility(View.VISIBLE);
             deleteImage2Button.setVisibility(View.GONE);
-            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
-            imageView1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
+
         } else if (imageCounter == 3) {
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
+            addImage0Button.setVisibility(View.GONE);
+            deleteImage0Button.setVisibility(View.VISIBLE);
+
+            imageView1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
+            addImage1Button.setVisibility(View.GONE);
+            deleteImage1Button.setVisibility(View.VISIBLE);
+
+            imageView2.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(2)));
             addImage2Button.setVisibility(View.GONE);
             deleteImage2Button.setVisibility(View.VISIBLE);
-            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
-            imageView1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
-            imageView2.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(2)));
         }
     }
 

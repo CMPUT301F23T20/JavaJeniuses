@@ -157,10 +157,13 @@ public class HomeFragment extends Fragment {
             selectedItems = new ArrayList<Item>();
 
             for (int i = 0; i < items.size(); i++) {
-                if (((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).isChecked()) {
-                    selectedItems.add(items.get(i));
-                    // unselect each box that was previously checked
-                    ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
+                View childView = itemList.getChildAt(i);
+                if (childView != null) {
+                    CheckBox checkBox = childView.findViewById(R.id.checkBox);
+                    if (checkBox != null && checkBox.isChecked()) {
+                        selectedItems.add(items.get(i));
+                        ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
+                    }
                 }
             }
 

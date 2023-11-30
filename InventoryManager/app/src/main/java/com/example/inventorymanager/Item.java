@@ -46,7 +46,7 @@ import java.util.Map;
  *     <li>and a comment about the item.</li>
  * </ul>
  * Implements the Parcelable interface to be able to be passed between fragments, as required for filtering items.
- * @author Kareem Assaf, Isaac Joffe, David Onchuru
+ * @author Kareem Assaf, Isaac Joffe, David Onchuru, Sumaiya Salsabil, Tomasz Ayobahan
  * @see ItemViewModel
  */
 public class Item implements Parcelable {
@@ -245,10 +245,12 @@ public class Item implements Parcelable {
     }
 
     // Methods for handling tags
+
+    /**
+     * Adds a tag to the item and updates the Firebase database accordingly.
+     * @param tag The tag to be added to the item.
+     */
     public void addTag(Tag tag) {
-//        if (!tags.contains(tag)) {
-//            tags.add(tag);
-//        }
 
         // get the user from firebase
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -281,10 +283,10 @@ public class Item implements Parcelable {
                 });
     }
 
-    public void removeTag(Tag tag) {
-        tags.remove(tag);
-    }
-
+    /**
+     * Retrieves the tags associated with the item from the Firebase database.
+     * @return A list of tags associated with the item.
+     */
     public ArrayList<Tag> getTags() {
 
         // get the user from firebase
@@ -324,9 +326,16 @@ public class Item implements Parcelable {
 
     }
 
-//    public void setTags(ArrayList<Tag> tags) {
-//        this.tags = tags;
-//    }
+    /**
+     * Retrieves the first tag from the list of tags.
+     * @return The first tag, or null if no tags are present.
+     */
+    public Tag getFirstTag() {
+
+        ArrayList<Tag> tagList = new ArrayList<Tag>();
+        tagList = getTags();
+        return tagList.get(0);
+    }
 
 
     /**

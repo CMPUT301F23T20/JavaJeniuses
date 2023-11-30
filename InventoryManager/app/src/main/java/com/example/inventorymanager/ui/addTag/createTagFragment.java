@@ -36,12 +36,27 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * A fragment for creating a new tag within the inventory management system.
+ * This fragment allows the user to input a tag name and select a color for the tag.
+ * It provides UI elements for the user to enter tag details and save or cancel the operation.
+ *
+ * @author Sumaiya Salsabil, Tomasz Ayobahan
+ * @see addTagFragment
+ */
 public class createTagFragment extends Fragment {
 
     private FragmentCreateTagBinding binding;
     private String tagColour;
 
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     * This method initializes the fragment's layout and sets up UI elements and event listeners.
+     * @param inflater The LayoutInflater object that can be used to inflate views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, the fragment is being re-constructed from a previous saved state.
+     * @return The View for the fragment's UI.
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
@@ -66,17 +81,21 @@ public class createTagFragment extends Fragment {
         greenButton.setOnClickListener(v -> { tagColour = "green"; });
         yellowButton.setOnClickListener(v -> { tagColour = "yellow"; });
 
+        // ViewModel to handle tag data
         addTagViewModel publicTagViewModel = new ViewModelProvider(requireActivity()).get(addTagViewModel.class);
 
+        // Save button: Creates a new tag with the entered name and selected color
         saveButton.setOnClickListener( v -> {
             String tagName = tagNameInput.getText().toString();
 
             publicTagViewModel.addTag(tagName, tagColour);
 
+            // Navigate to the addTagFragment after saving the tag
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.addTagFragment);
         });
 
+        // Cancel button: Navigates back to the addTagFragment without saving
         cancelButton.setOnClickListener( v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.addTagFragment);

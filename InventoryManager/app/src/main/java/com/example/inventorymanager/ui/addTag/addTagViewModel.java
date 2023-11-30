@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * A view model to manage the data for the addTagFragment.
  * Not used very much for the initial functionality of the project.
- * @author Tomasz Ayobahan
+ * @author Tomasz Ayobahan, Sumaiya Salsabil
  * @see addTagFragment
  */
 public class addTagViewModel extends ViewModel {
@@ -126,8 +126,6 @@ public class addTagViewModel extends ViewModel {
         ArrayList<Tag> tags = getTagsLiveData().getValue();
         // check which item corresponds to the given key and return it
         for (int i = 0; i < tags.size(); i++) {
-//            addTagToGlobalList(tags.get(i));
-//            tagItems.add(tags.get(i).getText());
         }
     }
 }

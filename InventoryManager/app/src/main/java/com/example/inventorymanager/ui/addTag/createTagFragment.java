@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.TagViewModel;
@@ -47,6 +48,7 @@ import java.util.Map;
 public class createTagFragment extends Fragment {
 
     private FragmentCreateTagBinding binding;
+    private ArrayList<Item> items;
     private String tagColour;
 
     /**
@@ -62,6 +64,11 @@ public class createTagFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentCreateTagBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        // unpack all items sent to this fragment
+        if (getArguments() != null) {
+            items = getArguments().getParcelableArrayList("items");
+        }
 
         // Bind UI elements to variables
         EditText tagNameInput = binding.tagEditText;
@@ -84,6 +91,10 @@ public class createTagFragment extends Fragment {
         // ViewModel to handle tag data
         addTagViewModel publicTagViewModel = new ViewModelProvider(requireActivity()).get(addTagViewModel.class);
 
+        // send bundle with the list of items
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("items", items);
+
         // Save button: Creates a new tag with the entered name and selected color
         saveButton.setOnClickListener( v -> {
             String tagName = tagNameInput.getText().toString();
@@ -92,13 +103,13 @@ public class createTagFragment extends Fragment {
 
             // Navigate to the addTagFragment after saving the tag
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.addTagFragment);
+            navController.navigate(R.id.addTagFragment, bundle);
         });
 
         // Cancel button: Navigates back to the addTagFragment without saving
         cancelButton.setOnClickListener( v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.addTagFragment);
+            navController.navigate(R.id.addTagFragment, bundle);
         });
 
         return root;

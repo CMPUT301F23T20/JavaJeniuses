@@ -97,7 +97,7 @@ public class addTagFragment extends Fragment {
         binding = FragmentAddTagBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-//
+
         // unpack all items sent to this fragment
         if (getArguments() != null) {
             items = getArguments().getParcelableArrayList("items");
@@ -107,8 +107,12 @@ public class addTagFragment extends Fragment {
 
         createTagButton.setOnClickListener( v -> {
 
+            // send bundle with the list of items
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("items", items);
+
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.createTagFragment);
+            navController.navigate(R.id.createTagFragment, bundle);
         });
 
         autoCompleteTextView = binding.autocompleteTextview;

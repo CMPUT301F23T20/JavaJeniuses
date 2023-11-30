@@ -91,14 +91,19 @@ public class ViewItemFragment extends Fragment {
         estimatedValueValue.setText(item.getEstimatedValue());
         commentValue.setText(item.getComment());
 
+        // retrieve the list of tags associated with the item
         tags = item.getTags();
+
         if (tags != null) {
+            // loop through each tag in the list
             for (int i = 0; i < tags.size(); i++) {
-                Log.d("DEBUG", tags.get(0).getText());
+
+                // create a new TextView for each tag and customize
                 TextView tagTextView = new TextView(getContext());
                 tagTextView.setTextSize(20);
                 SpannableString tagName = new SpannableString(" " + tags.get(i).getText() + " ");
-                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColour())), 0, tagName.length(), 0);
+                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColour())),
+                        0, tagName.length(), 0);
                 tagTextView.setText(tagName);
                 tagTextView.setPadding(15, 10, 15, 10);
                 tagList.addView(tagTextView);

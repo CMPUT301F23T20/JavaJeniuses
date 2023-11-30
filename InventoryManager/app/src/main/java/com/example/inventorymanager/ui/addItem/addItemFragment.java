@@ -11,6 +11,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,17 +28,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
-
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
+import android.Manifest;
 import com.example.inventorymanager.ImageSelectionFragment;
 import com.example.inventorymanager.ImageUtility;
 import com.example.inventorymanager.ItemUtility;
@@ -48,19 +54,42 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
+import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 
 /**
@@ -88,14 +117,13 @@ public class addItemFragment extends Fragment {
     private ImageView imageView1;
     private Button addImage1Button;
     private Button deleteImage1Button;
-
     private ImageView imageView2;
     private Button addImage2Button;
     private Button deleteImage2Button;
-
     private static final int REQUEST_CAMERA = 2;
     private static final int REQUEST_GALLERY = 3;
-
+    private String SCAN_MODE = "";
+    private static final int REQUEST_CODE = 22;
 
     /**
      * Generates the user interface of the fragment.
@@ -144,6 +172,10 @@ public class addItemFragment extends Fragment {
         deleteImage0Button = binding.deleteImage0Button;
         deleteImage1Button = binding.deleteImage1Button;
         deleteImage2Button = binding.deleteImage2Button;
+
+        // add buttons for the scanning functions
+        Button scanDescriptionButton = binding.scanDescriptionButton;
+        Button scanSerialNumberButton = binding.scanSerialNumberButton;
 
         // Set up calendar to pop up and allow user to choose date
         purchaseDateInput.setOnClickListener(v -> {
@@ -228,7 +260,39 @@ public class addItemFragment extends Fragment {
         addImage1Button.setOnClickListener(v -> imageUtility.showImageOptionsDialog());
         addImage2Button.setOnClickListener(v -> imageUtility.showImageOptionsDialog());
 
+        // add effect of the scan description button when pressed (open camera and scan barcode)
+        scanDescriptionButton.setOnClickListener(v -> {
+            // ensure app permissions have enabled use of the camera
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+            }
 
+            // set the result listener to know that this is an item description query
+            SCAN_MODE = "Description";
+
+            // prompt the user to take a photo that will likely work for the ML models
+            Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the barcode to scan in bright lighting.", Toast.LENGTH_SHORT).show();
+            // open the camera for the purpose of taking a picture
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, REQUEST_CODE);
+        });
+
+        // add effect of the scan serial number button when pressed (open camera and scan number)
+        scanSerialNumberButton.setOnClickListener(v -> {
+            // ensure app permissions have enabled use of the camera
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+            }
+
+            // set the result listener to know that this is an item description query
+            SCAN_MODE = "SerialNumber";
+
+            // prompt the user to take a photo that will likely work for the ML models
+            Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the number to read in bright lighting.", Toast.LENGTH_SHORT).show();
+            // open the camera for the purpose of taking a picture
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, REQUEST_CODE);
+        });
 
         // add effect of the add button when pressed (add this item to the list)
         addItemButton.setOnClickListener(v -> {
@@ -247,7 +311,6 @@ public class addItemFragment extends Fragment {
                 // if there are images to add
                 if (this.localImagePaths.size() > 0) {
                     // we have to upload all the item's pictures to Firebase cloud storage before creating an item and adding that to Firestore DB
-
                     List<Task<Uri>> uploadTasks = new ArrayList<>();
 
                     for (int i = 0; i < this.localImagePaths.size(); i++) {
@@ -318,7 +381,6 @@ public class addItemFragment extends Fragment {
             }
         });
 
-
         // User should be able to delete a picture after they have taken it but haven't submitted the "Add item" form
         deleteImage0Button.setOnClickListener( v -> {
             updateLocalImagePaths(0);
@@ -339,8 +401,7 @@ public class addItemFragment extends Fragment {
      * Updating our local image paths arrayList
      * @param imageToDelete
      */
-    void updateLocalImagePaths(int imageToDelete){
-
+    void updateLocalImagePaths(int imageToDelete) {
         if (imageToDelete >= 0 && imageToDelete < localImagePaths.size()) {
             localImagePaths.remove(imageToDelete);
         }
@@ -351,35 +412,176 @@ public class addItemFragment extends Fragment {
 
 
     /**
-     * Sets the picture taken from the camera page to the respective ImageView
-     * @param requestCode The integer request code originally supplied to
-     *                    startActivityForResult(), allowing you to identify who this
-     *                    result came from.
-     * @param resultCode The integer result code returned by the child activity
-     *                   through its setResult().
-     * @param data An Intent, which can return result data to the caller
-     *               (various data can be attached to Intent "extras").
-     *
+     * Performs operations on the image returned from the camera activity.
+     * Depending on the mode of operation (a class field), different operations are undertaken.
+     * @param requestCode The integer request code originally given to startActivityForResult(), allowing identification of source.
+     * @param resultCode The integer result code returned by the camera activity by setResult().
+     * @param data An Intent() that can return extra data to the caller.
      */
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        // only continue processing if it was a successful image taken
+        if (resultCode == RESULT_OK) {
+            // parse image differently depending on the mode of operation, description means lookup barcode
+            if (SCAN_MODE.equals("Description")) {
+                // parse the image into a format usable by the barcode detector
+                Bitmap rawImage = (Bitmap) data.getExtras().get("data");
+                InputImage image = InputImage.fromBitmap(rawImage, 0);
 
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_CAMERA) {
+                // set up a default barcode scanner to use
+                BarcodeScannerOptions options =
+                    new BarcodeScannerOptions.Builder()
+                        .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
+                        .build();
+                BarcodeScanner scanner = BarcodeScanning.getClient(options);
+
+                // set up a task that uses the scanner to parse and analyze the image for any barcodes
+                Task<List<Barcode>> result = scanner.process(image)
+                    .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
+                        @Override
+                        public void onSuccess(List<Barcode> barcodes) {
+                            // ensure that barcodes are found before proceeding in analysis
+                            if (barcodes.size() == 0) {
+                                // display error message to the user
+                                Toast.makeText(requireContext(), "Could not read barcode.", Toast.LENGTH_SHORT).show();
+                                return;    // no use proceeding
+                            }
+
+                            // check each barcode detected
+                            for (int i = 0; i < barcodes.size(); i++) {
+                                // these four formats are supported by the barcode lookup database
+                                if ((barcodes.get(i).getFormat() == Barcode.FORMAT_UPC_A) ||
+                                        (barcodes.get(i).getFormat() == Barcode.FORMAT_UPC_E) ||
+                                        (barcodes.get(i).getFormat() == Barcode.FORMAT_EAN_8) ||
+                                        (barcodes.get(i).getFormat() == Barcode.FORMAT_EAN_13)) {
+                                    // try to fetch data for this barcode
+                                    try {
+                                        // format the database search query for barcode and API key
+                                        String API_KEY = "m5wk8qavhnvw7wy9l1l161arzk49ru";
+                                        String query = String.format(
+                                                "https://api.barcodelookup.com/v3/products?barcode=%1$s&formatted=y&key=%2$s",
+                                                barcodes.get(i).getRawValue(),
+                                                API_KEY);
+                                        URL url = new URL(query);
+
+                                        // ensure that network calls are allowed to be made in the main thread
+                                        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
+
+                                        // read the response to this search query
+                                        BufferedReader searchResultsReader = new BufferedReader(new InputStreamReader(url.openStream()));
+                                        String nextLine = "";    // next line of data to fetch
+                                        StringBuilder searchResultsBuilder = new StringBuilder();    // total cumulative data
+                                        // read in all response lines until no data is left
+                                        while ((nextLine = searchResultsReader.readLine()) != null) {
+                                            // track each new line
+                                            searchResultsBuilder.append(nextLine);
+                                        }
+                                        String searchResults = searchResultsBuilder.toString();
+
+                                        // parse the JSON object returned from the API
+                                        JSONObject originalJsonObject = new JSONObject(searchResults.toString());
+                                        // retrieve the array of products, which is all that is inside the original objects
+                                        JSONArray jsonArray = originalJsonObject.getJSONArray("products");
+                                        // only the first object in this array matters (usually length 1 anyways)
+                                        JSONObject mainJsonObject = jsonArray.getJSONObject(0);
+                                        // fetch relevant information about the object to form description
+                                        String description = mainJsonObject.get("title").toString();
+                                        // trim string so it can fit inside the description field
+                                        description = description.substring(0, 40);
+
+                                        // update the description text to match the new keywords
+                                        ((EditText) binding.descriptionInput).setText(description);
+                                        // inform user of successful operation
+                                        Toast.makeText(requireContext(), "Description keywords automatically entered successfully.", Toast.LENGTH_SHORT).show();
+
+                                    // inform the users if any issue arises that prevent data from being automatically parsed
+                                    } catch (Exception e) {
+                                        // display error message to the user
+                                        Toast.makeText(requireContext(), "Could not fetch barcode data.", Toast.LENGTH_SHORT).show();
+                                        // log details of failure
+                                        e.printStackTrace();
+                                    }
+                                    break;    // only consider the first barcode detected
+                                }
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // display error message to the user
+                            Toast.makeText(requireContext(), "Could not read barcode.", Toast.LENGTH_SHORT).show();
+                            // log details of failure
+                            e.printStackTrace();
+                        }
+                    });
+
+            // serial number means attempt to read number from image
+            } else if (SCAN_MODE.equals("SerialNumber")) {
+                // parse the image into a format used by the text recognizer
+                Bitmap rawImage = (Bitmap) data.getExtras().get("data");
+                InputImage image = InputImage.fromBitmap(rawImage, 0);
+
+                // for latin script, assume English language only
+                TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+
+                // set up a task that can parse the text in the image to extract the serial number
+                Task<Text> result =
+                        recognizer.process(image)
+                                .addOnSuccessListener(new OnSuccessListener<Text>() {
+                                    @Override
+                                    public void onSuccess(Text visionText) {
+                                        // fetch the text read and store it
+                                        String resultText = visionText.getText();
+                                        if (resultText.contains("\n")) {
+                                            resultText = resultText.substring(0, resultText.indexOf("\n"));
+                                        }
+                                        // update the description text to match the new keywords
+                                        ((EditText) binding.serialNumberInput).setText(resultText);
+                                        // inform user of successful operation
+                                        Toast.makeText(requireContext(), "Serial number automatically entered successfully.", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // display error message to the user
+                                        Toast.makeText(requireContext(), "Could not read number.", Toast.LENGTH_SHORT).show();
+                                        // log details of failure
+                                        e.printStackTrace();
+                                    }
+                                });
+
+            // handle image upload request
+            } else if (requestCode == REQUEST_CAMERA) {
                 handleCameraResult(data);
+
+            // handle image gallery upload request
             } else if (requestCode == REQUEST_GALLERY) {
                 handleGalleryResult(data);
+
+            // should never be encountered
+            } else {
+                // inform user that the operation failed
+                Toast.makeText(requireContext(), "An unexpected error occurred.", Toast.LENGTH_SHORT).show();
+                // log details of failure
+                Log.d("DEBUG", String.format("Scan Mode: %s", SCAN_MODE));
             }
+
+        // some failure occurred in using the camera
         } else {
-            Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+            // inform user that the operation failed
+            Toast.makeText(requireContext(), "Camera failure.", Toast.LENGTH_SHORT).show();
+            // log details of failure
+            Log.d("DEBUG", String.format("Request Code: %1$d, Result Code: %2$d", requestCode, resultCode));
         }
+
+        SCAN_MODE = "";
     }
 
     /**
      * Handles the result from the camera activity. Takes the selected photo and converts it to
-     * Bitmap in order for it to be processed an inserted to a imageView
-     *
+     * Bitmap in order for it to be processed an inserted to a imageView.
      * @param data The Intent containing the result data from the camera activity.
      */
     private void handleCameraResult(Intent data) {
@@ -393,8 +595,7 @@ public class addItemFragment extends Fragment {
 
     /**
      * Handles the result from the gallery activity. Takes the selected photo and converts it to
-     * Bitmap in order for it to be processed an inserted to a imageView
-     *
+     * Bitmap in order for it to be processed an inserted to a imageView.
      * @param data The Intent containing the result data from the gallery activity.
      */
     private void handleGalleryResult(Intent data) {
@@ -413,8 +614,7 @@ public class addItemFragment extends Fragment {
 
     /**
      * Processes the result of selecting or capturing an image. Handles the flow of which
-     * imageView to insert the photo and handles the saving locally of the images
-     *
+     * imageView to insert the photo and handles the saving locally of the images.
      * @param photo The Bitmap representing the selected or captured image.
      */
     private void processImageResult(Bitmap photo) {
@@ -467,7 +667,6 @@ public class addItemFragment extends Fragment {
         }
         displayImages(localImagePaths.size());
     }
-
 
     /**
      * This method renders our images and buttons (during add and delete operations)
@@ -527,8 +726,6 @@ public class addItemFragment extends Fragment {
             deleteImage2Button.setVisibility(View.VISIBLE);
         }
     }
-
-
 
     /**
      * Kills the fragment.

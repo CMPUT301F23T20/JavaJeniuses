@@ -103,37 +103,18 @@ public class ItemAdapter extends ArrayAdapter{
 
         tags = item.getTags();
         if (tags != null) {
+            tagList.removeAllViews();
             for (int i = 0; i < tags.size(); i++) {
                 Log.d("DEBUG", tags.get(0).getText());
                 TextView tagTextView = new TextView(getContext());
-//                tagTextView.setText(tags.get(i).getText());
                 tagTextView.setTextSize(15);
                 SpannableString tagName = new SpannableString(" " + tags.get(i).getText() + " ");
                 tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColour())), 0, tagName.length(), 0);
                 tagTextView.setText(tagName);
-//                tagTextView.setHighlightColor(Color.parseColor(tags.get(i).getColour()));
                 tagTextView.setPadding(0, 10, 0, 10);
-//                tagTextView.setVisibility(View.VISIBLE);
-//                tagTextView.setHeight(25);
-//                tagTextView.setWidth(60);
-//                tagList.addFooterView(tagTextView);
-//                tagList.addHeaderView(tagTextView);
-
                 tagList.addView(tagTextView);
             }
         }
-//        Log.d("DEBUG", tags.get(0).getText());
-//        if (tags != null && !tags.isEmpty()) {
-////            Log.d("DEBUG", tags.get(0).toString());
-////            Log.d("DEBUG", "NOT HERE");
-//            tag = tags.get(0);
-//            String text = tag.getText();
-//            String colour = tag.getColour();
-//            itemTag.setText(text);
-//            int colourInt = Color.parseColor(colour);
-//            itemTag.setBackgroundColor(colourInt);
-//            itemTag.setVisibility(View.VISIBLE);
-//        }
 
         return view;
     }

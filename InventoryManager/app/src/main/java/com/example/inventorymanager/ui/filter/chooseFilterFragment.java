@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.ChooseFilterBinding;
 
 import java.lang.reflect.Array;
@@ -173,8 +174,15 @@ public class chooseFilterFragment extends Fragment {
     public ArrayList<Item> findItemsWithTag(String tag, ArrayList<Item> itemsToFilter) {
         ArrayList<Item> itemsWithTag = new ArrayList<>();
         for (Item item : itemsToFilter) {
-            if (item.getFirstTag().getText().contains(tag)) {
-                itemsWithTag.add(item);
+            if (item.hasTag()) {
+                ArrayList<Tag> itemTags = new ArrayList<>();
+                itemTags = item.getTags();
+                for (Tag itemTag : itemTags) {
+                    if (itemTag.getText().toLowerCase().contains(tag.toLowerCase())) {
+                        itemsWithTag.add(item);
+                        break;
+                    }
+                }
             }
         }
         return itemsWithTag;

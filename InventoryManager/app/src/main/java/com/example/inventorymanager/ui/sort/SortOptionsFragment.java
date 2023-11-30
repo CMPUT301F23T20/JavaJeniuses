@@ -18,6 +18,7 @@ import android.widget.ToggleButton;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.FragmentSortOptionsBinding;
 import com.example.inventorymanager.ui.filter.filteredItemsFragment;
 
@@ -178,7 +179,25 @@ public class SortOptionsFragment extends Fragment {
                 };
                 break;
             case "Tag":
-                comparator = Comparator.comparing(item -> item.getFirstTag().getText());
+                comparator = (item1, item2) -> {
+                    boolean item1HasTag = item1.hasTag();
+                    boolean item2HasTag = item2.hasTag();
+
+                    // Handle cases where either tag1 or tag2 is null
+                    if (!item1HasTag && item2HasTag) {
+                        return -1; // Both are equal if both tags are null
+                    } else if (item1HasTag && !item2HasTag) {
+                        return 1; // Null tags come first
+                    } else if (!item1HasTag) {
+                        return 0;
+                    }
+
+                    // Compare the text of the tags if both items have tags
+                    String tag1Text = item1.getFirstTag().getText().toLowerCase();
+                    String tag2Text = item2.getFirstTag().getText().toLowerCase();
+                    return tag1Text.compareTo(tag2Text);
+                };
+                break;
             default:
                 // handle invalid sortBy value
                 break;

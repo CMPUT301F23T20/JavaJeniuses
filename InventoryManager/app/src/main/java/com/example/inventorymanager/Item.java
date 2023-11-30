@@ -298,7 +298,7 @@ public class Item implements Parcelable {
                 .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
                 .collection("items").document(itemName).collection("tags");
 
-//        // query database to get all items indiscriminately
+        // query database to get all items indiscriminately
         privateTagsRef.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -326,15 +326,19 @@ public class Item implements Parcelable {
 
     }
 
+    public boolean hasTag(){
+        return !(getTags().isEmpty());
+    }
+
     /**
      * Retrieves the first tag from the list of tags.
      * @return The first tag, or null if no tags are present.
      */
     public Tag getFirstTag() {
-
-        ArrayList<Tag> tagList = new ArrayList<Tag>();
-        tagList = getTags();
-        return tagList.get(0);
+        if (hasTag()) {
+            return getTags().get(0);
+        }
+        return null;
     }
 
 

@@ -104,6 +104,44 @@ public class ImageUtility {
         fragment.startActivityForResult(galleryIntent, REQUEST_GALLERY);
     }
 
+    /**
+     * Helper method to save the image locally and return the path (where that image has been stored)
+     * @param bitmap The file's bitmap
+     * @param fileName What you want to name the file as
+     * @return
+     */
+    public String saveImageLocally(Bitmap bitmap, String fileName) {
+        try {
+            // Get the app's internal storage directory
+            File internalStorageDir = fragment.requireContext().getFilesDir();
+
+            // Create a directory named "images" if it doesn't exist
+            File imagesDir = new File(internalStorageDir, "images");
+            if (!imagesDir.exists()) {
+                imagesDir.mkdir();
+            }
+
+            // Create a File object for the image file
+            File imageFile = new File(imagesDir, fileName);
+
+            // Create a FileOutputStream to write the bitmap to the file
+            FileOutputStream outputStream = new FileOutputStream(imageFile);
+
+            // Compress the bitmap and write it to the file
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+
+            // Flush and close the stream
+            outputStream.flush();
+            outputStream.close();
+
+            // Return the absolute path to the saved image file so that we can display it on the add item page that the user is still working on
+            return imageFile.getAbsolutePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ""; // Return an empty string if there's an error
+        }
+    }
+
 
 }
 

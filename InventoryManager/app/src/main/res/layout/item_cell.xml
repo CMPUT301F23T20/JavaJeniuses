@@ -13,11 +13,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:cardCornerRadius="20dp"
-        app:cardBackgroundColor="@color/celadon" >
+        app:cardBackgroundColor="@color/celadon">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="100dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:descendantFocusability="afterDescendants"
+            android:clickable="true">
 
             <TextView
                 android:id="@+id/itemNameTextView"
@@ -120,7 +124,8 @@
                     android:layout_width="match_parent"
                     android:id="@+id/tagList"
                     android:orientation="vertical"
-                    android:padding="10dp"/>
+                    android:padding="10dp"
+                    />
             </androidx.core.widget.NestedScrollView>
 
 <!--                <TextView-->

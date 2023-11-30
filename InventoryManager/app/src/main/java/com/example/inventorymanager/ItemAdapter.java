@@ -109,7 +109,7 @@ public class ItemAdapter extends ArrayAdapter{
 //                tagTextView.setText(tags.get(i).getText());
                 tagTextView.setTextSize(15);
                 SpannableString tagName = new SpannableString(" " + tags.get(i).getText() + " ");
-                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColour())), 0, tags.get(i).getText().length() + 2, 0);
+                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColour())), 0, tagName.length(), 0);
                 tagTextView.setText(tagName);
 //                tagTextView.setHighlightColor(Color.parseColor(tags.get(i).getColour()));
                 tagTextView.setPadding(0, 10, 0, 10);
@@ -118,6 +118,7 @@ public class ItemAdapter extends ArrayAdapter{
 //                tagTextView.setWidth(60);
 //                tagList.addFooterView(tagTextView);
 //                tagList.addHeaderView(tagTextView);
+
                 tagList.addView(tagTextView);
             }
         }

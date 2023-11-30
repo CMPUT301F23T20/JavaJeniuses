@@ -89,21 +89,57 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"/>
 
-            <TextView
-                android:id="@+id/itemTag"
+
+<!--            <ListView-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:id="@+id/tagList"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:layout_constraintEnd_toStartOf="@id/estimateValueTextView"-->
+<!--                app:layout_constraintStart_toEndOf="@id/descriptionTextView"-->
+<!--                android:padding="10dp"-->
+<!--                android:divider="@android:color/transparent"-->
+<!--                android:dividerHeight="10sp"/>-->
+
+            <androidx.core.widget.NestedScrollView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="TextView"
-                android:textStyle="bold"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/estimateValueTextView"
-                app:layout_constraintEnd_toStartOf="@+id/estimateValueTextView"
-                app:layout_constraintStart_toEndOf="@+id/itemNameTextView"
-                app:layout_constraintTop_toTopOf="@+id/itemNameTextView" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/estimateValueTextView"
+                app:layout_constraintStart_toEndOf="@id/descriptionTextView"
+                app:layout_marginBaseline="10dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:id="@+id/tagList"
+                    android:orientation="vertical"
+                    android:padding="10dp"/>
+            </androidx.core.widget.NestedScrollView>
+
+<!--                <TextView-->
+<!--                    android:id="@+id/itemTag"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@color/white"-->
+<!--                    android:padding="5dp"-->
+<!--                    android:paddingLeft="10dp"-->
+<!--                    android:paddingRight="10dp"-->
+<!--                    android:text="TextView"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:visibility="invisible"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/estimateValueTextView"-->
+<!--                    app:layout_constraintEnd_toStartOf="@+id/estimateValueTextView"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/itemNameTextView"-->
+<!--                    app:layout_constraintTop_toTopOf="@+id/itemNameTextView" />-->
+<!--                />-->
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

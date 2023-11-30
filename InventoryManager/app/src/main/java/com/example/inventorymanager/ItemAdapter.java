@@ -2,11 +2,16 @@ package com.example.inventorymanager;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -75,7 +80,9 @@ public class ItemAdapter extends ArrayAdapter{
         TextView description = view.findViewById(R.id.descriptionTextView);
         TextView estimateValue = view.findViewById(R.id.estimateValueTextView);
         TextView purchaseDate = view.findViewById(R.id.purchaseDateTextView);
-        TextView itemTag = view.findViewById(R.id.itemTag);
+//        TextView itemTag = view.findViewById(R.id.itemTag);
+        LinearLayout tagList = view.findViewById(R.id.tagList);
+//        ListView tagList = view.findViewById(R.id.tagList);
         CheckBox checkBox = view.findViewById(R.id.checkBox);
 
         // display the most relevant fields for each item
@@ -85,6 +92,8 @@ public class ItemAdapter extends ArrayAdapter{
         purchaseDate.setText(item.getPurchaseDate());
         checkBox.setChecked(isChecked.get(item.getItemName()));
 
+
+
         // add effect of clicking on checkbox (toggling whether the item is selected)
         checkBox.setOnClickListener(v -> {
             // toggle the state of the check box
@@ -93,15 +102,37 @@ public class ItemAdapter extends ArrayAdapter{
         });
 
         tags = item.getTags();
-        if (tags != null && !tags.isEmpty()) {
-            tag = tags.get(0);
-            String text = tag.getText();
-            String colour = tag.getColour();
-            itemTag.setText(text);
-            int colourInt = Color.parseColor(colour);
-            itemTag.setBackgroundColor(colourInt);
-            itemTag.setVisibility(View.VISIBLE);
+        if (tags != null) {
+            for (int i = 0; i < tags.size(); i++) {
+                Log.d("DEBUG", tags.get(0).getText());
+                TextView tagTextView = new TextView(getContext());
+//                tagTextView.setText(tags.get(i).getText());
+                tagTextView.setTextSize(15);
+                SpannableString tagName = new SpannableString(" " + tags.get(i).getText() + " ");
+                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColour())), 0, tags.get(i).getText().length() + 2, 0);
+                tagTextView.setText(tagName);
+//                tagTextView.setHighlightColor(Color.parseColor(tags.get(i).getColour()));
+                tagTextView.setPadding(0, 10, 0, 10);
+//                tagTextView.setVisibility(View.VISIBLE);
+//                tagTextView.setHeight(25);
+//                tagTextView.setWidth(60);
+//                tagList.addFooterView(tagTextView);
+//                tagList.addHeaderView(tagTextView);
+                tagList.addView(tagTextView);
+            }
         }
+//        Log.d("DEBUG", tags.get(0).getText());
+//        if (tags != null && !tags.isEmpty()) {
+////            Log.d("DEBUG", tags.get(0).toString());
+////            Log.d("DEBUG", "NOT HERE");
+//            tag = tags.get(0);
+//            String text = tag.getText();
+//            String colour = tag.getColour();
+//            itemTag.setText(text);
+//            int colourInt = Color.parseColor(colour);
+//            itemTag.setBackgroundColor(colourInt);
+//            itemTag.setVisibility(View.VISIBLE);
+//        }
 
         return view;
     }

@@ -35,14 +35,15 @@ public class Tag implements Parcelable{
         this.text = text;
     }
 
+    public String getColourName() { return colour; }
+
     public String getColour() {
 
-        if (colour == "red") {return "#FF8986"; }
-        if (colour == "blue") {return "#A8E4EF"; }
-        if (colour == "green") {return "#A6ECA8"; }
-        if (colour == "yellow") {return "#FCFC99"; }
+        if (colour.equals("blue")) {return "#A8E4EF"; }
+        if (colour.equals("green")) {return "#A6ECA8"; }
+        if (colour.equals("yellow")) {return "#FCFC99"; }
+        else {return "#FF8986"; }
 
-        return null;
     }
 
     public void setColour(String colour) {
@@ -55,13 +56,6 @@ public class Tag implements Parcelable{
 
     public void setItems(List<Item> items) {
         this.items = items;
-    }
-
-    // Method to add an item to the tag
-    public void addItem(Item item) {
-        if (!items.contains(item)) {
-            items.add(item);
-        }
     }
 
     // Method to remove an item from the tag

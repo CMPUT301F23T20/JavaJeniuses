@@ -97,13 +97,21 @@ public class createTagFragment extends Fragment {
 
         // Save button: Creates a new tag with the entered name and selected color
         saveButton.setOnClickListener( v -> {
+
             String tagName = tagNameInput.getText().toString();
 
-            publicTagViewModel.addTag(tagName, tagColour);
+            if (tagName.isEmpty()) {
+                tagNameInput.setError("This field is required");
+            } else if (tagName.length() >= 11) {
+                tagNameInput.setError("Up to 10 characters");
+            } else {
+                publicTagViewModel.addTag(tagName, tagColour);
 
-            // Navigate to the addTagFragment after saving the tag
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-            navController.navigate(R.id.addTagFragment, bundle);
+                // Navigate to the addTagFragment after saving the tag
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                navController.navigate(R.id.addTagFragment, bundle);
+            }
+
         });
 
         // Cancel button: Navigates back to the addTagFragment without saving

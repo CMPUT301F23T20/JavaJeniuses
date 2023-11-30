@@ -85,13 +85,11 @@ public class chooseFilterFragment extends Fragment {
             // if user selects make
             if (!make.isEmpty()) {
                 items = findItemsWithMake(make, items);
-                // if item not already in list, add item to filtered item list
             }
 
             // if user selects description keyword
             if (!description.isEmpty()) {
                 items = findItemsWithDescriptionKeyword(description, items);
-                // if item not already in list, add item to filtered item list
             }
 
             // pack list of filtered items

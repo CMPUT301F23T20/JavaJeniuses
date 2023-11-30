@@ -1,13 +1,16 @@
 package com.example.inventorymanager.ui.addItem;
 
-
 import static android.app.Activity.RESULT_OK;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -23,11 +26,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -37,17 +37,26 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import android.Manifest;
-
-import com.example.inventorymanager.ItemAdapter;
+import com.example.inventorymanager.ImageSelectionFragment;
+import com.example.inventorymanager.ImageUtility;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
+import android.Manifest;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -68,8 +77,9 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
-//import com.google.gson.Gson;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
@@ -78,7 +88,6 @@ import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -99,6 +108,20 @@ import org.json.JSONObject;
 public class addItemFragment extends Fragment {
 
     private FragmentAddItemBinding binding;
+    private ArrayList<String> localImagePaths = new ArrayList<String>();
+    private ArrayList<String> imageUrls = new ArrayList<String>();
+    private ImageUtility imageUtility;
+    private ImageView imageView0;
+    private Button addImage0Button;
+    private Button deleteImage0Button;
+    private ImageView imageView1;
+    private Button addImage1Button;
+    private Button deleteImage1Button;
+    private ImageView imageView2;
+    private Button addImage2Button;
+    private Button deleteImage2Button;
+    private static final int REQUEST_CAMERA = 2;
+    private static final int REQUEST_GALLERY = 3;
     private String SCAN_MODE = "";
     private static final int REQUEST_CODE = 22;
 
@@ -121,6 +144,10 @@ public class addItemFragment extends Fragment {
         // Create an instance of the shared ViewModel that manages the list of items
         ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
+        // get the Firebase Storage instance
+        StorageReference storageRef = itemViewModel.storage.getReference();
+        StorageReference imagesRef = storageRef.child("itemImages");
+
         // Bind UI elements to variables
         ScrollView addItemScrollView = binding.addItemScrollView;
         EditText itemNameInput = binding.itemNameInput;
@@ -132,8 +159,21 @@ public class addItemFragment extends Fragment {
         EditText estimatedValueInput = binding.estimatedValueInput;
         EditText commentInput = binding.commentInput;
         Button addItemButton = binding.addItemButton;
-        ImageView itemImage = binding.itemImage;
-        Button addImageButton = binding.addImageButton;
+
+        // enforcing a maximum of 3 images per item
+        imageView0 = binding.itemImage0;
+        imageView1 = binding.itemImage1;
+        imageView2 = binding.itemImage2;
+
+        addImage0Button = binding.addImage0Button;
+        addImage1Button = binding.addImage1Button;
+        addImage2Button = binding.addImage2Button;
+
+        deleteImage0Button = binding.deleteImage0Button;
+        deleteImage1Button = binding.deleteImage1Button;
+        deleteImage2Button = binding.deleteImage2Button;
+
+        // add buttons for the scanning functions
         Button scanDescriptionButton = binding.scanDescriptionButton;
         Button scanSerialNumberButton = binding.scanSerialNumberButton;
 
@@ -205,6 +245,21 @@ public class addItemFragment extends Fragment {
             return false;
         });
 
+        // Users are crazy, and will often try unconventional things like adding a pic to the second image placeholder before the first
+        // we're gonna ENFORCE sequential image input
+        addImage1Button.setVisibility(View.GONE);
+        addImage2Button.setVisibility(View.GONE);
+
+        deleteImage0Button.setVisibility(View.GONE);
+        deleteImage1Button.setVisibility(View.GONE);
+        deleteImage2Button.setVisibility(View.GONE);
+
+        // when you click the respective Add Image button, choose if you're gonna add from gallery or take a pic with camera
+        imageUtility = new ImageUtility(this);
+        addImage0Button.setOnClickListener(v -> imageUtility.showImageOptionsDialog());
+        addImage1Button.setOnClickListener(v -> imageUtility.showImageOptionsDialog());
+        addImage2Button.setOnClickListener(v -> imageUtility.showImageOptionsDialog());
+
         // add effect of the scan description button when pressed (open camera and scan barcode)
         scanDescriptionButton.setOnClickListener(v -> {
             // ensure app permissions have enabled use of the camera
@@ -253,24 +308,108 @@ public class addItemFragment extends Fragment {
                 String estimateValue = estimatedValueInput.getText().toString();
                 String comment = commentInput.getText().toString();
 
-                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment);
+                // if there are images to add
+                if (this.localImagePaths.size() > 0) {
+                    // we have to upload all the item's pictures to Firebase cloud storage before creating an item and adding that to Firestore DB
+                    List<Task<Uri>> uploadTasks = new ArrayList<>();
 
-                // Add the new item to the shared ViewModel
-                itemViewModel.addItem(newItem);
+                    for (int i = 0; i < this.localImagePaths.size(); i++) {
+                        // fetch the path to the image
+                        String localPath = this.localImagePaths.get(i);
 
-                // Navigate back to the home fragment
-                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
-                navController.navigate(R.id.navigation_home);
+                        // Create a unique name for each image
+                        String imageName = "firebase_" + itemName + "_image" + i + ".jpg";
 
-                ItemUtility.clearTextFields(itemNameInput, purchaseDateInput ,descriptionInput,
-                        makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+                        // Create a new StorageReference for each image
+                        StorageReference imageRef = imagesRef.child(imageName);
+
+                        UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localPath)));
+
+                        // Register the task to the list
+                        uploadTasks.add(uploadTask.continueWithTask(task -> {
+                            if (!task.isSuccessful()) {
+                                throw Objects.requireNonNull(task.getException());
+                            }
+                            return imageRef.getDownloadUrl();
+                        }));
+                    }
+
+                    // Wait for all tasks to complete
+                    // WARNING: this will cause a slight delay when a user adds an item because Firebase Cloud storage is asynchronous
+                    // We have to wait until the url for the last image has been generated before taking the user back to the home page
+                    // if the image we are storing in firebase is the last image we need to store, then we create a new item with the full array of images for that item
+                    Tasks.whenAllSuccess(uploadTasks).addOnSuccessListener(results -> {
+                        // Convert List<Uri> to ArrayList<String>
+                        ArrayList<String> imageUrls = new ArrayList<>();
+                        for (Object uri : results) {
+                            imageUrls.add(uri.toString());
+                        }
+
+                        // All images are uploaded successfully
+                        // Now you can create the item
+                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, imageUrls);
+                        itemViewModel.addItem(newItem);
+
+                        // Navigate back to the home fragment
+                        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                        navController.navigate(R.id.navigation_home);
+
+                        ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
+                                makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+                    }).addOnFailureListener(exception -> {
+                        // Handle failure
+                        System.out.println("One or more image uploads failed");
+                    });
+                }
+
+                // if user didn't add any images
+                else {
+                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, null);
+                    // Add the new item to the shared ViewModel
+                    itemViewModel.addItem(newItem);
+
+                    // Navigate back to the home fragment
+                    NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                    navController.navigate(R.id.navigation_home);
+
+                    ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
+                            makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+                }
+                // if user didn't populate the add item fields as expected
             } else {
                 Toast.makeText(requireContext(), "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show(); // A pop-up message to ensure validity of input
             }
         });
 
+        // User should be able to delete a picture after they have taken it but haven't submitted the "Add item" form
+        deleteImage0Button.setOnClickListener( v -> {
+            updateLocalImagePaths(0);
+        });
+
+        deleteImage1Button.setOnClickListener( v -> {
+            updateLocalImagePaths(1);
+        });
+
+        deleteImage2Button.setOnClickListener( v -> {
+            updateLocalImagePaths(2);
+        });
+
         return root;
     }
+
+    /**
+     * Updating our local image paths arrayList
+     * @param imageToDelete
+     */
+    void updateLocalImagePaths(int imageToDelete) {
+        if (imageToDelete >= 0 && imageToDelete < localImagePaths.size()) {
+            localImagePaths.remove(imageToDelete);
+        }
+
+        // Determine the appropriate ImageView to update based on the counter
+        displayImages(localImagePaths.size());
+    }
+
 
     /**
      * Performs operations on the image returned from the camera activity.
@@ -282,7 +421,7 @@ public class addItemFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         // only continue processing if it was a successful image taken
-        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             // parse image differently depending on the mode of operation, description means lookup barcode
             if (SCAN_MODE.equals("Description")) {
                 // parse the image into a format usable by the barcode detector
@@ -388,28 +527,38 @@ public class addItemFragment extends Fragment {
 
                 // set up a task that can parse the text in the image to extract the serial number
                 Task<Text> result =
-                    recognizer.process(image)
-                        .addOnSuccessListener(new OnSuccessListener<Text>() {
-                            @Override
-                            public void onSuccess(Text visionText) {
-                                // fetch the text read and store it
-                                String resultText = visionText.getText();
-                                resultText = resultText.substring(0, resultText.indexOf("\n"));
-                                // update the description text to match the new keywords
-                                ((EditText) binding.serialNumberInput).setText(resultText);
-                                // inform user of successful operation
-                                Toast.makeText(requireContext(), "Serial number automatically entered successfully.", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // display error message to the user
-                                Toast.makeText(requireContext(), "Could not read number.", Toast.LENGTH_SHORT).show();
-                                // log details of failure
-                                e.printStackTrace();
-                            }
-                        });
+                        recognizer.process(image)
+                                .addOnSuccessListener(new OnSuccessListener<Text>() {
+                                    @Override
+                                    public void onSuccess(Text visionText) {
+                                        // fetch the text read and store it
+                                        String resultText = visionText.getText();
+                                        if (resultText.contains("\n")) {
+                                            resultText = resultText.substring(0, resultText.indexOf("\n"));
+                                        }
+                                        // update the description text to match the new keywords
+                                        ((EditText) binding.serialNumberInput).setText(resultText);
+                                        // inform user of successful operation
+                                        Toast.makeText(requireContext(), "Serial number automatically entered successfully.", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // display error message to the user
+                                        Toast.makeText(requireContext(), "Could not read number.", Toast.LENGTH_SHORT).show();
+                                        // log details of failure
+                                        e.printStackTrace();
+                                    }
+                                });
+
+            // handle image upload request
+            } else if (requestCode == REQUEST_CAMERA) {
+                handleCameraResult(data);
+
+            // handle image gallery upload request
+            } else if (requestCode == REQUEST_GALLERY) {
+                handleGalleryResult(data);
 
             // should never be encountered
             } else {
@@ -425,6 +574,156 @@ public class addItemFragment extends Fragment {
             Toast.makeText(requireContext(), "Camera failure.", Toast.LENGTH_SHORT).show();
             // log details of failure
             Log.d("DEBUG", String.format("Request Code: %1$d, Result Code: %2$d", requestCode, resultCode));
+        }
+
+        SCAN_MODE = "";
+    }
+
+    /**
+     * Handles the result from the camera activity. Takes the selected photo and converts it to
+     * Bitmap in order for it to be processed an inserted to a imageView.
+     * @param data The Intent containing the result data from the camera activity.
+     */
+    private void handleCameraResult(Intent data) {
+        if (data != null && data.getExtras() != null) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            processImageResult(photo);
+        } else {
+            Toast.makeText(requireContext(), "Invalid Camera Data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Handles the result from the gallery activity. Takes the selected photo and converts it to
+     * Bitmap in order for it to be processed an inserted to a imageView.
+     * @param data The Intent containing the result data from the gallery activity.
+     */
+    private void handleGalleryResult(Intent data) {
+        if (data != null && data.getData() != null) {
+            Uri selectedImageUri = data.getData();
+            try {
+                Bitmap photo = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImageUri);
+                processImageResult(photo);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(requireContext(), "Invalid Gallery Data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Processes the result of selecting or capturing an image. Handles the flow of which
+     * imageView to insert the photo and handles the saving locally of the images.
+     * @param photo The Bitmap representing the selected or captured image.
+     */
+    private void processImageResult(Bitmap photo) {
+        int imageCounter = localImagePaths.size(); // Get the current number of images
+
+        ImageView currentImageView;
+        Button currentAddImageButton;
+
+        // determine the appropriate ImageView to put our picture based on the counter
+        switch (imageCounter) {
+            case 0:
+                currentImageView = imageView0;
+                currentAddImageButton = addImage0Button;
+                break;
+            case 1:
+                currentImageView = imageView1;
+                currentAddImageButton = addImage1Button;
+                break;
+            case 2:
+                currentImageView = imageView2;
+                currentAddImageButton = addImage2Button;
+                break;
+            default:
+                // if we have more than 3 images (not possible for now tho)
+                return;
+        }
+
+        // Set the photo to the current ImageView
+        currentImageView.setImageBitmap(photo);
+
+        // Create a unique ID for each image file and Update the localImagePaths list
+        String uniqueId = UUID.randomUUID().toString();
+        String imagePath = imageUtility.saveImageLocally(photo, "image" + uniqueId + ".jpg");
+        if (imageCounter < localImagePaths.size()) {
+            // Replace existing path if the counter is within the bounds
+            localImagePaths.set(imageCounter, imagePath);
+        } else {
+            // Otherwise, add a new path
+            localImagePaths.add(imagePath);
+        }
+
+        // Enable the "Add Image" button for the current image
+        currentAddImageButton.setEnabled(true);
+
+        // ENFORCING sequential image input
+        // and accounting for the case where the user opens the camera page and cancels without actually taking the pic
+        System.out.println("local image paths size: " + localImagePaths.size());
+        for (String i : localImagePaths){
+            System.out.print(i);
+        }
+        displayImages(localImagePaths.size());
+    }
+
+    /**
+     * This method renders our images and buttons (during add and delete operations)
+     * @param imageCounter The number of images you want to render
+     */
+    void displayImages(int imageCounter) {
+        if (imageCounter == 0) {
+            imageView0.setImageBitmap(null);
+            addImage0Button.setVisibility(View.VISIBLE);
+            deleteImage0Button.setVisibility(View.GONE);
+
+            imageView1.setImageBitmap(null);
+            addImage1Button.setVisibility(View.GONE);
+            deleteImage1Button.setVisibility(View.GONE);
+
+            imageView2.setImageBitmap(null);
+            addImage2Button.setVisibility(View.GONE);
+            deleteImage2Button.setVisibility(View.GONE);
+
+        } else if (imageCounter == 1) {
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
+            addImage0Button.setVisibility(View.GONE);
+            deleteImage0Button.setVisibility(View.VISIBLE);
+
+            imageView1.setImageBitmap(null);
+            addImage1Button.setVisibility(View.VISIBLE);
+            deleteImage1Button.setVisibility(View.GONE);
+
+            imageView2.setImageBitmap(null);
+            addImage2Button.setVisibility(View.GONE);
+            deleteImage0Button.setVisibility(View.VISIBLE);
+
+        } else if (imageCounter == 2) {
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
+            addImage0Button.setVisibility(View.GONE);
+            deleteImage0Button.setVisibility(View.VISIBLE);
+
+            imageView1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
+            addImage1Button.setVisibility(View.GONE);
+            deleteImage1Button.setVisibility(View.VISIBLE);
+
+            imageView2.setImageBitmap(null);
+            addImage2Button.setVisibility(View.VISIBLE);
+            deleteImage2Button.setVisibility(View.GONE);
+
+        } else if (imageCounter == 3) {
+            imageView0.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(0)));
+            addImage0Button.setVisibility(View.GONE);
+            deleteImage0Button.setVisibility(View.VISIBLE);
+
+            imageView1.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(1)));
+            addImage1Button.setVisibility(View.GONE);
+            deleteImage1Button.setVisibility(View.VISIBLE);
+
+            imageView2.setImageBitmap(BitmapFactory.decodeFile(localImagePaths.get(2)));
+            addImage2Button.setVisibility(View.GONE);
+            deleteImage2Button.setVisibility(View.VISIBLE);
         }
     }
 

@@ -2,10 +2,12 @@ package com.example.inventorymanager;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -39,6 +41,7 @@ public class Item implements Parcelable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
+    private ArrayList<String> imageUrls;
 
     /**
      * Creates an Item() object with the fields passed in.
@@ -52,8 +55,9 @@ public class Item implements Parcelable {
      * @param serialNumber The serial number of the item to be created.
      * @param estimatedValue The estimated monetary value of the item to be created.
      * @param comment A brief comment about the item to be created.
+     * @param imageUrls URLs to pictures of items stored in Firebase Cloud Storage
      */
-    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment) {
+    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, ArrayList<String> imageUrls) {
         this.setItemName(itemName);
         this.setPurchaseDate(purchaseDate);
         this.setDescription(description);
@@ -62,6 +66,9 @@ public class Item implements Parcelable {
         this.setSerialNumber(serialNumber);
         this.setEstimatedValue(estimatedValue);
         this.setComment(comment);
+        // store empty array if item doesn't have urls
+        if (imageUrls != null){ this.setImageUrls(imageUrls); }
+        else{ this.setImageUrls(new ArrayList<>()); }
     }
 
     /**
@@ -79,6 +86,7 @@ public class Item implements Parcelable {
         serialNumber = source.readString();
         estimatedValue = source.readDouble();
         comment = source.readString();
+        imageUrls = source.createStringArrayList();
     }
 
     /**
@@ -219,15 +227,24 @@ public class Item implements Parcelable {
         this.comment = comment;
     }
 
+    public void setImageUrls(ArrayList<String> imageUrls){
+        this.imageUrls = imageUrls;
+    }
+
+    public ArrayList<String> getImageUrls(){
+        return this.imageUrls;
+    }
+
     /**
+     * TODO: Update tests because hashmap mapping has changed from <String, String> to <String, Object>. That's what's causing the related problems warning
      * Retrieves a dictionary representation of the original item.
      * The mapping returned is in the proper format for storage in the database.
      * Each field is represented as a String key associated with a String value.
      * @return A representation of the item that can be stored in the database.
      */
-    public HashMap<String, String> getDocument() {
+    public HashMap<String, Object> getDocument() {
         // data should be key-value mapping of String to String
-        HashMap<String, String> doc = new HashMap<>();
+        HashMap<String, Object> doc = new HashMap<>();
         // add fields one by one
         doc.put("name", this.getItemName());
         doc.put("date", this.getPurchaseDate());
@@ -237,6 +254,7 @@ public class Item implements Parcelable {
         doc.put("number", this.getSerialNumber());
         doc.put("value", this.getEstimatedValue());
         doc.put("comment", this.getComment());
+        doc.put("imageUrls", this.getImageUrls());
         return doc;
     }
 
@@ -265,6 +283,7 @@ public class Item implements Parcelable {
         parcel.writeString(serialNumber);
         parcel.writeDouble(estimatedValue);
         parcel.writeString(comment);
+        parcel.writeStringList(imageUrls);
     }
 
     /**

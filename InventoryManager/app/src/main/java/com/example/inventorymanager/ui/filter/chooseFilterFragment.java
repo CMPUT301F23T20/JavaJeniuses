@@ -60,6 +60,7 @@ public class chooseFilterFragment extends Fragment {
         // Bind UI elements to variables
         EditText descriptionKeywordEditText = binding.descriptionKeywordEditText;
         EditText makeKeywordEditText = binding.makeKeywordEditText;
+        EditText tagKeywordEditText = binding.tagKeywordEditText;
         EditText startDateEditText = binding.startDateEditText;
         EditText endDateEditText = binding.endDateEditText;
         Button searchButton = binding.searchButton;
@@ -73,6 +74,7 @@ public class chooseFilterFragment extends Fragment {
             // fetch keywords
             String description = (descriptionKeywordEditText.getText().toString()).toLowerCase();
             String make = makeKeywordEditText.getText().toString().toLowerCase();
+            String tag = tagKeywordEditText.getText().toString().toLowerCase();
             String startDate = startDateEditText.getText().toString();
             String endDate = endDateEditText.getText().toString();
 
@@ -91,6 +93,12 @@ public class chooseFilterFragment extends Fragment {
             // if user selects description keyword
             if (!description.isEmpty()) {
                 items = findItemsWithDescriptionKeyword(description, items);
+                // if item not already in list, add item to filtered item list
+            }
+
+            // if user selects tag keyword
+            if (!tag.isEmpty()) {
+                items = findItemsWithTag(tag, items);
                 // if item not already in list, add item to filtered item list
             }
 
@@ -157,6 +165,19 @@ public class chooseFilterFragment extends Fragment {
             }
         }
         return itemsWithMake;
+    }
+
+    /**
+     * Populate a new list with all items containing the desired tag.
+     */
+    public ArrayList<Item> findItemsWithTag(String tag, ArrayList<Item> itemsToFilter) {
+        ArrayList<Item> itemsWithTag = new ArrayList<>();
+        for (Item item : itemsToFilter) {
+            if (item.getFirstTag().getText().contains(tag)) {
+                itemsWithTag.add(item);
+            }
+        }
+        return itemsWithTag;
     }
 
     /**

@@ -78,17 +78,47 @@ public class SortOptionsFragment extends Fragment {
         ascending = true;
 
         // if button switched to descending, change ascending to false
-        ascendingButton.setOnCheckedChangeListener( (buttonView, isChecked) -> {ascending = false; });
+        ascendingButton.setOnCheckedChangeListener( (buttonView, isChecked) -> {ascending = !isChecked; });
 
         // create array to hold sorting order
         ArrayList<String> sortList = new ArrayList<String>();
 
-        // add sorting method to array when button clicked
-        dateButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Date"); });
-        descriptionButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Description"); });
-        makeButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Make"); });
-        valueButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Value"); });
-        tagButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Tag"); });
+        // add sorting method to array when button selected & remove when not selected
+        dateButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Date");
+            } else {
+                sortList.remove("Date");
+            }
+        });
+        descriptionButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Description");
+            } else {
+                sortList.remove("Description");
+            }
+        });
+        makeButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Make");
+            } else {
+                sortList.remove("Make");
+            }
+        });
+        valueButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Value");
+            } else {
+                sortList.remove("Value");
+            }
+        });
+        tagButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Tag");
+            } else {
+                sortList.remove("Tag");
+            }
+        });
 
         // handle done button click
         doneButton.setOnClickListener( v -> {
@@ -166,10 +196,10 @@ public class SortOptionsFragment extends Fragment {
                 };
                 break;
             case "Description":
-                comparator = Comparator.comparing(Item::getDescription);
+                comparator = Comparator.comparing(item -> item.getDescription().toLowerCase());
                 break;
             case "Make":
-                comparator = Comparator.comparing(Item::getMake);
+                comparator = Comparator.comparing(item -> item.getMake().toLowerCase());
                 break;
             case "Value":
                 comparator = (item1, item2) -> {

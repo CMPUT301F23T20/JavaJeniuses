@@ -152,18 +152,13 @@ public class HomeFragment extends Fragment {
 
         // add effect of clicking on add tag button
         Button addTagButton = root.findViewById(R.id.tag_button);
+
         // show add button fragment when button clicked
         addTagButton.setOnClickListener( v-> {
             selectedItems = new ArrayList<Item>();
-
-            for (int i = 0; i < items.size(); i++) {
-                View childView = itemList.getChildAt(i);
-                if (childView != null) {
-                    CheckBox checkBox = childView.findViewById(R.id.checkBox);
-                    if (checkBox != null && checkBox.isChecked()) {
-                        selectedItems.add(items.get(i));
-                        ((CheckBox) itemList.getChildAt(i).findViewById(R.id.checkBox)).setChecked(false);
-                    }
+            for (int i = items.size()-1; i >= 0; i--) {
+                if (adapter.getIsChecked(items.get(i).getItemName())) {
+                    selectedItems.add(items.get(i));
                 }
             }
 

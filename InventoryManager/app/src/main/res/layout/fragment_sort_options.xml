@@ -28,7 +28,7 @@
         android:textColor="@color/white"
         android:textOff="DATE OFF"
         android:textOn="DATE ON"
-        android:background="@drawable/button_state"/>
+        android:background="@color/celadon"/>
 
     <ToggleButton
         android:id="@+id/sort_description_button"
@@ -40,7 +40,7 @@
         android:textColor="@color/white"
         android:textOff="DESCRIPTION OFF"
         android:textOn="DESCRIPTION ON"
-        android:background="@drawable/button_state"/>
+        android:background="@color/celadon"/>
 
     <ToggleButton
         android:id="@+id/sort_make_button"
@@ -52,7 +52,7 @@
         android:textColor="@color/white"
         android:textOff="MAKE OFF"
         android:textOn="MAKE ON"
-        android:background="@drawable/button_state"/>
+        android:background="@color/celadon"/>
 
     <ToggleButton
         android:id="@+id/sort_value_button"
@@ -64,7 +64,7 @@
         android:textColor="@color/white"
         android:textOff="VALUE OFF"
         android:textOn="VALUE ON"
-        android:background="@drawable/button_state"/>
+        android:background="@color/celadon"/>
 
     <ToggleButton
         android:id="@+id/sort_tag_button"
@@ -76,7 +76,7 @@
         android:textColor="@color/white"
         android:textOff="TAG OFF"
         android:textOn="TAG ON"
-        android:background="@drawable/button_state"/>
+        android:background="@color/celadon"/>
 
     <ToggleButton
         android:id="@+id/ascending_button"
@@ -89,7 +89,7 @@
         android:textColor="@color/white"
         android:textOff="ASCENDING"
         android:textOn="DESCENDING"
-        android:background="@drawable/button_state"/>
+        android:background="@color/celadon"/>
 
 
     <Button

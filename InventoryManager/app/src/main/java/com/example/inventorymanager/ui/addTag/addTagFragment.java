@@ -1,6 +1,5 @@
 package com.example.inventorymanager.ui.addTag;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,21 +19,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.example.inventorymanager.Item;
-import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.TagAdapter;
 import com.example.inventorymanager.databinding.FragmentAddTagBinding;
-import com.example.inventorymanager.databinding.FragmentSortOptionsBinding;
-import com.example.inventorymanager.ui.filter.filteredItemsFragment;
-import com.example.inventorymanager.ui.sort.sortedItemsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,15 +35,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Fragment used for adding tags to items within an inventory management system. This fragment provides functionalities including:
@@ -107,7 +91,6 @@ public class addTagFragment extends Fragment {
         Button createTagButton = binding.createTagButton;
 
         createTagButton.setOnClickListener( v -> {
-
             // send bundle with the list of items
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("items", items);
@@ -171,8 +154,8 @@ public class addTagFragment extends Fragment {
             if (items != null && selectedItem != null) {
                 // Loop through each selected item and add the chosen tag
                 for (Item item : items) {
-                    HashMap<String, String> mapping = item.getDocument();
-                    String currentTags = mapping.get("tags");
+                    HashMap<String, Object> mapping = item.getDocument();
+                    String currentTags = (String) mapping.get("tags");
                     currentTags += selectedTag.getText() + "," + selectedTag.getColour() + ";";
                     mapping.put("tags", currentTags);
                     itemViewModel.editItem(item.getItemName(), new Item(mapping));

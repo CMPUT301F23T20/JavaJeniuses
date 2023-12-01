@@ -45,7 +45,7 @@ import java.util.Map;
 public class ItemViewModel extends ViewModel {
     // static variables make it so one copy of this variable exists across the whole app, synchronization
     private static MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
-    private static MutableLiveData<HashMap<String, ArrayList<Tag>>> allItemsTagsData = new MutableLiveData<>();
+//    private static MutableLiveData<HashMap<String, ArrayList<Tag>>> allItemsTagsData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference itemsDB;
 
@@ -73,9 +73,9 @@ public class ItemViewModel extends ViewModel {
         HashMap<String, ArrayList<Tag>> emptyTag = new HashMap<>();
 //        ArrayList<Tag> tags = new ArrayList<>();
 //        emptyTag.put("", tags);
-
-        allItemsTagsData.setValue(emptyTag);
-        fetchItemTags();
+//
+//        allItemsTagsData.setValue(emptyTag);
+//        fetchItemTags();
     }
 
     /**
@@ -86,13 +86,13 @@ public class ItemViewModel extends ViewModel {
         return itemsLiveData;
     }
 
-    /**
-     * Retrieves the data from the database that is currently being stored locally.
-     * @return A list of the current items being tracked.
-     */
-    public LiveData<HashMap<String, ArrayList<Tag>>> getAllItemsTagsLiveData() {
-        return allItemsTagsData;
-    }
+//    /**
+//     * Retrieves the data from the database that is currently being stored locally.
+//     * @return A list of the current items being tracked.
+//     */
+//    public LiveData<HashMap<String, ArrayList<Tag>>> getAllItemsTagsLiveData() {
+//        return allItemsTagsData;
+//    }
 
     /**
      * Fetches the entire list of items being tracked inside the database.
@@ -285,62 +285,62 @@ public class ItemViewModel extends ViewModel {
         return false;
     }
 
-    public void fetchItemTags() {
-        fetchItems();
-        // get the current items being tracked
-        ArrayList<Item> items = getItemsLiveData().getValue();
-
-        // get the user from firebase
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        // HashMap of current item tags
-        HashMap<String, ArrayList<Tag>> itemTags = new HashMap<>();
-
-        if (items == null) {
-            Log.d("NAME", "HERE");
-            return; }
-        for (Item currentItem : items) {
-            Log.d("NAME", currentItem.getItemName());
-//            if (currentItem == null) { return; }
-
-            Log.d("NAME", currentItem.getItemName());
-
-            // set the tags database accessed to be for this one user
-            CollectionReference privateTagsRef = db.collection("users")
-                    .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
-                    .collection("items").document(currentItem.getItemName()).collection("tags");
-
-            // query database to get all items indiscriminately
-            privateTagsRef.get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                // fetch the results of the blank query
-                                QuerySnapshot rawData = task.getResult();
-                                List<DocumentSnapshot> cleanedData = rawData.getDocuments();
-                                // iterate through fetched documents and make an item for each
-                                ArrayList<Tag> tags = new ArrayList<>();
-                                for (int i = 0; i < cleanedData.size(); i++) {
-                                    DocumentSnapshot rawTag = cleanedData.get(i);
-                                    // translate database format to the Item class
-                                    Tag cleanedTag = new Tag(
-                                            rawTag.getString("name"),
-                                            rawTag.getString("colour")
-                                    );
-                                    tags.add(cleanedTag);
-                                }
-
-                                // update the items being shown to the what was fetched
-                                itemTags.put(currentItem.getItemName(), tags);
-                                allItemsTagsData.setValue(itemTags);
-                            }
-                        }
-                    });
-        }
-
-    }
+//    public void fetchItemTags() {
+//        fetchItems();
+//        // get the current items being tracked
+//        ArrayList<Item> items = getItemsLiveData().getValue();
+//
+//        // get the user from firebase
+//        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+//        FirebaseUser user = mAuth.getCurrentUser();
+//
+//        // HashMap of current item tags
+//        HashMap<String, ArrayList<Tag>> itemTags = new HashMap<>();
+//
+//        if (items == null) {
+//            Log.d("NAME", "HERE");
+//            return; }
+//        for (Item currentItem : items) {
+//            Log.d("NAME", currentItem.getItemName());
+////            if (currentItem == null) { return; }
+//
+//            Log.d("NAME", currentItem.getItemName());
+//
+//            // set the tags database accessed to be for this one user
+//            CollectionReference privateTagsRef = db.collection("users")
+//                    .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
+//                    .collection("items").document(currentItem.getItemName()).collection("tags");
+//
+//            // query database to get all items indiscriminately
+//            privateTagsRef.get()
+//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                            if (task.isSuccessful()) {
+//                                // fetch the results of the blank query
+//                                QuerySnapshot rawData = task.getResult();
+//                                List<DocumentSnapshot> cleanedData = rawData.getDocuments();
+//                                // iterate through fetched documents and make an item for each
+//                                ArrayList<Tag> tags = new ArrayList<>();
+//                                for (int i = 0; i < cleanedData.size(); i++) {
+//                                    DocumentSnapshot rawTag = cleanedData.get(i);
+//                                    // translate database format to the Item class
+//                                    Tag cleanedTag = new Tag(
+//                                            rawTag.getString("name"),
+//                                            rawTag.getString("colour")
+//                                    );
+//                                    tags.add(cleanedTag);
+//                                }
+//
+//                                // update the items being shown to the what was fetched
+//                                itemTags.put(currentItem.getItemName(), tags);
+//                                allItemsTagsData.setValue(itemTags);
+//                            }
+//                        }
+//                    });
+//        }
+//
+//    }
 }
 
 

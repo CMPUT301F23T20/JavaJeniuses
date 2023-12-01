@@ -11,14 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,9 +35,6 @@ import java.util.HashMap;
 public class ItemAdapter extends ArrayAdapter{
     private final Context context;
     private ArrayList<Item> items;
-    private HashMap<String, ArrayList<Tag>> itemTags;
-//    private ArrayList<Tag> tags;
-//    private Tag tag;
     private HashMap<String, Boolean> isChecked;
 
     /**
@@ -50,12 +43,11 @@ public class ItemAdapter extends ArrayAdapter{
      * @param value The UI element to bind the adapter to.
      * @param items The items to be displayed.
      */
-    public ItemAdapter(Context context, int value, ArrayList<Item> items, HashMap<String, ArrayList<Tag>> itemTags) {
+    public ItemAdapter(Context context, int value, ArrayList<Item> items) {
         super(context, value, items);
         this.context = context;
         this.items = items;
         this.createEmptyIsChecked();
-        this.itemTags = itemTags;
     }
 
     /**
@@ -110,10 +102,7 @@ public class ItemAdapter extends ArrayAdapter{
         });
 
         ArrayList<Tag> tags = item.getTags();
-//        ArrayList<Tag> tags = itemTags.get(item.getItemName());
-//        tags = item.getTags();
         Log.d("DEBUG", Boolean.toString(tags.isEmpty()));
-//        Log.d("DEBUG", itemTags.get(item.getItemName()).toString());
         if (tags != null) {
             Log.d("DEBUG", "HERE");
             tagList.removeAllViews();
@@ -122,7 +111,7 @@ public class ItemAdapter extends ArrayAdapter{
                 TextView tagTextView = new TextView(getContext());
                 tagTextView.setTextSize(15);
                 SpannableString tagName = new SpannableString(" " + tags.get(i).getText() + " ");
-                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColour())), 0, tagName.length(), 0);
+                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColourCode())), 0, tagName.length(), 0);
                 tagTextView.setText(tagName);
                 tagTextView.setPadding(0, 10, 0, 10);
                 tagList.addView(tagTextView);

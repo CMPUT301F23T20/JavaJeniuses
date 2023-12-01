@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment {
 //                itemViewModel.fetchItemTags();
 
                 // Create an adapter to bind the data from the ArrayList to the ListView
-                adapter = new ItemAdapter(requireContext(), R.id.item_list, items, itemViewModel.getAllItemsTagsLiveData().getValue());
+                adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
                 // Set the adapter for the ListView, allowing it to display the data
                 itemList.setAdapter(adapter);
                 // display the current total estimated value of items being displayed

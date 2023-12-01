@@ -58,7 +58,7 @@ public class filteredItemsFragment extends Fragment {
         items = getArguments().getParcelableArrayList("items");
 
         // bind our list to the listView
-        adapter = new ItemAdapter(requireContext(), R.id.item_list, items, itemViewModel.getAllItemsTagsLiveData().getValue());
+        adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
 
         // Set the adapter for the ListView, allowing it to display the data
         itemList.setAdapter(adapter);

@@ -18,6 +18,7 @@ import android.widget.EditText;
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.FragmentAddTagBinding;
 import com.example.inventorymanager.databinding.FragmentCreateTagBinding;
@@ -83,13 +84,13 @@ public class createTagFragment extends Fragment {
         tagColour = "red";
 
         // change colour based on user's choice
-        redButton.setOnClickListener(v -> { tagColour = "red"; });
-        blueButton.setOnClickListener(v -> { tagColour = "blue"; });
-        greenButton.setOnClickListener(v -> { tagColour = "green"; });
-        yellowButton.setOnClickListener(v -> { tagColour = "yellow"; });
+        redButton.setOnClickListener(v -> { tagColour = "red"; Log.d("SAVE COLOUR", tagColour);});
+        blueButton.setOnClickListener(v -> { tagColour = "blue"; Log.d("SAVE COLOUR", tagColour);});
+        greenButton.setOnClickListener(v -> { tagColour = "green"; Log.d("SAVE COLOUR", tagColour);});
+        yellowButton.setOnClickListener(v -> { tagColour = "yellow"; Log.d("SAVE COLOUR", tagColour);});
 
         // ViewModel to handle tag data
-        addTagViewModel publicTagViewModel = new ViewModelProvider(requireActivity()).get(addTagViewModel.class);
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
 
         // send bundle with the list of items
         Bundle bundle = new Bundle();
@@ -97,7 +98,7 @@ public class createTagFragment extends Fragment {
 
         // Save button: Creates a new tag with the entered name and selected color
         saveButton.setOnClickListener( v -> {
-
+            Log.d("SAVE COLOUR", tagColour);
             String tagName = tagNameInput.getText().toString();
 
             if (tagName.isEmpty()) {
@@ -105,7 +106,7 @@ public class createTagFragment extends Fragment {
             } else if (tagName.length() >= 11) {
                 tagNameInput.setError("Up to 10 characters");
             } else {
-                publicTagViewModel.addTag(tagName, tagColour);
+                tagViewModel.addTag(new Tag(tagName, tagColour));
 
                 // Navigate to the addTagFragment after saving the tag
                 NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);

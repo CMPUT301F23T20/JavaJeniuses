@@ -9,7 +9,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -107,7 +106,7 @@ public class ViewItemFragment extends Fragment {
                 TextView tagTextView = new TextView(getContext());
                 tagTextView.setTextSize(20);
                 SpannableString tagName = new SpannableString(" " + tags.get(i).getText() + " ");
-                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColour())),
+                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColourCode())),
                         0, tagName.length(), 0);
                 tagTextView.setText(tagName);
                 tagTextView.setPadding(15, 10, 15, 10);

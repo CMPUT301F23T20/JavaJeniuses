@@ -2,6 +2,7 @@ package com.example.inventorymanager;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -76,13 +77,14 @@ public class Tag implements Parcelable{
      * Converts the colour name to its corresponding HEX code.
      * @return The HEX code representation of the tag's colour.
      */
-    public String getColourName() { return colour; }
+    public String getColour() { return colour; }
 
-    public String getColour() {
-
+    public String getColourCode() {
+        Log.d("DEBUG HERE", colour);
         if (colour.equals("blue")) {return "#A8E4EF"; }
         if (colour.equals("green")) {return "#A6ECA8"; }
         if (colour.equals("yellow")) {return "#FCFC99"; }
+        if (colour.equals("red")) { return "#FF8986"; }
         else {return "#FF8986"; }
 
     }

@@ -2,33 +2,14 @@ package com.example.inventorymanager;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
+
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
-import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * A representation of an item within the context of an inventory management system.
@@ -93,16 +74,16 @@ public class Item implements Parcelable {
     /**
      *
      */
-    public Item(HashMap<String,String> mapping) {
-        this.setItemName(mapping.get("name"));
-        this.setPurchaseDate(mapping.get("date"));
-        this.setDescription(mapping.get("description"));
-        this.setModel(mapping.get("model"));
-        this.setMake(mapping.get("make"));
-        this.setSerialNumber(mapping.get("number"));
-        this.setEstimatedValue(mapping.get("value"));
-        this.setComment(mapping.get("comment"));
-        this.setTags(mapping.get("tags"));
+    public Item(HashMap<String, Object> mapping) {
+        this.setItemName((String) mapping.get("name"));
+        this.setPurchaseDate((String) mapping.get("date"));
+        this.setDescription((String) mapping.get("description"));
+        this.setModel((String) mapping.get("model"));
+        this.setMake((String) mapping.get("make"));
+        this.setSerialNumber((String) mapping.get("number"));
+        this.setEstimatedValue((String) mapping.get("value"));
+        this.setComment((String) mapping.get("comment"));
+        this.setTags((String) mapping.get("tags"));
     }
 
     /**

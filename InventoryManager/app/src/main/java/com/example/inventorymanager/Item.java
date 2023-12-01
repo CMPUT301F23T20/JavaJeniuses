@@ -75,7 +75,7 @@ public class Item implements Parcelable {
      * @param estimatedValue The estimated monetary value of the item to be created.
      * @param comment A brief comment about the item to be created.
      */
-    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment) {
+    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, String tags) {
         this.setItemName(itemName);
         this.setPurchaseDate(purchaseDate);
         this.setDescription(description);
@@ -84,7 +84,22 @@ public class Item implements Parcelable {
         this.setSerialNumber(serialNumber);
         this.setEstimatedValue(estimatedValue);
         this.setComment(comment);
-        this.tags = new ArrayList<>();
+        this.setTags(tags);
+    }
+
+    /**
+     *
+     */
+    public Item(HashMap<String,String> mapping) {
+        this.setItemName(mapping.get("name"));
+        this.setPurchaseDate(mapping.get("date"));
+        this.setDescription(mapping.get("description"));
+        this.setModel(mapping.get("model"));
+        this.setMake(mapping.get("make"));
+        this.setSerialNumber(mapping.get("number"));
+        this.setEstimatedValue(mapping.get("value"));
+        this.setComment(mapping.get("comment"));
+        this.setTags(mapping.get("tags"));
     }
 
     /**
@@ -247,87 +262,31 @@ public class Item implements Parcelable {
     // Methods for handling tags
 
     /**
-     * Adds a tag to the item and updates the Firebase database accordingly.
-     * @param tag The tag to be added to the item.
+     *
      */
-    public void addTag(Tag tag) {
-
-        // get the user from firebase
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        // set the tags database accessed to be for this one user
-        CollectionReference privateTagsRef = db.collection("users")
-                .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
-                .collection("items").document(itemName).collection("tags");
-
-        // add colour in a Hashmap to make into a field
-        Map<String, Object> addTagColour = new HashMap<>();
-        addTagColour.put("name", tag.getText());
-        addTagColour.put("colour", tag.getColourName());
-
-        // add tag colour as a field to the database, updates the colour of a tag that already exists
-        privateTagsRef.document(tag.getText())
-                .set(addTagColour, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                    }
-                });
+    public ArrayList<Tag> getTags() {
+        return this.tags;
     }
 
     /**
-     * Retrieves the tags associated with the item from the Firebase database.
-     * @return A list of tags associated with the item.
+     *
      */
-    public ArrayList<Tag> getTags() {
-
-        // get the user from firebase
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        // set the tags database accessed to be for this one user
-        CollectionReference privateTagsRef = db.collection("users")
-                .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
-                .collection("items").document(itemName).collection("tags");
-
-        // query database to get all items indiscriminately
-        privateTagsRef.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // fetch the results of the blank query
-                            QuerySnapshot rawData = task.getResult();
-                            List<DocumentSnapshot> cleanedData = rawData.getDocuments();
-                            // iterate through fetched documents and make an item for each
-                            ArrayList<Tag> myTags = new ArrayList<>();
-                            for (int i = 0; i < cleanedData.size(); i++) {
-                                DocumentSnapshot rawTag = cleanedData.get(i);
-                                // translate database format to the Item class
-                                Tag cleanedTag = new Tag(
-                                        rawTag.getString("name"),
-                                        rawTag.getString("colour")
-                                );
-                                myTags.add(cleanedTag);
-                            }
-                            itemTags = myTags;
-                        }
-                    }
-                });
-        return itemTags;
-
+    public void setTags(String tags) {
+        this.tags = new ArrayList<>();
+        if (tags != null) {
+            String[] individualTags = tags.split(";", 0);
+            for (int i = 0; i < individualTags.length; i++) {
+                String[] individualTag = individualTags[i].split(",");
+                this.tags.add(new Tag(individualTag[0], individualTag[1]));
+            }
+        }
     }
 
+    /**
+     *
+     */
     public boolean hasTag(){
-        return !(getTags().isEmpty());
+        return !getTags().isEmpty();
     }
 
     /**
@@ -340,6 +299,100 @@ public class Item implements Parcelable {
         }
         return null;
     }
+
+//    /**
+//     * Adds a tag to the item and updates the Firebase database accordingly.
+//     * @param tag The tag to be added to the item.
+//     */
+//    public void addTag(Tag tag) {
+//        // get the user from firebase
+//        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+//        FirebaseUser user = mAuth.getCurrentUser();
+//
+//        // set the tags database accessed to be for this one user
+//        CollectionReference privateTagsRef = db.collection("users")
+//                .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
+//                .collection("items").document(itemName).collection("tags");
+//
+//        // add colour in a Hashmap to make into a field
+//        Map<String, Object> addTagColour = new HashMap<>();
+//        addTagColour.put("name", tag.getText());
+//        addTagColour.put("colour", tag.getColourName());
+//
+//        // add tag colour as a field to the database, updates the colour of a tag that already exists
+//        privateTagsRef.document(tag.getText())
+//                .set(addTagColour, SetOptions.merge())
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Log.d(TAG, "DocumentSnapshot successfully written!");
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.w(TAG, "Error writing document", e);
+//                    }
+//                });
+//    }
+
+//    /**
+//     * Retrieves the tags associated with the item from the Firebase database.
+//     * @return A list of tags associated with the item.
+//     */
+//    public ArrayList<Tag> getTags() {
+//
+//        // get the user from firebase
+//        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+//        FirebaseUser user = mAuth.getCurrentUser();
+//
+//        // set the tags database accessed to be for this one user
+//        CollectionReference privateTagsRef = db.collection("users")
+//                .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
+//                .collection("items").document(itemName).collection("tags");
+//
+//        // query database to get all items indiscriminately
+//        privateTagsRef.get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            // fetch the results of the blank query
+//                            QuerySnapshot rawData = task.getResult();
+//                            List<DocumentSnapshot> cleanedData = rawData.getDocuments();
+//                            // iterate through fetched documents and make an item for each
+//                            ArrayList<Tag> myTags = new ArrayList<>();
+//                            for (int i = 0; i < cleanedData.size(); i++) {
+//                                DocumentSnapshot rawTag = cleanedData.get(i);
+//                                // translate database format to the Item class
+//                                Tag cleanedTag = new Tag(
+//                                        rawTag.getString("name"),
+//                                        rawTag.getString("colour")
+//                                );
+//                                myTags.add(cleanedTag);
+//                            }
+//                            itemTags = myTags;
+//                        }
+//                    }
+//                });
+//        return itemTags;
+//
+//    }
+//
+//    public boolean hasTag(){
+//        return !(getTags().isEmpty());
+//    }
+//
+//    /**
+//     * Retrieves the first tag from the list of tags.
+//     * @return The first tag, or null if no tags are present.
+//     */
+//    public Tag getFirstTag() {
+//        if (hasTag()) {
+//            return getTags().get(0);
+//        }
+//        return null;
+//    }
 
 
     /**
@@ -360,6 +413,12 @@ public class Item implements Parcelable {
         doc.put("number", this.getSerialNumber());
         doc.put("value", this.getEstimatedValue());
         doc.put("comment", this.getComment());
+        //
+        String tagsString = "";
+        for (int i = 0; i < tags.size(); i++) {
+            tagsString += tags.get(i).getText() + "," + tags.get(i).getColour() + ";";
+        }
+        doc.put("tags", tagsString);
         return doc;
     }
 

@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment {
                 // Create a new ArrayList to store the data that will be displayed in the ListView
                 items = updatedItems;
 
-                itemViewModel.fetchItemTags();
+//                itemViewModel.fetchItemTags();
 
                 // Create an adapter to bind the data from the ArrayList to the ListView
                 adapter = new ItemAdapter(requireContext(), R.id.item_list, items, itemViewModel.getAllItemsTagsLiveData().getValue());

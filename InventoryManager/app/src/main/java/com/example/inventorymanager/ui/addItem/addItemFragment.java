@@ -182,7 +182,7 @@ public class addItemFragment extends Fragment {
                 String estimateValue = estimatedValueInput.getText().toString();
                 String comment = commentInput.getText().toString();
 
-                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment);
+                Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "");
 
                 // Add the new item to the shared ViewModel
                 itemViewModel.addItem(newItem);

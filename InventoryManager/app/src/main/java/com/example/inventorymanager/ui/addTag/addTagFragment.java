@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -150,6 +151,9 @@ public class addTagFragment extends Fragment {
         // Fetch the latest tags from the database
         getTags();
 
+        // Create an instance of the shared ViewModel that manages the list of items
+        ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
+
         // Set a listener on the AutoCompleteTextView to handle tag selection
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -167,7 +171,12 @@ public class addTagFragment extends Fragment {
             if (items != null && selectedItem != null) {
                 // Loop through each selected item and add the chosen tag
                 for (Item item : items) {
-                    item.addTag(selectedTag);
+                    HashMap<String, String> mapping = item.getDocument();
+                    String currentTags = mapping.get("tags");
+                    currentTags += selectedTag.getText() + "," + selectedTag.getColour() + ";";
+                    mapping.put("tags", currentTags);
+                    itemViewModel.editItem(item.getItemName(), new Item(mapping));
+//                    item.addTag(selectedTag);
             }}
 
             // Navigate back to the home fragment after adding tags

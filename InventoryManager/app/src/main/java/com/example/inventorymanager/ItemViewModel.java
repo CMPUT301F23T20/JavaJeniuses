@@ -113,7 +113,8 @@ public class ItemViewModel extends ViewModel {
                                     (String) rawItem.get("make"),
                                     (String) rawItem.get("number"),
                                     (String) rawItem.get("value"),
-                                    (String) rawItem.get("comment"));
+                                    (String) rawItem.get("comment"),
+                                    (String) rawItem.get("tags"));
                             items.add(cleanedItem);
                         }
                         // update the items being shown to the what was fetched
@@ -141,7 +142,7 @@ public class ItemViewModel extends ViewModel {
         }
 
         // should never ever be reached
-        return new Item("Error", "", "", "", "", "", "", "");
+        return new Item("Error", "", "", "", "", "", "", "", "");
     }
 
     /**

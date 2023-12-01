@@ -2,13 +2,12 @@ package com.example.inventorymanager;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -20,13 +19,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -61,6 +59,7 @@ public class Item implements Parcelable {
     private ArrayList<Tag> tags, itemTags;
     private static final String TAG = "PrivateAddTag";
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private ArrayList<String> imageUrls;
 
     /**
      * Creates an Item() object with the fields passed in.
@@ -74,8 +73,9 @@ public class Item implements Parcelable {
      * @param serialNumber The serial number of the item to be created.
      * @param estimatedValue The estimated monetary value of the item to be created.
      * @param comment A brief comment about the item to be created.
+     * @param imageUrls URLs to pictures of items stored in Firebase Cloud Storage
      */
-    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, String tags) {
+    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, String tags, ArrayList<String> imageUrls) {
         this.setItemName(itemName);
         this.setPurchaseDate(purchaseDate);
         this.setDescription(description);
@@ -85,6 +85,9 @@ public class Item implements Parcelable {
         this.setEstimatedValue(estimatedValue);
         this.setComment(comment);
         this.setTags(tags);
+        // store empty array if item doesn't have urls
+        if (imageUrls != null){ this.setImageUrls(imageUrls); }
+        else{ this.setImageUrls(new ArrayList<>()); }
     }
 
     /**
@@ -119,6 +122,7 @@ public class Item implements Parcelable {
         comment = source.readString();
         tags = new ArrayList<>();
         source.readTypedList(tags, Tag.CREATOR);
+        imageUrls = source.createStringArrayList();
     }
 
     /**
@@ -259,8 +263,6 @@ public class Item implements Parcelable {
         this.comment = comment;
     }
 
-    // Methods for handling tags
-
     /**
      *
      */
@@ -280,6 +282,22 @@ public class Item implements Parcelable {
                 this.tags.add(new Tag(individualTag[0], individualTag[1]));
             }
         }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ArrayList<String> getImageUrls(){
+        return this.imageUrls;
+    }
+
+    /**
+     *
+     * @param imageUrls
+     */
+    public void setImageUrls(ArrayList<String> imageUrls){
+        this.imageUrls = imageUrls;
     }
 
     /**
@@ -394,16 +412,16 @@ public class Item implements Parcelable {
 //        return null;
 //    }
 
-
     /**
+     * TODO: Update tests because hashmap mapping has changed from <String, String> to <String, Object>. That's what's causing the related problems warning
      * Retrieves a dictionary representation of the original item.
      * The mapping returned is in the proper format for storage in the database.
      * Each field is represented as a String key associated with a String value.
      * @return A representation of the item that can be stored in the database.
      */
-    public HashMap<String, String> getDocument() {
+    public HashMap<String, Object> getDocument() {
         // data should be key-value mapping of String to String
-        HashMap<String, String> doc = new HashMap<>();
+        HashMap<String, Object> doc = new HashMap<>();
         // add fields one by one
         doc.put("name", this.getItemName());
         doc.put("date", this.getPurchaseDate());
@@ -419,6 +437,7 @@ public class Item implements Parcelable {
             tagsString += tags.get(i).getText() + "," + tags.get(i).getColour() + ";";
         }
         doc.put("tags", tagsString);
+        doc.put("imageUrls", this.getImageUrls());
         return doc;
     }
 
@@ -448,6 +467,7 @@ public class Item implements Parcelable {
         parcel.writeDouble(estimatedValue);
         parcel.writeString(comment);
         parcel.writeList(tags);
+        parcel.writeStringList(imageUrls);
     }
 
     /**

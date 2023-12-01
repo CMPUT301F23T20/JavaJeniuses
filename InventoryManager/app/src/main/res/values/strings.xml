@@ -13,7 +13,7 @@
     <string name="purchase_date_hint">Enter date</string>
 
     <string name="description">Brief Description</string>
-    <string name="description_hint">Enter name of item</string>
+    <string name="description_hint">Enter description</string>
 
     <string name="make_label">Make</string>
     <string name="make_hint">Enter Make</string>
@@ -21,7 +21,7 @@
     <string name="model_label">Model</string>
     <string name="model_hint">Enter Model</string>
 
-    <string name="serial_number">Serial Number (if applicable)</string>
+    <string name="serial_number">Serial Number</string>
     <string name="serial_number_hint">Enter serial number</string>
 
     <string name="estimate_value">Estimate Value</string>
@@ -42,7 +42,8 @@
     <string name="add_item">Add Item</string>
     <string name="delete_button">Delete</string>
     <string name="add_tag_button">Add Tag</string>
-    <string name="add_image">Add Image</string>
+    <string name="gallery_button">Gallery</string>
+    <string name="take_picture_button">Take Picture</string>
 
     <string name="total">Total Estimated Value:</string>
     <string name="total_value">$0.00</string>
@@ -51,7 +52,5 @@
     <string name="title_no_items_found">No Items Found</string>
     <string name="title_sort_options">Choose Sort</string>
     <string name="title_sorted_items">Sorted Items</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="title_camera">Camera</string>
 </resources>

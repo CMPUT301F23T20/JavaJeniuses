@@ -1,17 +1,12 @@
 package com.example.inventorymanager.ui.viewItem;
 
-import static java.lang.Thread.sleep;
-
 import androidx.lifecycle.ViewModelProvider;
-
 import android.graphics.Color;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
 import android.util.Log;
@@ -20,22 +15,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.FragmentViewItemBinding;
-
 import java.util.ArrayList;
+import com.bumptech.glide.Glide;
 
 /**
  * Shows the details of a single item.
  * Each field of the item is labelled and displayed.
  * Users may choose to edit the details of this item or to delete this item.
- * @author Isaac Joffe
+ * @author Isaac Joffe, David Onchuru
  * @see com.example.inventorymanager.ui.home.HomeFragment
  * @see com.example.inventorymanager.ui.editItem.EditItemFragment
  */
@@ -67,8 +62,13 @@ public class ViewItemFragment extends Fragment {
         // fetch the full item from the database
         Item item = itemViewModel.getItem(key);
 
+        // DEBUG statements
+        System.out.println("item name" + item.getItemName());
+        System.out.println("Image urls size" + item.getImageUrls().size());
+
         // Bind UI elements to variables
         ScrollView viewItemScrollView = binding.ViewItemScrollView;
+
         TextView itemNameValue = binding.itemNameValue;
         TextView purchaseDateValue = binding.purchaseDateValue;
         TextView descriptionValue = binding.descriptionValue;
@@ -77,6 +77,11 @@ public class ViewItemFragment extends Fragment {
         TextView serialNumberValue = binding.serialNumberValue;
         TextView estimatedValueValue = binding.estimatedValueValue;
         TextView commentValue = binding.commentValue;
+
+        ImageView imageView0 = binding.itemImage0;
+        ImageView imageView1 = binding.itemImage1;
+        ImageView imageView2 = binding.itemImage2;
+
         Button editButton = binding.editButton;
         Button deleteButton = binding.deleteButton;
         LinearLayout tagList = binding.tagList;
@@ -110,6 +115,20 @@ public class ViewItemFragment extends Fragment {
             }
         }
 
+        System.out.println("Image urls size" + item.getImageUrls().size());
+
+        // Use Glide API to fetch, resize and embed the picture into the imageView
+        if (item.getImageUrls().size() >= 1) {
+            Glide.with(this).load(item.getImageUrls().get(0)).into(imageView0);
+        }
+
+        if (item.getImageUrls().size() >= 2) {
+            Glide.with(this).load(item.getImageUrls().get(1)).into(imageView1);
+        }
+
+        if (item.getImageUrls().size() >= 3) {
+            Glide.with(this).load(item.getImageUrls().get(2)).into(imageView2);
+        }
 
         // add effect of the edit button when pressed (edit details)
         editButton.setOnClickListener(v -> {

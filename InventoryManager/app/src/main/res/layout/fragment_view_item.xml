@@ -10,6 +10,7 @@
     tools:context=".ui.viewItem.ViewItemFragment">
 
     <LinearLayout
+        android:id="@+id/itemDetailsLinearLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -189,7 +190,7 @@
                 android:id="@+id/commentValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="100dp"
+                android:layout_marginBottom="10dp"
                 android:fontFamily="sans-serif-light"
                 android:text="@string/default_text"
                 android:textColor="@color/black"
@@ -197,7 +198,6 @@
                 android:textStyle="" />
 
         </LinearLayout>
-
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -212,7 +212,80 @@
                     android:padding="10dp" />
             </androidx.core.widget.NestedScrollView>
 
+        <!-- Add images -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/image_constraint_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/image0Constraint"
+                android:layout_width="115dp"
+                android:layout_height="151dp"
+                android:background="#A5A5A5"
+                app:layout_constraintHorizontal_bias="0.145"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/image1Constraint"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
+                    android:id="@+id/itemImage0"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#A5A5A5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/image1Constraint"
+                android:layout_width="115dp"
+                android:layout_height="151dp"
+                android:background="#A5A5A5"
+                app:layout_constraintHorizontal_bias="0.145"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image0Constraint"
+                app:layout_constraintEnd_toStartOf="@id/image2Constraint">
+
+                <ImageView
+                    android:id="@+id/itemImage1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#A5A5A5"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/image2Constraint"
+                android:layout_width="115dp"
+                android:layout_height="151dp"
+                android:background="#A5A5A5"
+                app:layout_constraintHorizontal_bias="0.145"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image1Constraint"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/itemImage2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#A5A5A5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -243,12 +316,12 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/editButton"
                 app:layout_goneMarginTop="50dp" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="50dp"/>
+            android:layout_margin="50dp"
+            android:layout_marginBottom="100dp"/>
     </LinearLayout>
 </ScrollView>

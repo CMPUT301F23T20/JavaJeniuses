@@ -39,6 +39,7 @@ import java.util.HashMap;
 public class ItemAdapter extends ArrayAdapter{
     private final Context context;
     private ArrayList<Item> items;
+    private HashMap<String, ArrayList<Tag>> itemTags;
     private ArrayList<Tag> tags;
     private Tag tag;
     private HashMap<String, Boolean> isChecked;
@@ -49,11 +50,12 @@ public class ItemAdapter extends ArrayAdapter{
      * @param value The UI element to bind the adapter to.
      * @param items The items to be displayed.
      */
-    public ItemAdapter(Context context, int value, ArrayList<Item> items) {
+    public ItemAdapter(Context context, int value, ArrayList<Item> items, HashMap<String, ArrayList<Tag>> itemTags) {
         super(context, value, items);
         this.context = context;
         this.items = items;
         this.createEmptyIsChecked();
+        this.itemTags = itemTags;
     }
 
     /**
@@ -101,10 +103,13 @@ public class ItemAdapter extends ArrayAdapter{
             isChecked.put(item.getItemName(), Boolean.logicalXor(Boolean.TRUE, isChecked.get(item.getItemName())));
         });
 
-        tags = item.getTags();
+        tags = itemTags.get(item.getItemName());
+//        tags = item.getTags();
+//        Log.d("DEBUG", itemTags.get(item.getItemName()).toString());
         if (tags != null) {
             tagList.removeAllViews();
             for (int i = 0; i < tags.size(); i++) {
+
                 Log.d("DEBUG", tags.get(0).getText());
                 TextView tagTextView = new TextView(getContext());
                 tagTextView.setTextSize(15);

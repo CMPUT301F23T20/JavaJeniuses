@@ -3,6 +3,7 @@ package com.example.inventorymanager.ui.home;
 import android.app.Dialog;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import com.example.inventorymanager.databinding.FragmentHomeBinding;
 import java.sql.Array;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Shows the list of items being tracked by the application.
@@ -47,8 +49,8 @@ public class HomeFragment extends Fragment {
     private ItemAdapter adapter;
     // No accessors and modifier methods. If you want to get items, instantiate itemViewModel and pull from database (same results)
     private ArrayList<Item> items, selectedItems;
-
     private Observer<ArrayList<Item>> dataObserver;
+    private Observer<HashMap<String, ArrayList<Tag>>> tagObserver;
 
     /**
      * Provides the user interface of the fragment.
@@ -77,7 +79,7 @@ public class HomeFragment extends Fragment {
                 // Create a new ArrayList to store the data that will be displayed in the ListView
                 items = updatedItems;
                 // Create an adapter to bind the data from the ArrayList to the ListView
-                adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
+                adapter = new ItemAdapter(requireContext(), R.id.item_list, items, itemViewModel.getAllItemsTagsLiveData().getValue());
                 // Set the adapter for the ListView, allowing it to display the data
                 itemList.setAdapter(adapter);
                 // display the current total estimated value of items being displayed
@@ -87,6 +89,23 @@ public class HomeFragment extends Fragment {
 
         // call this listener so that the items load in the first time
         itemViewModel.getItemsLiveData().observe(getViewLifecycleOwner(), dataObserver);
+
+        // create a listener so that the items being displayed automatically update based on database changes
+        tagObserver = new Observer<HashMap<String, ArrayList<Tag>>>() {
+            @Override
+            public void onChanged(HashMap<String, ArrayList<Tag>> updateTags) {
+                Log.d("DEBUG", "ONCHANGE");
+                // Create an adapter to bind the data from the ArrayList to the ListView
+                adapter = new ItemAdapter(requireContext(), R.id.item_list, items, updateTags);
+                // Set the adapter for the ListView, allowing it to display the data
+                itemList.setAdapter(adapter);
+//                // display the current total estimated value of items being displayed
+//                updateTotal();
+            }
+        };
+
+        // call this listener so that the items load in the first time
+        itemViewModel.getAllItemsTagsLiveData().observe(getViewLifecycleOwner(), tagObserver);
 
         // add effect of clicking on a delete button (delete all highlighted items)
         Button deleteButton = root.findViewById(R.id.deleteButton);

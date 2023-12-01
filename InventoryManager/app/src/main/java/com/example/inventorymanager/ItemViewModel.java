@@ -255,7 +255,7 @@ public class ItemViewModel extends ViewModel {
             return; }
         for (Item currentItem : items) {
             Log.d("NAME", currentItem.getItemName());
-            if (currentItem == null) { return; }
+//            if (currentItem == null) { return; }
 
             Log.d("NAME", currentItem.getItemName());
 

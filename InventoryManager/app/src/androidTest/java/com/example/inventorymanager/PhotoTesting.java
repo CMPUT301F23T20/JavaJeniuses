@@ -15,6 +15,8 @@ import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 
+import android.graphics.Rect;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 
 import androidx.test.espresso.Espresso;
@@ -23,8 +25,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiCollection;
 import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObject2;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiScrollable;
+import androidx.test.uiautomator.UiSelector;
+import androidx.test.uiautomator.Until;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -135,7 +143,32 @@ public class PhotoTesting {
         onView(withId(R.id.addImage0Button)).perform(click());
         onView(withId(R.id.galleryButton)).perform(click());
 
+        // Using UI Automator to select the Pictures folder and the first image in the gallery
+        // This test assumes the user has at least one image in their gallery
+        try {
 
+            UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+            // Find the pictures folder
+            UiObject picturesFolder = uiDevice.findObject(new UiSelector().textContains("Pictures"));
+            // Get the bounds of the "Pictures" folder
+            Rect bounds = picturesFolder.getBounds();
+
+            int centerY = bounds.centerY();
+
+            // Perform the click at the coordinates of the "Pictures" folder
+            uiDevice.click(0, centerY);
+            // Introduce a pause in between clicks
+            SystemClock.sleep(2000);
+            // In order to click at the first image in the gallery, we must click at the same position
+            // as we clicked for the picture folder
+            uiDevice.click(0, centerY);
+
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        // Check to ensure we can add another image
+        onView(withId(R.id.addImage1Button)).check(matches(isDisplayed()));
 
 
     }

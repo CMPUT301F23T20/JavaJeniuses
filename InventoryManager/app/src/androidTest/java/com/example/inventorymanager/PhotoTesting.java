@@ -145,9 +145,9 @@ public class PhotoTesting {
 
         // Using UI Automator to select the Pictures folder and the first image in the gallery
         // This test assumes the user has at least one image in their gallery
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         try {
 
-            UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
             // Find the pictures folder
             UiObject picturesFolder = uiDevice.findObject(new UiSelector().textContains("Pictures"));
             // Get the bounds of the "Pictures" folder
@@ -169,8 +169,21 @@ public class PhotoTesting {
 
         // Check to ensure we can add another image
         onView(withId(R.id.addImage1Button)).check(matches(isDisplayed()));
+        onView(withId(R.id.addImage1Button)).perform(click());
+        onView(withId(R.id.takePictureButton)).perform(click());
+        SystemClock.sleep(2000);
+        try {
+            UiObject cameraPermission = uiDevice.findObject(new UiSelector().textContains("Only this time"));
+            cameraPermission.click();
+            SystemClock.sleep(2000);
 
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
 
+        onView(withId(R.id.addImage1Button)).perform(click());
+        onView(withId(R.id.takePictureButton)).perform(click());
+        SystemClock.sleep(2000);
     }
 
 

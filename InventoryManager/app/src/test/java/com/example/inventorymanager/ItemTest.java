@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import java.util.HashMap;
 
+import com.example.inventorymanager.Item;
+
 
 /**
  * Tests the functionality of the Item() class.
@@ -36,7 +38,7 @@ public class ItemTest {
      * @return The main item to be used by other tests.
      */
     private Item defaultItem() {
-        return new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, "", null);
+        return new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, null, null);
     }
 
     /**

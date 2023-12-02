@@ -36,8 +36,6 @@ public class Item implements Parcelable {
     private double estimatedValue;
     private String comment;
     private ArrayList<Tag> tags;
-    private static final String TAG = "PrivateAddTag";
-    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<String> imageUrls, tagTexts;
 
     /**
@@ -84,7 +82,7 @@ public class Item implements Parcelable {
         this.setComment((String) mapping.get("comment"));
         this.setTags((String) mapping.get("tags"));
         // store empty array if item doesn't have urls
-        if (imageUrls != null){ this.setImageUrls(imageUrls); }
+        if (imageUrls != null){ this.setImageUrls((ArrayList<String>) mapping.get("imageUrls")); }
         else{ this.setImageUrls(new ArrayList<>()); }
     }
 

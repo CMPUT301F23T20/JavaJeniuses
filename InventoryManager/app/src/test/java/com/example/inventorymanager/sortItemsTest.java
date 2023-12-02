@@ -51,8 +51,8 @@ public class sortItemsTest {
     private ArrayList<Item> defaultList() {
         ArrayList<Item> items = new ArrayList<Item>();
 
-        item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, "", null);
-        item2 = new Item(itemName2, purchaseDate2, description2, model2, make2, serialNumber2, estimatedValue2, comment2, "", null);
+        item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, null, null);
+        item2 = new Item(itemName2, purchaseDate2, description2, model2, make2, serialNumber2, estimatedValue2, comment2, null, null);
 
         items.add(item1);
         items.add(item2);

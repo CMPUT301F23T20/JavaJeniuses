@@ -1,53 +1,34 @@
 package com.example.inventorymanager.ui.addTag;
 
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-
 import com.example.inventorymanager.Item;
-import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.TagViewModel;
-import com.example.inventorymanager.databinding.FragmentAddTagBinding;
 import com.example.inventorymanager.databinding.FragmentCreateTagBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.WriteBatch;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+
 
 /**
  * A fragment for creating a new tag within the inventory management system.
  * This fragment allows the user to input a tag name and select a color for the tag.
  * It provides UI elements for the user to enter tag details and save or cancel the operation.
  *
- * @author Sumaiya Salsabil, Tomasz Ayobahan
+ * @author Sumaiya Salsabil, Tomasz Ayobahan, Isaac Joffe
  * @see addTagFragment
  */
 public class createTagFragment extends Fragment {
-
     private FragmentCreateTagBinding binding;
     private ArrayList<Item> items;
     private String tagColour;
@@ -61,7 +42,6 @@ public class createTagFragment extends Fragment {
      * @return The View for the fragment's UI.
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         binding = FragmentCreateTagBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -84,10 +64,10 @@ public class createTagFragment extends Fragment {
         tagColour = "red";
 
         // change colour based on user's choice
-        redButton.setOnClickListener(v -> { tagColour = "red"; Log.d("SAVE COLOUR", tagColour);});
-        blueButton.setOnClickListener(v -> { tagColour = "blue"; Log.d("SAVE COLOUR", tagColour);});
-        greenButton.setOnClickListener(v -> { tagColour = "green"; Log.d("SAVE COLOUR", tagColour);});
-        yellowButton.setOnClickListener(v -> { tagColour = "yellow"; Log.d("SAVE COLOUR", tagColour);});
+        redButton.setOnClickListener(v -> { tagColour = "red"; });
+        blueButton.setOnClickListener(v -> { tagColour = "blue"; });
+        greenButton.setOnClickListener(v -> { tagColour = "green"; });
+        yellowButton.setOnClickListener(v -> { tagColour = "yellow"; });
 
         // ViewModel to handle tag data
         TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);

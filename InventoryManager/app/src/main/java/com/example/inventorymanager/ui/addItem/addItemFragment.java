@@ -2,7 +2,6 @@ package com.example.inventorymanager.ui.addItem;
 
 import static android.app.Activity.RESULT_OK;
 import android.app.DatePickerDialog;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,7 +27,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -38,9 +36,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import android.Manifest;
-
 import com.example.inventorymanager.ImageUtility;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
@@ -50,10 +46,8 @@ import com.example.inventorymanager.TagAdapter;
 import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
-
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -67,7 +61,6 @@ import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -77,14 +70,13 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 
 /**
  * The addItemFragment class is a fragment that displays a series of editable fields.

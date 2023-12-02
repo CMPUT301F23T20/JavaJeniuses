@@ -11,11 +11,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.notNullValue;
-
 import android.graphics.Rect;
 import android.os.SystemClock;
 import android.view.KeyEvent;
-
 import androidx.test.espresso.Espresso;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -28,7 +26,6 @@ import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,14 +34,13 @@ import org.junit.runner.RunWith;
 /**
  * Conducts comprehensive UI testing on the photos feature.
  * Ensures the user is able to add, view, edit and delete the photos properly.
+ * Tests US 4.1, 4.2, and 4.3.
  * Important Note: All tests should be run on Pixel 6 API 34.
  * @author Kareem Assaf, David Onchuru
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class PhotoTesting {
-
-
     @Rule
     public ActivityScenarioRule<LoginActivity> scenario = new ActivityScenarioRule<>(LoginActivity.class);
 
@@ -354,7 +350,7 @@ public class PhotoTesting {
     /**
      * This is the main function for this testing class
      * Test that the user can add photos to their items
-     * Tests US 04.01.01
+     * Tests US 4.1, 4.2, and 4.3.
      */
     @Test
     public void testPhotos() {

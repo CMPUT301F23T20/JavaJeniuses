@@ -348,7 +348,7 @@ public class EditItemFragment extends Fragment {
                             imageUrls.add(uri.toString());
                         }
 
-                        System.out.println("line 326, url size:::: " + imageUrls.size());
+                        Log.d("DEBUG", "line 326, url size:::: " + imageUrls.size());
 
                         Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", imageUrls);
                         itemViewModel.editItem(key, newItem);
@@ -477,7 +477,9 @@ public class EditItemFragment extends Fragment {
                                             // fetch relevant information about the object to form description
                                             String description = mainJsonObject.get("title").toString();
                                             // trim string so it can fit inside the description field
-                                            description = description.substring(0, 40);
+                                            if (description.length() > 40) {
+                                                description = description.substring(0, 40);
+                                            }
 
                                             // update the description text to match the new keywords
                                             ((EditText) binding.descriptionInput).setText(description);
@@ -523,8 +525,12 @@ public class EditItemFragment extends Fragment {
                                     public void onSuccess(Text visionText) {
                                         // fetch the text read and store it
                                         String resultText = visionText.getText();
+                                        // trim string so it can fit inside the field and skip other lines
                                         if (resultText.contains("\n")) {
                                             resultText = resultText.substring(0, resultText.indexOf("\n"));
+                                        }
+                                        if (resultText.length() > 20) {
+                                            resultText = resultText.substring(0, 20);
                                         }
                                         // update the description text to match the new keywords
                                         ((EditText) binding.serialNumberInput).setText(resultText);

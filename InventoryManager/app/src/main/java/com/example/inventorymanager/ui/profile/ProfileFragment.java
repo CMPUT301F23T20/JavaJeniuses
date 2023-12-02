@@ -7,18 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.example.inventorymanager.Item;
-import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.LoginActivity;
-import com.example.inventorymanager.MainActivity;
 import com.example.inventorymanager.databinding.FragmentProfileBinding;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
 
 /**
  * Shows the user details of the user currently logged into the application.
@@ -27,7 +21,6 @@ import com.google.firebase.auth.FirebaseUser;
  * @see LoginActivity
  */
 public class ProfileFragment extends Fragment {
-
     private FragmentProfileBinding binding;
 
     /**
@@ -41,25 +34,22 @@ public class ProfileFragment extends Fragment {
      * from a previous saved state as given here.
      * @return The root of the view.
      */
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        ProfileViewModel profileViewModel =
-                new ViewModelProvider(this).get(ProfileViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ProfileViewModel profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // display username
         final TextView username = binding.Username;
-
         profileViewModel.getText().observe(getViewLifecycleOwner(), username::setText);
 
+        // add logout function
         final Button logout = binding.logoutButton;
         logout.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             startActivity(intent);
         });
-
-
 
         return root;
     }

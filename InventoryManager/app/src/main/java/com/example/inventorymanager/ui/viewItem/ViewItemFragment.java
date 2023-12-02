@@ -9,6 +9,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.example.inventorymanager.databinding.FragmentViewItemBinding;
 import java.util.ArrayList;
 import com.bumptech.glide.Glide;
 
+
 /**
  * Shows the details of a single item.
  * Each field of the item is labelled and displayed.
@@ -34,7 +36,6 @@ import com.bumptech.glide.Glide;
  * @see com.example.inventorymanager.ui.editItem.EditItemFragment
  */
 public class ViewItemFragment extends Fragment {
-
     private FragmentViewItemBinding binding;
     private ArrayList<Tag> tags;
 
@@ -62,12 +63,11 @@ public class ViewItemFragment extends Fragment {
         Item item = itemViewModel.getItem(key);
 
         // DEBUG statements
-        System.out.println("item name" + item.getItemName());
-        System.out.println("Image urls size" + item.getImageUrls().size());
+        Log.d("DEBUG", "item name" + item.getItemName());
+        Log.d("DEBUG", "Image urls size" + item.getImageUrls().size());
 
         // Bind UI elements to variables
         ScrollView viewItemScrollView = binding.ViewItemScrollView;
-
         TextView itemNameValue = binding.itemNameValue;
         TextView purchaseDateValue = binding.purchaseDateValue;
         TextView descriptionValue = binding.descriptionValue;
@@ -76,11 +76,9 @@ public class ViewItemFragment extends Fragment {
         TextView serialNumberValue = binding.serialNumberValue;
         TextView estimatedValueValue = binding.estimatedValueValue;
         TextView commentValue = binding.commentValue;
-
         ImageView imageView0 = binding.itemImage0;
         ImageView imageView1 = binding.itemImage1;
         ImageView imageView2 = binding.itemImage2;
-
         Button editButton = binding.editButton;
         Button deleteButton = binding.deleteButton;
         LinearLayout tagList = binding.tagList;
@@ -97,11 +95,9 @@ public class ViewItemFragment extends Fragment {
 
         // retrieve the list of tags associated with the item
         tags = item.getTags();
-
         if (tags != null) {
             // loop through each tag in the list
             for (int i = 0; i < tags.size(); i++) {
-
                 // create a new TextView for each tag and customize
                 TextView tagTextView = new TextView(getContext());
                 tagTextView.setTextSize(20);
@@ -114,17 +110,15 @@ public class ViewItemFragment extends Fragment {
             }
         }
 
-        System.out.println("Image urls size" + item.getImageUrls().size());
+        Log.d("DEBUG", "Image urls size" + item.getImageUrls().size());
 
         // Use Glide API to fetch, resize and embed the picture into the imageView
         if (item.getImageUrls().size() >= 1) {
             Glide.with(this).load(item.getImageUrls().get(0)).into(imageView0);
         }
-
         if (item.getImageUrls().size() >= 2) {
             Glide.with(this).load(item.getImageUrls().get(1)).into(imageView1);
         }
-
         if (item.getImageUrls().size() >= 3) {
             Glide.with(this).load(item.getImageUrls().get(2)).into(imageView2);
         }

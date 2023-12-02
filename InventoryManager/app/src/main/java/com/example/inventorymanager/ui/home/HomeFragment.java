@@ -1,39 +1,27 @@
 package com.example.inventorymanager.ui.home;
 
-import android.app.Dialog;
 import android.os.Bundle;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.MenuView;
-
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
-import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
-
-import java.sql.Array;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 
 /**
  * Shows the list of items being tracked by the application.
@@ -44,14 +32,11 @@ import java.util.HashMap;
  * @see ItemViewModel
  */
 public class HomeFragment extends Fragment {
-
     private FragmentHomeBinding binding;
     private ItemAdapter adapter;
     // No accessors and modifier methods. If you want to get items, instantiate itemViewModel and pull from database (same results)
     private ArrayList<Item> items, selectedItems;
     private Observer<ArrayList<Item>> dataObserver;
-//    private Observer<HashMap<String, ArrayList<Tag>>> tagObserver;
-//    private HashMap<String, ArrayList<Tag>> allTags;
 
     /**
      * Provides the user interface of the fragment.
@@ -79,9 +64,6 @@ public class HomeFragment extends Fragment {
             public void onChanged(ArrayList<Item> updatedItems) {
                 // Create a new ArrayList to store the data that will be displayed in the ListView
                 items = updatedItems;
-
-//                itemViewModel.fetchItemTags();
-
                 // Create an adapter to bind the data from the ArrayList to the ListView
                 adapter = new ItemAdapter(requireContext(), R.id.item_list, items);
                 // Set the adapter for the ListView, allowing it to display the data
@@ -93,23 +75,6 @@ public class HomeFragment extends Fragment {
 
         // call this listener so that the items load in the first time
         itemViewModel.getItemsLiveData().observe(getViewLifecycleOwner(), dataObserver);
-
-//        // create a listener so that the items being displayed automatically update based on database changes
-//        tagObserver = new Observer<HashMap<String, ArrayList<Tag>>>() {
-//            @Override
-//            public void onChanged(HashMap<String, ArrayList<Tag>> updateTags) {
-//                Log.d("DEBUG", "ONCHANGE");
-//                // Create an adapter to bind the data from the ArrayList to the ListView
-//                adapter = new ItemAdapter(requireContext(), R.id.item_list, items, updateTags);
-//                // Set the adapter for the ListView, allowing it to display the data
-//                itemList.setAdapter(adapter);
-////                // display the current total estimated value of items being displayed
-////                updateTotal();
-//            }
-//        };
-//
-//        // call this listener so that the items load in the first time
-//        itemViewModel.getAllItemsTagsLiveData().observe(getViewLifecycleOwner(), tagObserver);
 
         // add effect of clicking on a delete button (delete all highlighted items)
         Button deleteButton = root.findViewById(R.id.deleteButton);
@@ -175,7 +140,6 @@ public class HomeFragment extends Fragment {
 
         // add effect of clicking on add tag button
         Button addTagButton = root.findViewById(R.id.tag_button);
-
         // show add button fragment when button clicked
         addTagButton.setOnClickListener( v-> {
             selectedItems = new ArrayList<Item>();
@@ -192,7 +156,6 @@ public class HomeFragment extends Fragment {
             // navigate to the add tag fragment
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.addTagFragment, bundle);
-
         });
 
         return root;

@@ -5,7 +5,9 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -14,41 +16,42 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+
+import static java.util.Objects.isNull;
 
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.view.KeyEvent;
+import android.view.View;
 
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.assertion.ViewAssertions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
-import androidx.test.uiautomator.UiCollection;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
-import androidx.test.uiautomator.Until;
 
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 /**
- * Conducts comprehensive UI testing on fragments and item-related functionalities.
- * Verifies proper navigation between fragments.
- * Assesses the functionality of adding, editing, and deleting items.
- * Tests US 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, and 6.1.
- * All tests should be run on Pixel 6 API 34.
- * @author Kareem Assaf, Isaac Joffe
+ * Conducts comprehensive UI testing on the photos feature.
+ * Ensures the user is able to add, view, edit and delete the photos properly.
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -104,18 +107,16 @@ public class PhotoTesting {
     /**
      * Creates an item and adds three photos to it
      */
-    private void addPhotos() {
+    private void addPhotos(UiDevice uiDevice) {
         // Check to ensure we are on the home fragment
 
         onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
         onView(withText("Add Tag")).check(matches(isDisplayed()));
 
-        onView(withId(R.id.navigation_addItem)).perform(click());
-
         // Navigate to the add item fragment
         onView(withId(R.id.navigation_addItem)).perform(click());
         // Set the item's name
-        onView(withId(R.id.itemNameInput)).perform(typeText("Add Photo Test"));
+        onView(withId(R.id.itemNameInput)).perform(typeText("PhotoTest"));
 
 
         onView(withId(R.id.purchaseDateInput)).perform(click());
@@ -149,7 +150,6 @@ public class PhotoTesting {
 
         // Using UI Automator to select the Pictures folder and the first image in the gallery
         // This test assumes the user has at least one image in their gallery
-        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         galleryPhoto(uiDevice);
 
         // Add a second image by taking a photo
@@ -168,6 +168,137 @@ public class PhotoTesting {
         onView(withId(R.id.takePictureButton)).perform(click());
         SystemClock.sleep(1000);
         takePicture(uiDevice);
+
+        // Add the item
+        onView(withId(R.id.addItemButton)).perform(click());
+
+        SystemClock.sleep(3500);
+        // Check to ensure navigation back to home fragment
+        onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
+
+        // Check to make sure there is text on screen with the item name
+        onView(withText("PhotoTest")).perform(scrollTo());
+        onView(withText("PhotoTest")).check(matches(isDisplayed()));
+    }
+    /**
+     * Views the item and tests the image view to ensure they are not null
+     */
+    private void viewPhotoItem (UiDevice uiDevice) {
+
+
+        onView(withText("PhotoTest")).perform(scrollTo());
+        SystemClock.sleep(1000);
+        onView(withText("PhotoTest")).perform(click());
+
+        try {
+            // Create a UiScrollable instance
+            UiScrollable scrollable = new UiScrollable(new UiSelector().scrollable(true));
+            // Scroll down by swiping up
+            scrollable.scrollForward();
+
+            // Check each image view field and ensure they are displayed and not null
+            onView(withId(R.id.itemImage0)).check(matches(isDisplayed()));
+            onView(withId(R.id.itemImage0)).check(matches(notNullValue()));
+            onView(withId(R.id.itemImage1)).check(matches(isDisplayed()));
+            onView(withId(R.id.itemImage1)).check(matches(notNullValue()));
+            onView(withId(R.id.itemImage2)).check(matches(isDisplayed()));
+            onView(withId(R.id.itemImage2)).check(matches(notNullValue()));
+
+            // Navigate back to the home page to continue the other tests
+            uiDevice.pressBack();
+            SystemClock.sleep(1000);
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+    /**
+     * Edits a particular item in the database; specifically, the one made by addPhotos().
+     */
+    private void editPhotoItem(UiDevice uiDevice) {
+        onView(withText("PhotoTest")).perform(scrollTo());
+        SystemClock.sleep(1000);
+        onView(withText("PhotoTest")).perform(click());
+
+        try {
+            // Create a UiScrollable instance
+            UiScrollable scrollable = new UiScrollable(new UiSelector().scrollable(true));
+            // Scroll down by swiping up
+            scrollable.scrollForward();
+
+            // Identify the delete button using UiSelector
+            UiObject editButton = uiDevice.findObject(new UiSelector().textContains("EDIT"));
+            SystemClock.sleep(1000);
+            // Click on the delete button
+            editButton.click();
+
+            // Scroll to reach the images view
+            scrollable.scrollForward();
+            // Delete the second image
+            UiObject deleteImage2Button = uiDevice.findObject(new UiSelector().resourceId("com.example.inventorymanager:id/deleteImage2Button"));
+            SystemClock.sleep(1000);
+            deleteImage2Button.click();
+            SystemClock.sleep(1000);
+            // Check to make sure everything adjusted correctly
+            onView(withId(R.id.addImage2Button)).check(matches(isDisplayed()));
+
+
+            // Save the edited item that now has 2 photos instead of 3
+            UiObject saveButton = uiDevice.findObject(new UiSelector().textContains("SAVE"));
+            SystemClock.sleep(1000);
+            // Click on the delete button
+            saveButton.click();
+
+            // Check to ensure navigation back to home fragment
+            SystemClock.sleep(3000);
+            onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
+
+            // Check to make sure the item is there
+            onView(withText("PhotoTest")).perform(scrollTo());
+            onView(withText("PhotoTest")).check(matches(isDisplayed()));
+
+            // Now must view the item to ensure there are only 2 photos
+            // itemImage2 will be empty
+            onView(withText("PhotoTest")).perform(click());
+            scrollable.scrollForward();
+            onView(withId(R.id.itemImage0)).check(matches(isDisplayed()));
+            onView(withId(R.id.itemImage0)).check(matches(notNullValue()));
+            onView(withId(R.id.itemImage1)).check(matches(isDisplayed()));
+            onView(withId(R.id.itemImage1)).check(matches(notNullValue()));
+            onView(withId(R.id.itemImage2)).check(matches(isDisplayed()));
+            UiObject2 imageView2 = uiDevice.findObject(By.res("your.package.name:id/itemImage2"));
+            Assert.assertNull("ImageView has unexpected content.", imageView2);
+
+            uiDevice.pressBack();
+            SystemClock.sleep(2000);
+
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Delete a particular item in the database; specifically, the one made by addPhotos().
+     */
+    private void deletePhotoItem(UiDevice uiDevice) {
+        onView(withText("PhotoTest")).perform(scrollTo());
+        SystemClock.sleep(1000);
+        onView(withText("PhotoTest")).perform(click());
+
+        try {
+            // Create a UiScrollable instance
+            UiScrollable scrollable = new UiScrollable(new UiSelector().scrollable(true));
+            // Scroll down by swiping up
+            scrollable.scrollForward();
+
+            // Identify the delete button using UiSelector
+            UiObject deleteButton = uiDevice.findObject(new UiSelector().textContains("DELETE"));
+            SystemClock.sleep(1000);
+            // Click on the delete button
+            deleteButton.click();
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -234,15 +365,22 @@ public class PhotoTesting {
         }
     }
 
+
+
     /**
      * Test that the user can add photos to their items
      * Tests US 4.1
      */
     @Test
-    public void testAddPhoto() {
+    public void testPhotos() {
         // attempt proper login
         login();
-        addPhotos();
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        addPhotos(uiDevice);    // Add a photo to test
+        viewPhotoItem(uiDevice);
+        editPhotoItem(uiDevice);
+        deletePhotoItem(uiDevice);
+
     }
 
 }

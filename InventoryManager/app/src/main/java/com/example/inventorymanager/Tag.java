@@ -2,12 +2,10 @@ package com.example.inventorymanager;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * A representation of a tag within the context of an inventory management system.
@@ -25,7 +23,6 @@ import java.util.List;
  * @see TagViewModel
  */
 public class Tag implements Parcelable{
-
     private String text;
     private String colour; // Color can be stored in various formats, like HEX codes
     private List<Item> items; // List to store items associated with this tag
@@ -51,7 +48,6 @@ public class Tag implements Parcelable{
         colour = in.readString();
     }
 
-    // Getters and setters
     /**
      * Returns the text label of the tag.
      * @return The text label of this tag.
@@ -72,21 +68,18 @@ public class Tag implements Parcelable{
      * Returns the colour name of the tag.
      * @return The colour name of this tag.
      */
+    public String getColour() { return colour; }
 
     /**
      * Converts the colour name to its corresponding HEX code.
      * @return The HEX code representation of the tag's colour.
      */
-    public String getColour() { return colour; }
-
     public String getColourCode() {
-        Log.d("DEBUG HERE", colour);
         if (colour.equals("blue")) {return "#A8E4EF"; }
         if (colour.equals("green")) {return "#A6ECA8"; }
         if (colour.equals("yellow")) {return "#FCFC99"; }
         if (colour.equals("red")) { return "#FF8986"; }
         else {return "#FF8986"; }
-
     }
 
     /**
@@ -113,7 +106,6 @@ public class Tag implements Parcelable{
         items.remove(item);
     }
 
-    // Parcelable interface methods
     /**
      * Describes the kinds of special objects contained in this Parcelable's marshalled representation.
      * @return A bitmask indicating the set of special object types marshalled by this Parcelable object instance.
@@ -133,7 +125,6 @@ public class Tag implements Parcelable{
         dest.writeString(text);
         dest.writeString(colour);
     }
-
 
     /**
      * A public static CREATOR field that generates instances of your Parcelable class from a Parcel.

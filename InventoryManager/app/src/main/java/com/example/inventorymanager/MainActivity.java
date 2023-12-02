@@ -1,22 +1,15 @@
 package com.example.inventorymanager;
 
-import android.content.Intent;
-import android.app.ActionBar;
 import android.os.Bundle;
-import android.util.Log;
-
 import com.example.inventorymanager.ui.addItem.addItemFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.example.inventorymanager.databinding.ActivityMainBinding;
+
 
 /**
  * The main activity in which the entire application operates.
@@ -32,7 +25,6 @@ import com.example.inventorymanager.databinding.ActivityMainBinding;
  * @see com.example.inventorymanager.ui.profile.ProfileFragment
  */
 public class MainActivity extends AppCompatActivity {
-
     private ActivityMainBinding binding;
 
     /**

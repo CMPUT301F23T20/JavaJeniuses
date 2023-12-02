@@ -12,12 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 /**
  * Displays the items being tracked by the inventory manager to the user.
@@ -74,9 +73,7 @@ public class ItemAdapter extends ArrayAdapter{
         TextView description = view.findViewById(R.id.descriptionTextView);
         TextView estimateValue = view.findViewById(R.id.estimateValueTextView);
         TextView purchaseDate = view.findViewById(R.id.purchaseDateTextView);
-//        TextView itemTag = view.findViewById(R.id.itemTag);
         LinearLayout tagList = view.findViewById(R.id.tagList);
-//        ListView tagList = view.findViewById(R.id.tagList);
         CheckBox checkBox = view.findViewById(R.id.checkBox);
 
         // apply algorithm to ensure item description is not too long
@@ -92,8 +89,6 @@ public class ItemAdapter extends ArrayAdapter{
         purchaseDate.setText(item.getPurchaseDate());
         checkBox.setChecked(isChecked.get(item.getItemName()));
 
-
-
         // add effect of clicking on checkbox (toggling whether the item is selected)
         checkBox.setOnClickListener(v -> {
             // toggle the state of the check box
@@ -101,19 +96,21 @@ public class ItemAdapter extends ArrayAdapter{
             isChecked.put(item.getItemName(), Boolean.logicalXor(Boolean.TRUE, isChecked.get(item.getItemName())));
         });
 
+        // programmatically generate the tags to be displayed
         ArrayList<Tag> tags = item.getTags();
-        Log.d("DEBUG", Boolean.toString(tags.isEmpty()));
         if (tags != null) {
-            Log.d("DEBUG", "HERE");
+            // delete the previous tags shown
             tagList.removeAllViews();
             for (int i = 0; i < tags.size(); i++) {
-                Log.d("DEBUG", tags.get(0).getText());
+                // generate a new text view for each tag
                 TextView tagTextView = new TextView(getContext());
                 tagTextView.setTextSize(15);
+                // set this text view to display the text with spaces for padding, and the proper colour
                 SpannableString tagName = new SpannableString(" " + tags.get(i).getText() + " ");
                 tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColourCode())), 0, tagName.length(), 0);
                 tagTextView.setText(tagName);
                 tagTextView.setPadding(0, 10, 0, 10);
+                // add text view to the scrollable interface
                 tagList.addView(tagTextView);
             }
         }

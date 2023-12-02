@@ -46,6 +46,9 @@ import androidx.test.filters.LargeTest;
 import androidx.test.internal.platform.content.PermissionGranter;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiScrollable;
+import androidx.test.uiautomator.UiSelector;
 
 import org.junit.After;
 import org.junit.Before;
@@ -290,8 +293,23 @@ public class ScanningTest {
         onView(withText("Video Game")).perform(click());
 
         // Scroll to the delete button and delete the item
-        onView(withId(R.id.deleteButton)).perform(scrollTo());
+        scrollToBottom();
         onView(withId(R.id.deleteButton)).perform(click());
+    }
+
+    /**
+     * Allows to scroll down to the bottom of the fragment
+     */
+    private void scrollToBottom() {
+        try {
+            // Create a UiScrollable instance
+            UiScrollable scrollable = new UiScrollable(new UiSelector().scrollable(true));
+            // Scroll down by swiping up
+            scrollable.scrollForward();
+        } catch (UiObjectNotFoundException e) {
+            Log.d("DEBUG", "HERE");
+            e.printStackTrace();
+        }
     }
 
     /**

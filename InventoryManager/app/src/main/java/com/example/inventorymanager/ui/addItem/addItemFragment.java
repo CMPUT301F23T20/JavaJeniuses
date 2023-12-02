@@ -19,6 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,6 +32,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -37,20 +41,28 @@ import com.example.inventorymanager.ImageUtility;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
+import com.example.inventorymanager.TagAdapter;
+import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import java.io.File;
-import java.io.IOException;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+import java.io.File;
+import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -62,11 +74,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.text.Text;
-import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.TextRecognizer;
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -86,8 +93,8 @@ import org.json.JSONObject;
  */
 public class addItemFragment extends Fragment {
     private FragmentAddItemBinding binding;
-    private ArrayList<String> localImagePaths = new ArrayList<String>();
-    private ArrayList<String> imageUrls = new ArrayList<String>();
+    private final ArrayList<String> localImagePaths = new ArrayList<String>();
+    private final ArrayList<String> imageUrls = new ArrayList<String>();
     private ImageUtility imageUtility;
     private ImageView imageView0;
     private Button addImage0Button;
@@ -102,6 +109,10 @@ public class addItemFragment extends Fragment {
     private static final int REQUEST_GALLERY = 3;
     private String SCAN_MODE = "";
     private static final int REQUEST_CODE = 22;
+    private ArrayAdapter<String> adapterTags;
+    private Observer<ArrayList<Tag>> dataObserver;
+    private String selectedItem;
+    private Tag selectedTag;
 
     /**
      * Generates the user interface of the fragment.
@@ -136,6 +147,7 @@ public class addItemFragment extends Fragment {
         EditText serialNumberInput = binding.serialNumberInput;
         EditText estimatedValueInput = binding.estimatedValueInput;
         EditText commentInput = binding.commentInput;
+        AutoCompleteTextView autoCompleteTextView = binding.autocompleteTextviewInAddItem;
         Button addItemButton = binding.addItemButton;
 
         // enforcing a maximum of 3 images per item
@@ -178,7 +190,7 @@ public class addItemFragment extends Fragment {
             // published August 2016, accessed November 2023
             // https://stackoverflow.com/questions/5107901/better-way-to-format-currency-input-edittext
         estimatedValueInput.addTextChangedListener(new TextWatcher() {
-            private String current = "";
+            private final String current = "";
             @Override
             public void afterTextChanged(Editable charSequence) {
                 // nothing to do
@@ -221,6 +233,28 @@ public class addItemFragment extends Fragment {
             return false;
         });
 
+        // create a listener so that the tags being displayed automatically load from the database
+        dataObserver = new Observer<ArrayList<Tag>>() {
+            @Override
+            public void onChanged(ArrayList<Tag> updatedTags) {
+                adapterTags = new TagAdapter(root.getContext(), R.layout.tag_list_item, updatedTags);
+                autoCompleteTextView.setAdapter(adapterTags);
+            }
+        };
+
+        // Create an instance of the shared ViewModel that manages the list of items
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        tagViewModel.getTagsLiveData().observe(getViewLifecycleOwner(), dataObserver);
+
+        // Set a listener on the AutoCompleteTextView to handle tag selection
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedItem = parent.getItemAtPosition(position).toString();
+                selectedTag = findTagByName(selectedItem);
+            }
+        });
+
         // Users are crazy, and will often try unconventional things like adding a pic to the second image placeholder before the first
         // we're gonna ENFORCE sequential image input
         addImage1Button.setVisibility(View.GONE);
@@ -237,36 +271,47 @@ public class addItemFragment extends Fragment {
 
         // add effect of the scan description button when pressed (open camera and scan barcode)
         scanDescriptionButton.setOnClickListener(v -> {
-            // ensure app permissions have enabled use of the camera
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+            try {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+                } else {
+
+                    // set the result listener to know that this is an item description query
+                    SCAN_MODE = "Description";
+
+                    // prompt the user to take a photo that will likely work for the ML models
+                    Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the barcode to scan in bright lighting.", Toast.LENGTH_SHORT).show();
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, REQUEST_CAMERA);
+                }
+
+            } catch (SecurityException e) {
+                // Handle the exception, e.g., request the permission or show a message to the user.
+                e.printStackTrace(); // Log the exception for debugging purposes.
             }
 
-            // set the result listener to know that this is an item description query
-            SCAN_MODE = "Description";
-
-            // prompt the user to take a photo that will likely work for the ML models
-            Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the barcode to scan in bright lighting.", Toast.LENGTH_SHORT).show();
-            // open the camera for the purpose of taking a picture
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, REQUEST_CODE);
         });
 
         // add effect of the scan serial number button when pressed (open camera and scan number)
         scanSerialNumberButton.setOnClickListener(v -> {
-            // ensure app permissions have enabled use of the camera
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+            try {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+                } else {
+
+                    // set the result listener to know that this is an item description query
+                    SCAN_MODE = "SerialNumber";
+
+                    // prompt the user to take a photo that will likely work for the ML models
+                    Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the barcode to scan in bright lighting.", Toast.LENGTH_SHORT).show();
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, REQUEST_CAMERA);
+                }
+
+            } catch (SecurityException e) {
+                // Handle the exception, e.g., request the permission or show a message to the user.
+                e.printStackTrace(); // Log the exception for debugging purposes.
             }
-
-            // set the result listener to know that this is an item description query
-            SCAN_MODE = "SerialNumber";
-
-            // prompt the user to take a photo that will likely work for the ML models
-            Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the number to read in bright lighting.", Toast.LENGTH_SHORT).show();
-            // open the camera for the purpose of taking a picture
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, REQUEST_CODE);
         });
 
         // add effect of the add button when pressed (add this item to the list)
@@ -318,10 +363,14 @@ public class addItemFragment extends Fragment {
                             imageUrls.add(uri.toString());
                         }
 
+                        String tag = "";
+                        if (selectedTag != null && !selectedTag.equals("")) {
+                            tag = selectedTag.getText() + "," + selectedTag.getColour() + ";";
+                        }
+
                         // All images are uploaded successfully
                         // Now you can create the item
-                        // TODO: add ability to add tags here
-                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", imageUrls);
+                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, tag, imageUrls);
                         itemViewModel.addItem(newItem);
 
                         // Navigate back to the home fragment
@@ -339,7 +388,12 @@ public class addItemFragment extends Fragment {
 
                 // if user didn't add any images
                 else {
-                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", null);
+                    String tag = "";
+                    if (selectedTag != null && !selectedTag.equals("")) {
+                        tag = selectedTag.getText() + "," + selectedTag.getColour() + ";";
+                    }
+
+                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, tag, null);
                     // Add the new item to the shared ViewModel
                     itemViewModel.addItem(newItem);
 
@@ -428,7 +482,7 @@ public class addItemFragment extends Fragment {
                                     // try to fetch data for this barcode
                                     try {
                                         // format the database search query for barcode and API key
-                                        String API_KEY = "m5wk8qavhnvw7wy9l1l161arzk49ru";
+                                        String API_KEY = "kzazmbk749ke6jghx29bnn68yp6kwo";
                                         String query = String.format(
                                                 "https://api.barcodelookup.com/v3/products?barcode=%1$s&formatted=y&key=%2$s",
                                                 barcodes.get(i).getRawValue(),
@@ -450,7 +504,7 @@ public class addItemFragment extends Fragment {
                                         String searchResults = searchResultsBuilder.toString();
 
                                         // parse the JSON object returned from the API
-                                        JSONObject originalJsonObject = new JSONObject(searchResults.toString());
+                                        JSONObject originalJsonObject = new JSONObject(searchResults);
                                         // retrieve the array of products, which is all that is inside the original objects
                                         JSONArray jsonArray = originalJsonObject.getJSONArray("products");
                                         // only the first object in this array matters (usually length 1 anyways)
@@ -463,7 +517,7 @@ public class addItemFragment extends Fragment {
                                         }
 
                                         // update the description text to match the new keywords
-                                        ((EditText) binding.descriptionInput).setText(description);
+                                        binding.descriptionInput.setText(description);
                                         // inform user of successful operation
                                         Toast.makeText(requireContext(), "Description keywords automatically entered successfully.", Toast.LENGTH_SHORT).show();
 
@@ -514,7 +568,7 @@ public class addItemFragment extends Fragment {
                                             resultText = resultText.substring(0, 20);
                                         }
                                         // update the description text to match the new keywords
-                                        ((EditText) binding.serialNumberInput).setText(resultText);
+                                        binding.serialNumberInput.setText(resultText);
                                         // inform user of successful operation
                                         Toast.makeText(requireContext(), "Serial number automatically entered successfully.", Toast.LENGTH_SHORT).show();
                                     }
@@ -702,6 +756,22 @@ public class addItemFragment extends Fragment {
             addImage2Button.setVisibility(View.GONE);
             deleteImage2Button.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Finds a tag by its name.
+     * @param tagName The name of the tag to find.
+     * @return The Tag object if found, or null otherwise.
+     */
+    private Tag findTagByName(String tagName) {
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        ArrayList<Tag> myTags = tagViewModel.getTagsLiveData().getValue();
+        for (Tag tag : myTags) {
+            if (tag.getText().equals(tagName)) {
+                return tag;
+            }
+        }
+        return null; // Return null if tag not found
     }
 
     /**

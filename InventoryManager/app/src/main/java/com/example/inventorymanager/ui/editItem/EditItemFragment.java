@@ -2,6 +2,7 @@ package com.example.inventorymanager.ui.editItem;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
 import static android.app.Activity.RESULT_OK;
@@ -28,6 +29,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -41,6 +45,9 @@ import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
+import com.example.inventorymanager.TagAdapter;
+import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.FragmentEditItemBinding;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -84,8 +91,8 @@ import java.util.UUID;
  */
 public class EditItemFragment extends Fragment {
     private FragmentEditItemBinding binding;
-    private ArrayList<String> imagePaths = new ArrayList<>(); // local paths
-    private ArrayList<String> tempList = new ArrayList<>(); // A temporary list to store our generated urls
+    private final ArrayList<String> imagePaths = new ArrayList<>(); // local paths
+    private final ArrayList<String> tempList = new ArrayList<>(); // A temporary list to store our generated urls
     private ImageUtility imageUtility;
     private ImageView imageView0;
     private Button addImage0Button;
@@ -100,6 +107,10 @@ public class EditItemFragment extends Fragment {
     private static final int REQUEST_GALLERY = 3;
     private String SCAN_MODE = "";
     private static final int REQUEST_CODE = 22;
+    private ArrayAdapter<String> adapterTags, itemTagsAdapter;
+    private Observer<ArrayList<Tag>> dataObserver;
+    private String selectedItemAdd, selectedItemDelete;
+    private Tag selectedTagAdd, selectedTagDelete;
 
     /**
      * Provides the user interface of the fragment.
@@ -139,6 +150,8 @@ public class EditItemFragment extends Fragment {
         EditText serialNumberInput = binding.serialNumberInput;
         EditText estimatedValueInput = binding.estimatedValueInput;
         EditText commentInput = binding.commentInput;
+        AutoCompleteTextView addTagAutoCompleteTextView = binding.autocompleteTextviewInEditItemAddTag;
+        AutoCompleteTextView deleteTagAutoCompleteTextView = binding.autocompleteTextviewInEditItemDeleteTag;
         Button saveButton = binding.saveButton;
         Button deleteButton = binding.deleteButton;
         Button scanDescriptionButton = binding.scanDescriptionButton;
@@ -200,7 +213,7 @@ public class EditItemFragment extends Fragment {
             // published August 2016, accessed November 2023
             // https://stackoverflow.com/questions/5107901/better-way-to-format-currency-input-edittext
         estimatedValueInput.addTextChangedListener(new TextWatcher() {
-            private String current = "";
+            private final String current = "";
             @Override
             public void afterTextChanged(Editable charSequence) {
                 // nothing to do
@@ -242,6 +255,42 @@ public class EditItemFragment extends Fragment {
             }
             return false;
         });
+
+        // create a listener so that the tags being displayed automatically load from the database
+        dataObserver = new Observer<ArrayList<Tag>>() {
+            @Override
+            public void onChanged(ArrayList<Tag> updatedTags) {
+                adapterTags = new TagAdapter(root.getContext(), R.layout.tag_list_item, updatedTags);
+                addTagAutoCompleteTextView.setAdapter(adapterTags);
+            }
+        };
+
+        // Create an instance of the shared ViewModel that manages the list of items
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        tagViewModel.getTagsLiveData().observe(getViewLifecycleOwner(), dataObserver);
+
+        // Set a listener on the Add Tag AutoCompleteTextView to handle tag selection
+        addTagAutoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedItemAdd = parent.getItemAtPosition(position).toString();
+                selectedTagAdd = findTagByName(selectedItemAdd);
+            }
+        });
+
+        // display the item's tags under delete dropdown
+        itemTagsAdapter = new TagAdapter(root.getContext(), R.layout.tag_list_item, item.getTagsArray());
+        deleteTagAutoCompleteTextView.setAdapter(itemTagsAdapter);
+
+        // Set a listener on the Delete Tag AutoCompleteTextView to handle tag selection
+        deleteTagAutoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedItemDelete = parent.getItemAtPosition(position).toString();
+                selectedTagDelete = findTagByName(selectedItemDelete);
+            }
+        });
+
 
         // IMAGE FUNCTIONALITY
         // when you click the respective Add Image button, choose if you're gonna add from gallery or take a pic with camera
@@ -317,7 +366,7 @@ public class EditItemFragment extends Fragment {
                     // will use to confirm if all pics have been uploaded successfully
                     List<Task<Uri>> uploadTasks = new ArrayList<>();
 
-                    System.out.println("line 293, image paths size:::: " + imagePaths.size());
+                    Log.d("DEBUG", "line 293, image paths size:::: " + imagePaths.size());
                     for (int i = 0; i < this.imagePaths.size(); i++) {
                         // fetch the path to the image
                         String localPath = this.imagePaths.get(i);
@@ -350,7 +399,18 @@ public class EditItemFragment extends Fragment {
 
                         Log.d("DEBUG", "line 326, url size:::: " + imageUrls.size());
 
-                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", imageUrls);
+                        String tag = item.getTags();
+                        // delete selected tag
+                        if (selectedTagDelete != null && !selectedTagDelete.equals("")) {
+                            String tagToDelete = selectedTagDelete.getText() + "," + selectedTagDelete.getColour() + ";";
+                            tag = tag.replace(tagToDelete, "");
+                        }
+                        // add selected tag
+                        if (selectedTagAdd != null && !selectedTagAdd.equals("")) {
+                            tag += selectedTagAdd.getText() + "," + selectedTagAdd.getColour() + ";";
+                        }
+
+                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, tag, imageUrls);
                         itemViewModel.editItem(key, newItem);
 
                         // Navigate back to the home fragment
@@ -368,7 +428,18 @@ public class EditItemFragment extends Fragment {
 
                 // if there are no pics to add
                 else {
-                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", null);
+                    String tag = item.getTags();
+                    // delete selected tag
+                    if (selectedTagDelete != null && !selectedTagDelete.equals("")) {
+                        String tagToDelete = selectedTagDelete.getText() + "," + selectedTagDelete.getColour() + ";";
+                        tag = tag.replace(tagToDelete, "");
+                    }
+                    // add selected tag
+                    if (selectedTagAdd != null && !selectedTagAdd.equals("")) {
+                        tag += selectedTagAdd.getText() + "," + selectedTagAdd.getColour() + ";";
+                    }
+
+                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, tag, null);
                     // Add the new item to the shared ViewModel
                     itemViewModel.editItem(key, newItem);
 
@@ -447,7 +518,7 @@ public class EditItemFragment extends Fragment {
                                         // try to fetch data for this barcode
                                         try {
                                             // format the database search query for barcode and API key
-                                            String API_KEY = "m5wk8qavhnvw7wy9l1l161arzk49ru";
+                                            String API_KEY = "kzazmbk749ke6jghx29bnn68yp6kwo";
                                             String query = String.format(
                                                     "https://api.barcodelookup.com/v3/products?barcode=%1$s&formatted=y&key=%2$s",
                                                     barcodes.get(i).getRawValue(),
@@ -469,7 +540,7 @@ public class EditItemFragment extends Fragment {
                                             String searchResults = searchResultsBuilder.toString();
 
                                             // parse the JSON object returned from the API
-                                            JSONObject originalJsonObject = new JSONObject(searchResults.toString());
+                                            JSONObject originalJsonObject = new JSONObject(searchResults);
                                             // retrieve the array of products, which is all that is inside the original objects
                                             JSONArray jsonArray = originalJsonObject.getJSONArray("products");
                                             // only the first object in this array matters (usually length 1 anyways)
@@ -482,7 +553,7 @@ public class EditItemFragment extends Fragment {
                                             }
 
                                             // update the description text to match the new keywords
-                                            ((EditText) binding.descriptionInput).setText(description);
+                                            binding.descriptionInput.setText(description);
                                             // inform user of successful operation
                                             Toast.makeText(requireContext(), "Description keywords automatically entered successfully.", Toast.LENGTH_SHORT).show();
 
@@ -533,7 +604,7 @@ public class EditItemFragment extends Fragment {
                                             resultText = resultText.substring(0, 20);
                                         }
                                         // update the description text to match the new keywords
-                                        ((EditText) binding.serialNumberInput).setText(resultText);
+                                        binding.serialNumberInput.setText(resultText);
                                         // inform user of successful operation
                                         Toast.makeText(requireContext(), "Serial number automatically entered successfully.", Toast.LENGTH_SHORT).show();
                                     }
@@ -741,7 +812,6 @@ public class EditItemFragment extends Fragment {
     /**
      * Uses Glide API to preload all the images from their links asynchronously then calls displayImages to render them all
      * @param imageUrls
-     * @return
      */
     private void convertUrlsToLocalPaths(ArrayList<String> imageUrls) {
         // Clear existing image paths
@@ -769,6 +839,22 @@ public class EditItemFragment extends Fragment {
                     }
                 });
         }
+    }
+
+    /**
+     * Finds a tag by its name.
+     * @param tagName The name of the tag to find.
+     * @return The Tag object if found, or null otherwise.
+     */
+    private Tag findTagByName(String tagName) {
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        ArrayList<Tag> myTags = tagViewModel.getTagsLiveData().getValue();
+        for (Tag tag : myTags) {
+            if (tag.getText().equals(tagName)) {
+                return tag;
+            }
+        }
+        return null; // Return null if tag not found
     }
 
     /**

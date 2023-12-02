@@ -212,10 +212,61 @@
                 android:id="@+id/commentInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="30dp"
                 android:hint="@string/comment_hint"
                 android:imeOptions="actionDone"
                 android:inputType="text"/>
+
+            <!-- Add and Delete Tags -->
+            <!-- Add existing tag title -->
+            <TextView
+                android:id="@+id/add_tag_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Existing Tag"
+                android:fontFamily="sans-serif-black"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/black"/>
+
+            <!-- Add tag from from drop down -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_margin="10dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autocomplete_textview_in_edit_item_add_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Delete item tag title -->
+            <TextView
+                android:id="@+id/delete_tag_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete Item Tag"
+                android:fontFamily="sans-serif-black"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/black"/>
+
+            <!-- Delete tag from from drop down -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_margin="10dp">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autocomplete_textview_in_edit_item_delete_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
 
 
             <!-- Edit images -->
@@ -224,6 +275,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="50dp"
+                android:layout_marginTop="20dp"
                 app:layout_constraintTop_toBottomOf="@id/commentInput" >
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -363,6 +415,7 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

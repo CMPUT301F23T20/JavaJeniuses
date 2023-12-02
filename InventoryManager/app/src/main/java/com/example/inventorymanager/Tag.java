@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class Tag implements Parcelable{
     private String text;
-    private String colour; // Color can be stored in various formats, like HEX codes
+    private final String colour; // Color can be stored in various formats, like HEX codes
     private List<Item> items; // List to store items associated with this tag
 
     /**
@@ -75,10 +75,12 @@ public class Tag implements Parcelable{
      * @return The HEX code representation of the tag's colour.
      */
     public String getColourCode() {
-        if (colour.equals("blue")) {return "#A8E4EF"; }
-        if (colour.equals("green")) {return "#A6ECA8"; }
-        if (colour.equals("yellow")) {return "#FCFC99"; }
         if (colour.equals("red")) { return "#FF8986"; }
+        if (colour.equals("orange")) { return "#FAC898"; }
+        if (colour.equals("yellow")) { return "#FCFC99"; }
+        if (colour.equals("blue")) { return "#A8E4EF"; }
+        if (colour.equals("purple")) { return "#C3B1E1"; }
+        if (colour.equals("pink")) { return "#F8C8DC"; }
         else {return "#FF8986"; }
     }
 

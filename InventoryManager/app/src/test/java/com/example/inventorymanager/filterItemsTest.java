@@ -1,14 +1,10 @@
 package com.example.inventorymanager;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
-
 import com.example.inventorymanager.ui.filter.chooseFilterFragment;
-import com.example.inventorymanager.Item;
-
 import java.util.ArrayList;
+
 
 /**
  * Tests the functionality of the filtering functions in chooseFilterFragment
@@ -20,7 +16,6 @@ public class filterItemsTest {
     private final String itemName1 = "Computer";
     private final String itemName2 = "Laptop";
     private final String itemName3 = "Tablet";
-
     private final String purchaseDate1 = "2023-01-01";
     private final String purchaseDate2 = "2023-08-20";
     private final String description1 = "PC used for gaming.";
@@ -63,7 +58,7 @@ public class filterItemsTest {
     public void testFilterByDescription() {
         ArrayList<Item> items = defaultList();
         ArrayList<Item> filteredItems = chooseFilterFragment.findItemsWithDescriptionKeyword("gaming", items);
-        assertTrue(filteredItems.size() == 2);
+        assertEquals(2, filteredItems.size());
 
         // Test case: description doesn't exist within items
         ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsWithDescriptionKeyword("empty", items);

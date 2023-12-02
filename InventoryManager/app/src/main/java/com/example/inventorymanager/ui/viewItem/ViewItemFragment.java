@@ -94,7 +94,7 @@ public class ViewItemFragment extends Fragment {
         commentValue.setText(item.getComment());
 
         // retrieve the list of tags associated with the item
-        tags = item.getTags();
+        tags = item.getTagsArray();
         if (tags != null) {
             // loop through each tag in the list
             for (int i = 0; i < tags.size(); i++) {

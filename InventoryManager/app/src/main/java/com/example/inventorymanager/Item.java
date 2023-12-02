@@ -35,10 +35,10 @@ public class Item implements Parcelable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
-    private ArrayList<Tag> tags, itemTags;
+    private ArrayList<Tag> tags;
     private static final String TAG = "PrivateAddTag";
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private ArrayList<String> imageUrls;
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private ArrayList<String> imageUrls, tagTexts;
 
     /**
      * Creates an Item() object with the fields passed in.
@@ -247,11 +247,16 @@ public class Item implements Parcelable {
     }
 
     /**
-     * Retrieves the item's tags in a non-String format (DIFFERENT FROM THE OTHERS).
-     * @return The item's tags.
+     * Retrieves the tags representing an item.
+     * @return The tag's representing the item.
      */
-    public ArrayList<Tag> getTags() {
-        return this.tags;
+    public String getTags() {
+        // build string by combining all text in all tags
+        String tagsString = "";
+        for (int i = 0; i < tags.size(); i++) {
+            tagsString += tags.get(i).getText() + "," + tags.get(i).getColour() + ";";
+        }
+        return tagsString;
     }
 
     /**
@@ -270,6 +275,14 @@ public class Item implements Parcelable {
                 this.tags.add(new Tag(individualTag[0], individualTag[1]));
             }
         }
+    }
+
+    /**
+     * Retrieves the item's tags in a non-String format (different from the other getters).
+     * @return The tag's representing the item in an ArrayList().
+     */
+    public ArrayList<Tag> getTagsArray() {
+        return this.tags;
     }
 
     /**
@@ -293,7 +306,7 @@ public class Item implements Parcelable {
      * @return TRUE if it has a tag; FALSE otherwise.
      */
     public boolean hasTag(){
-        return !getTags().isEmpty();
+        return !getTagsArray().isEmpty();
     }
 
     /**
@@ -302,7 +315,7 @@ public class Item implements Parcelable {
      */
     public Tag getFirstTag() {
         if (hasTag()) {
-            return getTags().get(0);
+            return getTagsArray().get(0);
         }
         return null;
     }

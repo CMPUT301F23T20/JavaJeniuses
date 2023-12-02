@@ -24,7 +24,7 @@ public class ImageUtility {
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_CAMERA = 2;
     private static final int REQUEST_GALLERY = 3;
-    private Fragment fragment;
+    private final Fragment fragment;
     public ImageUtility(Fragment fragment) {
         this.fragment = fragment;
     }

@@ -9,19 +9,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.Tag;
+import com.example.inventorymanager.TagAdapter;
+import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.ChooseFilterBinding;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.reflect.Array;
 import java.text.ParseException;
@@ -41,6 +50,11 @@ import java.util.Locale;
 public class chooseFilterFragment extends Fragment {
     private ArrayList<Item> items;
     private ChooseFilterBinding binding;
+    private ArrayAdapter<String> adapterTags;
+    private static MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String tag;
+    private Observer<ArrayList<Tag>> dataObserver;
 
     /**
      * Provides the user interface of the fragment.
@@ -61,7 +75,7 @@ public class chooseFilterFragment extends Fragment {
         // Bind UI elements to variables
         EditText descriptionKeywordEditText = binding.descriptionKeywordEditText;
         EditText makeKeywordEditText = binding.makeKeywordEditText;
-        EditText tagKeywordEditText = binding.tagKeywordEditText;
+        AutoCompleteTextView autoCompleteTextView = binding.autocompleteTextview;
         EditText startDateEditText = binding.startDateEditText;
         EditText endDateEditText = binding.endDateEditText;
         Button searchButton = binding.searchButton;
@@ -70,12 +84,37 @@ public class chooseFilterFragment extends Fragment {
         startDateEditText.setOnClickListener(v-> { showCalendar(startDateEditText); });
         endDateEditText.setOnClickListener(v-> { showCalendar(endDateEditText); });
 
+        // create a listener so that the tags being displayed automatically load from the database
+        dataObserver = new Observer<ArrayList<Tag>>() {
+            @Override
+            public void onChanged(ArrayList<Tag> updatedTags) {
+                adapterTags = new TagAdapter(root.getContext(), R.layout.tag_list_item, updatedTags);
+                autoCompleteTextView.setAdapter(adapterTags);
+            }
+        };
+
+        // create default empty list on first time creating
+        ArrayList<Tag> emptyTags = new ArrayList<>();
+        tagsLiveData.setValue(emptyTags);
+
+        // Create an instance of the shared ViewModel that manages the list of items
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        tagViewModel.getTagsLiveData().observe(getViewLifecycleOwner(), dataObserver);
+
+        // Set a listener on the AutoCompleteTextView to handle tag selection
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                tag = parent.getItemAtPosition(position).toString();
+            }
+        });
+
         // search through items with the selected keywords
         searchButton.setOnClickListener(v -> {
             // fetch keywords
             String description = (descriptionKeywordEditText.getText().toString()).toLowerCase();
             String make = makeKeywordEditText.getText().toString().toLowerCase();
-            String tag = tagKeywordEditText.getText().toString().toLowerCase();
+//            String tag = tagKeywordEditText.getText().toString().toLowerCase();
             String startDate = startDateEditText.getText().toString();
             String endDate = endDateEditText.getText().toString();
 
@@ -95,8 +134,8 @@ public class chooseFilterFragment extends Fragment {
                 items = findItemsWithDescriptionKeyword(description, items);
             }
 
-            // if user selects tag keyword
-            if (!tag.isEmpty()) {
+            // if user selects tag
+            if (!(tag == null)) {
                 items = findItemsWithTag(tag, items);
                 // if item not already in list, add item to filtered item list
             }
@@ -209,6 +248,22 @@ public class chooseFilterFragment extends Fragment {
         }
 
         return itemsBetweenDates;
+    }
+
+    /**
+     * Finds a tag by its name.
+     * @param tagName The name of the tag to find.
+     * @return The Tag object if found, or null otherwise.
+     */
+    private Tag findTagByName(String tagName) {
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        ArrayList<Tag> myTags = tagViewModel.getTagsLiveData().getValue();
+        for (Tag tag : myTags) {
+            if (tag.getText().equals(tagName)) {
+                return tag;
+            }
+        }
+        return null; // Return null if tag not found
     }
 
     /**

@@ -44,14 +44,12 @@ import java.util.HashMap;
  */
 public class addTagFragment extends Fragment {
     private ArrayList<Item> items;
-    private ArrayList<String> tagItems = new ArrayList<>();
     private String selectedItem;
     private FragmentAddTagBinding binding;
     private AutoCompleteTextView autoCompleteTextView;
     private ArrayAdapter<String> adapterTags;
     private static MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private ArrayList<Tag> allTags = new ArrayList<>();
     private Tag selectedTag;
     private Observer<ArrayList<Tag>> dataObserver;
 

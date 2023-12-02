@@ -46,6 +46,7 @@ import androidx.test.filters.LargeTest;
 import androidx.test.internal.platform.content.PermissionGranter;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
+import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
@@ -318,6 +319,7 @@ public class ScanningTest {
      */
     @Test
     public void testScanDescription() {
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         // login to default user
         login();
         // create an item with it's description scanned in
@@ -332,6 +334,7 @@ public class ScanningTest {
      */
     @Test
     public void testScanSerialNumber() {
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         // login to default user
         login();
         // create an item with it's description scanned in

@@ -363,7 +363,36 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Add existing tag title -->
+            <TextView
+                android:id="@+id/add_tag_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Existing Tag"
+                android:fontFamily="sans-serif-black"
+                android:textSize="20sp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:textColor="@color/black"/>
         </LinearLayout>
+
+        <!-- Add tag from from drop down -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="247dp"
+            android:layout_margin="16dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/autocomplete_textview_in_edit_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

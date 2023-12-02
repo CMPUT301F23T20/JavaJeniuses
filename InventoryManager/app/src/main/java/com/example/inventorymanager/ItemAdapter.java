@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,7 +96,7 @@ public class ItemAdapter extends ArrayAdapter{
         });
 
         // programmatically generate the tags to be displayed
-        ArrayList<Tag> tags = item.getTags();
+        ArrayList<Tag> tags = item.getTagsArray();
         if (tags != null) {
             // delete the previous tags shown
             tagList.removeAllViews();

@@ -91,10 +91,6 @@ public class addTagFragment extends Fragment {
             }
         };
 
-        // create default empty list on first time creating
-        ArrayList<Tag> emptyTags = new ArrayList<>();
-        tagsLiveData.setValue(emptyTags);
-
         // Create an instance of the shared ViewModel that manages the list of items
         TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
         tagViewModel.getTagsLiveData().observe(getViewLifecycleOwner(), dataObserver);
@@ -125,7 +121,6 @@ public class addTagFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedItem = parent.getItemAtPosition(position).toString();
                 selectedTag = findTagByName(selectedItem);
-
             }
         });
 

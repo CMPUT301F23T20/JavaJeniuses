@@ -54,9 +54,11 @@ public class createTagFragment extends Fragment {
         // Bind UI elements to variables
         EditText tagNameInput = binding.tagEditText;
         Button redButton = binding.redButton;
-        Button blueButton = binding.blueButton;
-        Button greenButton = binding.greenButton;
+        Button orangeButton = binding.orangeButton;
         Button yellowButton = binding.yellowButton;
+        Button blueButton = binding.blueButton;
+        Button purpleButton = binding.purpleButton;
+        Button pinkButton = binding.pinkButton;
         Button cancelButton = binding.cancelButton;
         Button saveButton = binding.saveButton;
 
@@ -65,9 +67,11 @@ public class createTagFragment extends Fragment {
 
         // change colour based on user's choice
         redButton.setOnClickListener(v -> { tagColour = "red"; });
-        blueButton.setOnClickListener(v -> { tagColour = "blue"; });
-        greenButton.setOnClickListener(v -> { tagColour = "green"; });
+        orangeButton.setOnClickListener(v -> { tagColour = "orange"; });
         yellowButton.setOnClickListener(v -> { tagColour = "yellow"; });
+        blueButton.setOnClickListener(v -> { tagColour = "blue"; });
+        purpleButton.setOnClickListener(v -> { tagColour = "purple"; });
+        pinkButton.setOnClickListener(v -> { tagColour = "pink"; });
 
         // ViewModel to handle tag data
         TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
@@ -85,6 +89,10 @@ public class createTagFragment extends Fragment {
                 tagNameInput.setError("This field is required");
             } else if (tagName.length() >= 11) {
                 tagNameInput.setError("Up to 10 characters");
+            } else if (tagName.contains(",")) {
+                tagNameInput.setError("Commas are illegal");
+            } else if (tagName.contains(";")) {
+                tagNameInput.setError("Semicolons are illegal");
             } else {
                 tagViewModel.addTag(new Tag(tagName, tagColour));
 

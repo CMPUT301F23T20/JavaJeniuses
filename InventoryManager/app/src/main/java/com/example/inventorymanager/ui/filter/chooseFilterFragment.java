@@ -1,11 +1,7 @@
 package com.example.inventorymanager.ui.filter;
 
-import static com.google.common.collect.Iterables.size;
-
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -32,13 +27,11 @@ import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.ChooseFilterBinding;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -213,7 +206,7 @@ public class chooseFilterFragment extends Fragment {
         for (Item item : itemsToFilter) {
             if (item.hasTag()) {
                 ArrayList<Tag> itemTags = new ArrayList<>();
-                itemTags = item.getTags();
+                itemTags = item.getTagsArray();
                 for (Tag itemTag : itemTags) {
                     if (itemTag.getText().toLowerCase().contains(tag.toLowerCase())) {
                         itemsWithTag.add(item);

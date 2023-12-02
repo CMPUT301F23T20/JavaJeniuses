@@ -407,7 +407,7 @@ public class EditItemFragment extends Fragment {
                         }
                         // add selected tag
                         if (selectedTagAdd != null && !selectedTagAdd.equals("")) {
-                            tag = selectedTagAdd.getText() + "," + selectedTagAdd.getColour() + ";";
+                            tag += selectedTagAdd.getText() + "," + selectedTagAdd.getColour() + ";";
                         }
 
                         Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, tag, imageUrls);
@@ -436,7 +436,7 @@ public class EditItemFragment extends Fragment {
                     }
                     // add selected tag
                     if (selectedTagAdd != null && !selectedTagAdd.equals("")) {
-                        tag = selectedTagAdd.getText() + "," + selectedTagAdd.getColour() + ";";
+                        tag += selectedTagAdd.getText() + "," + selectedTagAdd.getColour() + ";";
                     }
 
                     Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, tag, null);

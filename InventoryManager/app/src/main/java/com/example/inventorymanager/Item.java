@@ -243,7 +243,10 @@ public class Item implements Parcelable {
         this.comment = comment;
     }
 
-
+    /**
+     * Retrieves the tags representing an item.
+     * @return The tag's representing the item.
+     */
     public String getTags() {
         // build string by combining all text in all tags
         String tagsString = "";
@@ -272,8 +275,8 @@ public class Item implements Parcelable {
     }
 
     /**
-     * Retrieves the item's tags.
-     * @return tags An ArrayList of the item's tags
+     * Retrieves the item's tags in a non-String format (different from the other getters).
+     * @return The tag's representing the item in an ArrayList().
      */
     public ArrayList<Tag> getTagsArray() {
         return this.tags;

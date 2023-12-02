@@ -11,13 +11,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import com.example.inventorymanager.databinding.FragmentImageSelectionBinding;
 
-
+/**
+ * Logic for the image input choice dialog fragment.
+ * Selects if user wants to upload a picture from their gallery or take one with their camera.
+ * @author David Onchuru, Kareem Assaf
+ */
 public class ImageSelectionFragment extends DialogFragment {
     private FragmentImageSelectionBinding binding;
     private OnImageOptionClickListener optionClickListener;
     public static final int CHOICE_GALLERY = 1;
     public static final int CHOICE_CAMERA = 2;
-
 
     /**
      * Interface definition for a callback to be invoked when an image selection option is clicked.

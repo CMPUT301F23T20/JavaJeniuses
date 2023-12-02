@@ -258,7 +258,7 @@ public class Item implements Parcelable {
     public void setTags(String tags) {
         this.tags = new ArrayList<>();
         // parse String into tag objects if it exists
-        if (!tags.equals("")) {
+        if (tags != null && !tags.equals("")) {
             // split by the delimiter token without any blanks at the end
             String[] individualTags = tags.split(";", 0);
             // create tag object based on th content of the individual tag string

@@ -83,6 +83,9 @@ public class Item implements Parcelable {
         this.setEstimatedValue((String) mapping.get("value"));
         this.setComment((String) mapping.get("comment"));
         this.setTags((String) mapping.get("tags"));
+        // store empty array if item doesn't have urls
+        if (imageUrls != null){ this.setImageUrls(imageUrls); }
+        else{ this.setImageUrls(new ArrayList<>()); }
     }
 
     /**

@@ -45,9 +45,9 @@ public class filterItemsTest {
     private ArrayList<Item> defaultList() {
         ArrayList<Item> items = new ArrayList<Item>();
 
-        Item item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1);
-        Item item2 = new Item(itemName2, purchaseDate2, description1, model1, make2, serialNumber1, estimatedValue1, comment1);
-        Item item3 = new Item(itemName3, purchaseDate1, description3, model1, make1, serialNumber1, estimatedValue1, comment1);
+        Item item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1,"", null);
+        Item item2 = new Item(itemName2, purchaseDate2, description1, model1, make2, serialNumber1, estimatedValue1, comment1, "", null);
+        Item item3 = new Item(itemName3, purchaseDate1, description3, model1, make1, serialNumber1, estimatedValue1, comment1, "", null);
 
         items.add(item1);
         items.add(item2);
@@ -66,7 +66,7 @@ public class filterItemsTest {
         assertTrue(filteredItems.size() == 2);
 
         // Test case: description doesn't exist within items
-        ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsWithMake("empty", items);
+        ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsWithDescriptionKeyword("empty", items);
         assertEquals(filteredItems_empty.size(), 0);
     }
 

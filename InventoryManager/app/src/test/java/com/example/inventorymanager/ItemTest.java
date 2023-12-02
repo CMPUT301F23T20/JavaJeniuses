@@ -1,15 +1,17 @@
 package com.example.inventorymanager;
 
+import com.example.inventorymanager.Item;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Tests the functionality of the Item() class.
  * Ensures that all getters and setters work properly and that the item can be properly transformed into a database document.
- * @author Isaac Joffe
+ * @author Isaac Joffe, David Onchuru
  * @see Item
  */
 public class ItemTest {
@@ -36,7 +38,7 @@ public class ItemTest {
      * @return The main item to be used by other tests.
      */
     private Item defaultItem() {
-        return new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1);
+        return new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, "", null);
     }
 
     /**
@@ -169,7 +171,7 @@ public class ItemTest {
     public void testGetDocument() {
         // ensure that the document is accurate to original data
         Item item = defaultItem();
-        HashMap<String, String> document = item.getDocument();
+        HashMap<String, Object> document = item.getDocument();
         assertTrue(item.getItemName().equals(document.get("name")));
         assertTrue(item.getPurchaseDate().equals(document.get("date")));
         assertTrue(item.getDescription().equals(document.get("description")));

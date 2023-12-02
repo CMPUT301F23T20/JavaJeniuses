@@ -27,9 +27,11 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 
 /**
  * Conducts comprehensive UI testing on the photos feature.
@@ -140,7 +142,7 @@ public class PhotoTesting {
         onView(withId(R.id.addImage1Button)).check(matches(isDisplayed()));
         onView(withId(R.id.addImage1Button)).perform(click());
         onView(withId(R.id.takePictureButton)).perform(click());
-        SystemClock.sleep(1000); // artificial delay
+        SystemClock.sleep(2000); // artificial delay
         cameraPermission(uiDevice); // accept permissions prompt
         onView(withId(R.id.addImage1Button)).perform(click());
         onView(withId(R.id.takePictureButton)).perform(click());
@@ -156,7 +158,7 @@ public class PhotoTesting {
         // Add the item
         onView(withId(R.id.addItemButton)).perform(click());
 
-        SystemClock.sleep(3500);
+        SystemClock.sleep(5000);
         // Check to ensure navigation back to home fragment
         onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
 

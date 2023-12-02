@@ -158,9 +158,10 @@ public class PhotoTesting {
         takePicture(uiDevice);
 
         // Add the item
+        SystemClock.sleep(1000);
         onView(withId(R.id.addItemButton)).perform(click());
 
-        SystemClock.sleep(5000);
+        SystemClock.sleep(10000);
         // Check to ensure navigation back to home fragment
         onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
 

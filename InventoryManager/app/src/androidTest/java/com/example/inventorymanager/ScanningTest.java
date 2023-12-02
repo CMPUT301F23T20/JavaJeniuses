@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -295,6 +296,7 @@ public class ScanningTest {
 
         // Scroll to the delete button and delete the item
         scrollToBottom();
+        SystemClock.sleep(2000);
         onView(withId(R.id.deleteButton)).perform(click());
     }
 

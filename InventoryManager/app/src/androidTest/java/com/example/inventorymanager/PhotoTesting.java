@@ -214,6 +214,7 @@ public class PhotoTesting {
     }
     /**
      * Edits a particular item in the database; specifically, the one made by addPhotos().
+     * It also views the changes
      */
     private void editPhotoItem(UiDevice uiDevice) {
         onView(withText("PhotoTest")).perform(scrollTo());
@@ -261,6 +262,7 @@ public class PhotoTesting {
             // itemImage2 will be empty
             onView(withText("PhotoTest")).perform(click());
             scrollable.scrollForward();
+            // Check to make sure all image views are full except the third one
             onView(withId(R.id.itemImage0)).check(matches(isDisplayed()));
             onView(withId(R.id.itemImage0)).check(matches(notNullValue()));
             onView(withId(R.id.itemImage1)).check(matches(isDisplayed()));
@@ -307,6 +309,7 @@ public class PhotoTesting {
      */
     private void cameraPermission(UiDevice uiDevice) {
         try {
+            // Find the user permissions button and click it
             UiObject cameraPermission = uiDevice.findObject(new UiSelector().textContains("Only this time"));
             cameraPermission.click();
             SystemClock.sleep(1000);

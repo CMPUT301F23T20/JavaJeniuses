@@ -7,6 +7,7 @@ import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.pressKey;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static
@@ -24,6 +25,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 
 import static java.lang.Thread.sleep;
 
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.widget.DatePicker;
 
@@ -48,6 +50,7 @@ import java.util.Date;
 /**
  * Conducts comprehensive UI testing. Tests the home view and the primary actions that can be taken
  * within the home view. Tests basic filtering, sorting, multi-selection, multi-deleting, and multi-tagging*.
+ * Important Note: All tests should be run on Pixel 6 API 34.
  * @author Tyler Hoekstra, Kareem Assaf
  * @see com.example.inventorymanager.ui.home.HomeFragment
  * @see chooseFilterFragment
@@ -72,7 +75,8 @@ public class ViewTesting {
         loginAndAddManyItems(7);
         // Filter by make
         onView(withId(R.id.filter_button)).perform(click());
-        onView(withId(R.id.make_keyword_editText)).perform(typeText("Logitech"));
+        SystemClock.sleep(1000);
+        onView(withId(R.id.make_keyword_editText)).perform(replaceText("Logitech"));
         onView(withId(R.id.searchButton)).perform(click());
         // Check if the test is successful
         // Checks to make sure all logitech items are displayed
@@ -114,7 +118,7 @@ public class ViewTesting {
         loginAndAddManyItems(7);
         // Filter by make
         onView(withId(R.id.filter_button)).perform(click());
-        onView(withId(R.id.description_keyword_editText)).perform(typeText("Mouse"));
+        onView(withId(R.id.description_keyword_editText)).perform(replaceText("Mouse"));
         onView(withId(R.id.searchButton)).perform(click());
         // Check if the test is successful
         // Checks to make sure all logitech items are displayed

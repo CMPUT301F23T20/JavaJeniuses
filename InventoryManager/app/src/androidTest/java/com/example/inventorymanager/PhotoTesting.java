@@ -100,7 +100,11 @@ public class PhotoTesting {
         onView(withText("Add Tag")).check(matches(isDisplayed()));
     }
 
-    private void addPhoto() {
+
+    /**
+     * Creates an item and adds three photos to it
+     */
+    private void addPhotos() {
         // Check to ensure we are on the home fragment
 
         onView(withId(R.id.tag_button)).check(matches(isDisplayed()));
@@ -146,6 +150,68 @@ public class PhotoTesting {
         // Using UI Automator to select the Pictures folder and the first image in the gallery
         // This test assumes the user has at least one image in their gallery
         UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        galleryPhoto(uiDevice);
+
+        // Add a second image by taking a photo
+        onView(withId(R.id.addImage1Button)).check(matches(isDisplayed()));
+        onView(withId(R.id.addImage1Button)).perform(click());
+        onView(withId(R.id.takePictureButton)).perform(click());
+        SystemClock.sleep(1000);
+        cameraPermission(uiDevice);
+        onView(withId(R.id.addImage1Button)).perform(click());
+        onView(withId(R.id.takePictureButton)).perform(click());
+        takePicture(uiDevice);
+
+        // Add a third image
+        onView(withId(R.id.addImage2Button)).check(matches(isDisplayed()));
+        onView(withId(R.id.addImage2Button)).perform(click());
+        onView(withId(R.id.takePictureButton)).perform(click());
+        SystemClock.sleep(1000);
+        takePicture(uiDevice);
+
+    }
+
+    /**
+     * Helper function to ask for the camera permission
+     */
+    private void cameraPermission(UiDevice uiDevice) {
+        try {
+            UiObject cameraPermission = uiDevice.findObject(new UiSelector().textContains("Only this time"));
+            cameraPermission.click();
+            SystemClock.sleep(1000);
+
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+    /**
+     * Helper function to take a picture on the camera
+     */
+    private void takePicture(UiDevice uiDevice) {
+        try {
+            UiObject shutterButton = uiDevice.findObject(new UiSelector().descriptionContains("Shutter"));
+            // Get the bounds of the "Pictures" folder
+            Rect bounds = shutterButton.getBounds();
+            int centerX = bounds.centerX();
+            int centerY = bounds.centerY();
+            // Click the shutter button to take a picture
+            shutterButton.click();
+            SystemClock.sleep(2000);
+            // Click in the same spot as the shutter button to accept the picture
+            uiDevice.click(centerX, centerY);
+            SystemClock.sleep(2000);
+        }catch (UiObjectNotFoundException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Helper function to take a picture from the gallery.
+     * Selects the first photo from the gallery
+     */
+
+    private void galleryPhoto (UiDevice uiDevice) {
         try {
 
             // Find the pictures folder
@@ -166,26 +232,7 @@ public class PhotoTesting {
         } catch (UiObjectNotFoundException e) {
             e.printStackTrace();
         }
-
-        // Check to ensure we can add another image
-        onView(withId(R.id.addImage1Button)).check(matches(isDisplayed()));
-        onView(withId(R.id.addImage1Button)).perform(click());
-        onView(withId(R.id.takePictureButton)).perform(click());
-        SystemClock.sleep(2000);
-        try {
-            UiObject cameraPermission = uiDevice.findObject(new UiSelector().textContains("Only this time"));
-            cameraPermission.click();
-            SystemClock.sleep(2000);
-
-        } catch (UiObjectNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        onView(withId(R.id.addImage1Button)).perform(click());
-        onView(withId(R.id.takePictureButton)).perform(click());
-        SystemClock.sleep(2000);
     }
-
 
     /**
      * Test that the user can add photos to their items
@@ -195,7 +242,7 @@ public class PhotoTesting {
     public void testAddPhoto() {
         // attempt proper login
         login();
-        addPhoto();
+        addPhotos();
     }
 
 }

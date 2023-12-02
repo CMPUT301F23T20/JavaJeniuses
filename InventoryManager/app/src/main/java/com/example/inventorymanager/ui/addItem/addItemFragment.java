@@ -46,18 +46,23 @@ import com.example.inventorymanager.TagAdapter;
 import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import java.io.File;
-import java.io.IOException;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
+import java.io.File;
+import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -65,16 +70,10 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.text.Text;
-import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.TextRecognizer;
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -272,36 +271,47 @@ public class addItemFragment extends Fragment {
 
         // add effect of the scan description button when pressed (open camera and scan barcode)
         scanDescriptionButton.setOnClickListener(v -> {
-            // ensure app permissions have enabled use of the camera
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+            try {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+                } else {
+
+                    // set the result listener to know that this is an item description query
+                    SCAN_MODE = "Description";
+
+                    // prompt the user to take a photo that will likely work for the ML models
+                    Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the barcode to scan in bright lighting.", Toast.LENGTH_SHORT).show();
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, REQUEST_CAMERA);
+                }
+
+            } catch (SecurityException e) {
+                // Handle the exception, e.g., request the permission or show a message to the user.
+                e.printStackTrace(); // Log the exception for debugging purposes.
             }
 
-            // set the result listener to know that this is an item description query
-            SCAN_MODE = "Description";
-
-            // prompt the user to take a photo that will likely work for the ML models
-            Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the barcode to scan in bright lighting.", Toast.LENGTH_SHORT).show();
-            // open the camera for the purpose of taking a picture
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, REQUEST_CODE);
         });
 
         // add effect of the scan serial number button when pressed (open camera and scan number)
         scanSerialNumberButton.setOnClickListener(v -> {
-            // ensure app permissions have enabled use of the camera
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+            try {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CODE);
+                } else {
+
+                    // set the result listener to know that this is an item description query
+                    SCAN_MODE = "SerialNumber";
+
+                    // prompt the user to take a photo that will likely work for the ML models
+                    Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the barcode to scan in bright lighting.", Toast.LENGTH_SHORT).show();
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, REQUEST_CAMERA);
+                }
+
+            } catch (SecurityException e) {
+                // Handle the exception, e.g., request the permission or show a message to the user.
+                e.printStackTrace(); // Log the exception for debugging purposes.
             }
-
-            // set the result listener to know that this is an item description query
-            SCAN_MODE = "SerialNumber";
-
-            // prompt the user to take a photo that will likely work for the ML models
-            Toast.makeText(requireContext(), "Please take a sharp, zoomed-in, and level photo of the number to read in bright lighting.", Toast.LENGTH_SHORT).show();
-            // open the camera for the purpose of taking a picture
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, REQUEST_CODE);
         });
 
         // add effect of the add button when pressed (add this item to the list)
@@ -472,7 +482,7 @@ public class addItemFragment extends Fragment {
                                     // try to fetch data for this barcode
                                     try {
                                         // format the database search query for barcode and API key
-                                        String API_KEY = "m5wk8qavhnvw7wy9l1l161arzk49ru";
+                                        String API_KEY = "kzazmbk749ke6jghx29bnn68yp6kwo";
                                         String query = String.format(
                                                 "https://api.barcodelookup.com/v3/products?barcode=%1$s&formatted=y&key=%2$s",
                                                 barcodes.get(i).getRawValue(),

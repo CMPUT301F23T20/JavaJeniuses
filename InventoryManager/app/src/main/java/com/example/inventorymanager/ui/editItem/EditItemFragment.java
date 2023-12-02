@@ -518,7 +518,7 @@ public class EditItemFragment extends Fragment {
                                         // try to fetch data for this barcode
                                         try {
                                             // format the database search query for barcode and API key
-                                            String API_KEY = "m5wk8qavhnvw7wy9l1l161arzk49ru";
+                                            String API_KEY = "kzazmbk749ke6jghx29bnn68yp6kwo";
                                             String query = String.format(
                                                     "https://api.barcodelookup.com/v3/products?barcode=%1$s&formatted=y&key=%2$s",
                                                     barcodes.get(i).getRawValue(),

@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class Tag implements Parcelable{
     private String text;
-    private String colour; // Color can be stored in various formats, like HEX codes
+    private final String colour; // Color can be stored in various formats, like HEX codes
     private List<Item> items; // List to store items associated with this tag
 
     /**

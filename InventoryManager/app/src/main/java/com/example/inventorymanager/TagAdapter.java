@@ -21,7 +21,7 @@ import java.util.ArrayList;
  */
 public class TagAdapter extends ArrayAdapter {
     private final Context context;
-    private ArrayList<Tag> tags;
+    private final ArrayList<Tag> tags;
 
     /**
      * Constructs a new TagAdapter for displaying a list of tags.

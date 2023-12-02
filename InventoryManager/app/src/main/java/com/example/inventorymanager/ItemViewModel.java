@@ -37,8 +37,8 @@ import java.util.List;
  */
 public class ItemViewModel extends ViewModel {
     // static variables make it so one copy of this variable exists across the whole app, synchronization
-    private static MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static final MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference itemsDB;
     public FirebaseStorage storage = FirebaseStorage.getInstance();
 

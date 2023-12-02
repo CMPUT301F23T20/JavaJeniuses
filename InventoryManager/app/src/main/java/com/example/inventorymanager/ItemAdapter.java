@@ -32,7 +32,7 @@ import java.util.HashMap;
  */
 public class ItemAdapter extends ArrayAdapter{
     private final Context context;
-    private ArrayList<Item> items;
+    private final ArrayList<Item> items;
     private HashMap<String, Boolean> isChecked;
 
     /**

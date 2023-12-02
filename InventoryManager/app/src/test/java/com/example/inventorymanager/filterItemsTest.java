@@ -63,7 +63,7 @@ public class filterItemsTest {
     public void testFilterByDescription() {
         ArrayList<Item> items = defaultList();
         ArrayList<Item> filteredItems = chooseFilterFragment.findItemsWithDescriptionKeyword("gaming", items);
-        assertTrue(filteredItems.size() == 2);
+        assertEquals(2, filteredItems.size());
 
         // Test case: description doesn't exist within items
         ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsWithMake("empty", items);

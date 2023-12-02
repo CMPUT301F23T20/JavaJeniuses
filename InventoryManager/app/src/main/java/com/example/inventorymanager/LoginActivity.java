@@ -49,10 +49,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // bind ui elements to variables to read text and set error messages
-        enterUsername = (EditText) findViewById(R.id.username);
-        enterPassword = (EditText) findViewById(R.id.password);
-        login = (Button) findViewById(R.id.login);
-        signup = (Button) findViewById(R.id.signup);
+        enterUsername = findViewById(R.id.username);
+        enterPassword = findViewById(R.id.password);
+        login = findViewById(R.id.login);
+        signup = findViewById(R.id.signup);
 
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

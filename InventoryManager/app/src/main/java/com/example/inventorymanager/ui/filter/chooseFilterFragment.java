@@ -44,8 +44,8 @@ public class chooseFilterFragment extends Fragment {
     private ArrayList<Item> items;
     private ChooseFilterBinding binding;
     private ArrayAdapter<String> adapterTags;
-    private static MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static final MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String tag;
     private Observer<ArrayList<Tag>> dataObserver;
 

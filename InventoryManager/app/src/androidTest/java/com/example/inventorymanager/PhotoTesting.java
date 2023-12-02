@@ -37,11 +37,14 @@ import org.junit.runner.RunWith;
 /**
  * Conducts comprehensive UI testing on the photos feature.
  * Ensures the user is able to add, view, edit and delete the photos properly.
+ * Important Note: All tests should be run on Pixel 6 API 34.
  * @author Kareem Assaf, David Onchuru
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class PhotoTesting {
+
+
     @Rule
     public ActivityScenarioRule<LoginActivity> scenario = new ActivityScenarioRule<>(LoginActivity.class);
 

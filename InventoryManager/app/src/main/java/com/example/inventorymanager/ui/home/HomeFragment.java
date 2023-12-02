@@ -1,7 +1,6 @@
 package com.example.inventorymanager.ui.home;
 
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,23 +8,20 @@ import android.widget.Button;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentHomeBinding;
-
-import java.sql.Array;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+
 
 /**
  * Shows the list of items being tracked by the application.
@@ -36,11 +32,10 @@ import java.util.ArrayList;
  * @see ItemViewModel
  */
 public class HomeFragment extends Fragment {
-
     private FragmentHomeBinding binding;
     private ItemAdapter adapter;
     // No accessors and modifier methods. If you want to get items, instantiate itemViewModel and pull from database (same results)
-    private ArrayList<Item> items;
+    private ArrayList<Item> items, selectedItems;
     private Observer<ArrayList<Item>> dataObserver;
 
     /**
@@ -141,6 +136,26 @@ public class HomeFragment extends Fragment {
             // navigate to the choose filter fragment
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.chooseFilterFragment, bundle);
+        });
+
+        // add effect of clicking on add tag button
+        Button addTagButton = root.findViewById(R.id.tag_button);
+        // show add button fragment when button clicked
+        addTagButton.setOnClickListener( v-> {
+            selectedItems = new ArrayList<Item>();
+            for (int i = items.size()-1; i >= 0; i--) {
+                if (adapter.getIsChecked(items.get(i).getItemName())) {
+                    selectedItems.add(items.get(i));
+                }
+            }
+
+            // send bundle with the list of items
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("items", selectedItems);
+
+            // navigate to the add tag fragment
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.addTagFragment, bundle);
         });
 
         return root;

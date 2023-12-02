@@ -2,18 +2,12 @@ package com.example.inventorymanager;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
-
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Locale;
+
 
 /**
  * A representation of an item within the context of an inventory management system.
@@ -29,7 +23,7 @@ import java.util.Locale;
  *     <li>and a comment about the item.</li>
  * </ul>
  * Implements the Parcelable interface to be able to be passed between fragments, as required for filtering items.
- * @author Kareem Assaf, Isaac Joffe, David Onchuru
+ * @author Kareem Assaf, Isaac Joffe, David Onchuru, Sumaiya Salsabil, Tomasz Ayobahan
  * @see ItemViewModel
  */
 public class Item implements Parcelable {
@@ -41,6 +35,9 @@ public class Item implements Parcelable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
+    private ArrayList<Tag> tags, itemTags;
+    private static final String TAG = "PrivateAddTag";
+    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ArrayList<String> imageUrls;
 
     /**
@@ -57,7 +54,7 @@ public class Item implements Parcelable {
      * @param comment A brief comment about the item to be created.
      * @param imageUrls URLs to pictures of items stored in Firebase Cloud Storage
      */
-    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, ArrayList<String> imageUrls) {
+    public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, String tags, ArrayList<String> imageUrls) {
         this.setItemName(itemName);
         this.setPurchaseDate(purchaseDate);
         this.setDescription(description);
@@ -66,9 +63,26 @@ public class Item implements Parcelable {
         this.setSerialNumber(serialNumber);
         this.setEstimatedValue(estimatedValue);
         this.setComment(comment);
+        this.setTags(tags);
         // store empty array if item doesn't have urls
         if (imageUrls != null){ this.setImageUrls(imageUrls); }
         else{ this.setImageUrls(new ArrayList<>()); }
+    }
+
+    /**
+     * Creates an Item() object from a database-style mapping.
+     * @param mapping The HashMap to create the item from.
+     */
+    public Item(HashMap<String, Object> mapping) {
+        this.setItemName((String) mapping.get("name"));
+        this.setPurchaseDate((String) mapping.get("date"));
+        this.setDescription((String) mapping.get("description"));
+        this.setModel((String) mapping.get("model"));
+        this.setMake((String) mapping.get("make"));
+        this.setSerialNumber((String) mapping.get("number"));
+        this.setEstimatedValue((String) mapping.get("value"));
+        this.setComment((String) mapping.get("comment"));
+        this.setTags((String) mapping.get("tags"));
     }
 
     /**
@@ -86,6 +100,8 @@ public class Item implements Parcelable {
         serialNumber = source.readString();
         estimatedValue = source.readDouble();
         comment = source.readString();
+        tags = new ArrayList<>();
+        source.readTypedList(tags, Tag.CREATOR);
         imageUrls = source.createStringArrayList();
     }
 
@@ -227,12 +243,65 @@ public class Item implements Parcelable {
         this.comment = comment;
     }
 
+    /**
+     * Retrieves the item's tags in a non-String format (DIFFERENT FROM THE OTHERS).
+     * @return The item's tags.
+     */
+    public ArrayList<Tag> getTags() {
+        return this.tags;
+    }
+
+    /**
+     * Changes the tags associated with an item.
+     * @param tags The database String representing the item's tags.
+     */
+    public void setTags(String tags) {
+        this.tags = new ArrayList<>();
+        // parse String into tag objects if it exists
+        if (!tags.equals("")) {
+            // split by the delimiter token without any blanks at the end
+            String[] individualTags = tags.split(";", 0);
+            // create tag object based on th content of the individual tag string
+            for (int i = 0; i < individualTags.length; i++) {
+                String[] individualTag = individualTags[i].split(",");
+                this.tags.add(new Tag(individualTag[0], individualTag[1]));
+            }
+        }
+    }
+
+    /**
+     * Retrieves the images representing the item.
+     * @return The images representing the item.
+     */
+    public ArrayList<String> getImageUrls(){
+        return this.imageUrls;
+    }
+
+    /**
+     * Changes the images representing the item.
+     * @param imageUrls The new images representing the item.
+     */
     public void setImageUrls(ArrayList<String> imageUrls){
         this.imageUrls = imageUrls;
     }
 
-    public ArrayList<String> getImageUrls(){
-        return this.imageUrls;
+    /**
+     * returns whether or not the item has any associated tags.
+     * @return TRUE if it has a tag; FALSE otherwise.
+     */
+    public boolean hasTag(){
+        return !getTags().isEmpty();
+    }
+
+    /**
+     * Retrieves the first tag from the list of tags.
+     * @return The first tag, or null if no tags are present.
+     */
+    public Tag getFirstTag() {
+        if (hasTag()) {
+            return getTags().get(0);
+        }
+        return null;
     }
 
     /**
@@ -255,6 +324,12 @@ public class Item implements Parcelable {
         doc.put("value", this.getEstimatedValue());
         doc.put("comment", this.getComment());
         doc.put("imageUrls", this.getImageUrls());
+        // add the tags separately by parsing the internal object into a tag String
+        String tagsString = "";
+        for (int i = 0; i < tags.size(); i++) {
+            tagsString += tags.get(i).getText() + "," + tags.get(i).getColour() + ";";
+        }
+        doc.put("tags", tagsString);
         return doc;
     }
 
@@ -283,6 +358,7 @@ public class Item implements Parcelable {
         parcel.writeString(serialNumber);
         parcel.writeDouble(estimatedValue);
         parcel.writeString(comment);
+        parcel.writeList(tags);
         parcel.writeStringList(imageUrls);
     }
 

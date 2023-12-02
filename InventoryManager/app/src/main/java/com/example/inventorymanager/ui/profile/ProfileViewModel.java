@@ -3,10 +3,9 @@ package com.example.inventorymanager.ui.profile;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import com.example.inventorymanager.ui.home.HomeFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 
 /**
  * A view model to manage the data for the profile fragment.
@@ -15,7 +14,6 @@ import com.google.firebase.auth.FirebaseUser;
  * @see ProfileFragment
  */
 public class ProfileViewModel extends ViewModel {
-
     private final MutableLiveData<String> mText;
 
     /**

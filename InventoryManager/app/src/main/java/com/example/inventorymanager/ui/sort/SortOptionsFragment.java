@@ -18,6 +18,7 @@ import android.widget.ToggleButton;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.FragmentSortOptionsBinding;
 import com.example.inventorymanager.ui.filter.filteredItemsFragment;
 
@@ -65,6 +66,7 @@ public class SortOptionsFragment extends Fragment {
         ToggleButton descriptionButton = binding.sortDescriptionButton;
         ToggleButton makeButton = binding.sortMakeButton;
         ToggleButton valueButton = binding.sortValueButton;
+        ToggleButton tagButton = binding.sortTagButton;
         ToggleButton ascendingButton = binding.ascendingButton;
         Button doneButton = binding.sortDone;
 
@@ -76,16 +78,47 @@ public class SortOptionsFragment extends Fragment {
         ascending = true;
 
         // if button switched to descending, change ascending to false
-        ascendingButton.setOnCheckedChangeListener( (buttonView, isChecked) -> {ascending = false; });
+        ascendingButton.setOnCheckedChangeListener( (buttonView, isChecked) -> {ascending = !isChecked; });
 
         // create array to hold sorting order
         ArrayList<String> sortList = new ArrayList<String>();
 
-        // add sorting method to array when button clicked
-        dateButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Date"); });
-        descriptionButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Description"); });
-        makeButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Make"); });
-        valueButton.setOnCheckedChangeListener( (buttonView, isChecked) -> { sortList.add("Value"); });
+        // add sorting method to array when button selected & remove when not selected
+        dateButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Date");
+            } else {
+                sortList.remove("Date");
+            }
+        });
+        descriptionButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Description");
+            } else {
+                sortList.remove("Description");
+            }
+        });
+        makeButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Make");
+            } else {
+                sortList.remove("Make");
+            }
+        });
+        valueButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Value");
+            } else {
+                sortList.remove("Value");
+            }
+        });
+        tagButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                sortList.add("Tag");
+            } else {
+                sortList.remove("Tag");
+            }
+        });
 
         // handle done button click
         doneButton.setOnClickListener( v -> {
@@ -120,7 +153,7 @@ public class SortOptionsFragment extends Fragment {
             comparators.add(createComparator(sortBy, ascending));
         }
 
-        // create a composite comparator that performs multisort
+        // create a composite comparator that performs multi-sort
         Comparator<Item> multiComparator = (item1, item2) -> {
             for (Comparator<Item> comparator : comparators) {
                 int result = comparator.compare(item1, item2);
@@ -163,16 +196,36 @@ public class SortOptionsFragment extends Fragment {
                 };
                 break;
             case "Description":
-                comparator = Comparator.comparing(Item::getDescription);
+                comparator = Comparator.comparing(item -> item.getDescription().toLowerCase());
                 break;
             case "Make":
-                comparator = Comparator.comparing(Item::getMake);
+                comparator = Comparator.comparing(item -> item.getMake().toLowerCase());
                 break;
             case "Value":
                 comparator = (item1, item2) -> {
                     double value1 = Double.parseDouble(item1.getEstimatedValue().replaceAll("[$,]", ""));
                     double value2 = Double.parseDouble(item2.getEstimatedValue().replaceAll("[$,]", ""));
                     return Double.compare(value1, value2);
+                };
+                break;
+            case "Tag":
+                comparator = (item1, item2) -> {
+                    boolean item1HasTag = item1.hasTag();
+                    boolean item2HasTag = item2.hasTag();
+
+                    // Handle cases where either tag1 or tag2 is null
+                    if (!item1HasTag && item2HasTag) {
+                        return -1; // Both are equal if both tags are null
+                    } else if (item1HasTag && !item2HasTag) {
+                        return 1; // Null tags come first
+                    } else if (!item1HasTag) {
+                        return 0;
+                    }
+
+                    // Compare the text of the tags if both items have tags
+                    String tag1Text = item1.getFirstTag().getText().toLowerCase();
+                    String tag2Text = item2.getFirstTag().getText().toLowerCase();
+                    return tag1Text.compareTo(tag2Text);
                 };
                 break;
             default:

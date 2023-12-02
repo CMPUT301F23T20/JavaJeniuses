@@ -2,16 +2,10 @@ package com.example.inventorymanager.ui.editItem;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import android.Manifest;
-import android.app.Activity;
 import static android.app.Activity.RESULT_OK;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
-import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -42,7 +36,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.example.inventorymanager.ImageSelectionFragment;
 import com.example.inventorymanager.ImageUtility;
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemUtility;
@@ -54,11 +47,9 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -82,6 +73,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
+
 /**
  * Shows the details of a single item and allows a user to edit these details.
  * Each field of the item is labelled and displayed in an editable format.
@@ -91,10 +83,9 @@ import java.util.UUID;
  * @see com.example.inventorymanager.ui.viewItem.ViewItemFragment
  */
 public class EditItemFragment extends Fragment {
-
     private FragmentEditItemBinding binding;
     private ArrayList<String> imagePaths = new ArrayList<>(); // local paths
-    private ArrayList<String> tempList = new ArrayList<String>(); // A temporary list to store our generated urls
+    private ArrayList<String> tempList = new ArrayList<>(); // A temporary list to store our generated urls
     private ImageUtility imageUtility;
     private ImageView imageView0;
     private Button addImage0Button;
@@ -157,19 +148,15 @@ public class EditItemFragment extends Fragment {
         imageView0 = binding.itemImage0;
         imageView1 = binding.itemImage1;
         imageView2 = binding.itemImage2;
-
         addImage0Button = binding.addImage0Button;
         addImage1Button = binding.addImage1Button;
         addImage2Button = binding.addImage2Button;
-
         addImage0Button.setVisibility(View.GONE);
         addImage1Button.setVisibility(View.GONE);
         addImage2Button.setVisibility(View.GONE);
-
         deleteImage0Button = binding.deleteImage0Button;
         deleteImage1Button = binding.deleteImage1Button;
         deleteImage2Button = binding.deleteImage2Button;
-
         deleteImage0Button.setVisibility(View.GONE);
         deleteImage1Button.setVisibility(View.GONE);
         deleteImage2Button.setVisibility(View.GONE);
@@ -187,7 +174,7 @@ public class EditItemFragment extends Fragment {
         convertUrlsToLocalPaths(item.getImageUrls());
         // render the item's images
         displayImages(this.imagePaths.size());
-        System.out.println("Entering edit fragment" + this.imagePaths.size());
+        Log.d("DEBUG", "Entering edit fragment" + this.imagePaths.size());
 
         purchaseDateInput.setOnClickListener(v -> {
             Calendar selectedDate = Calendar.getInstance(); // Create a Calendar instance for the current date
@@ -267,11 +254,9 @@ public class EditItemFragment extends Fragment {
         deleteImage0Button.setOnClickListener( v -> {
             updateLocalImagePaths(0);
         });
-
         deleteImage1Button.setOnClickListener( v -> {
             updateLocalImagePaths(1);
         });
-
         deleteImage2Button.setOnClickListener( v -> {
             updateLocalImagePaths(2);
         });
@@ -336,13 +321,11 @@ public class EditItemFragment extends Fragment {
                     for (int i = 0; i < this.imagePaths.size(); i++) {
                         // fetch the path to the image
                         String localPath = this.imagePaths.get(i);
-
                         // Create a unique name for each image
                         String imageName = "firebase_" + itemName + "_image" + i + ".jpg";
 
                         // Create a new StorageReference for each image
                         StorageReference imageRef = imagesRef.child(imageName);
-
                         UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localPath)));
 
                         // Register the task to the list
@@ -365,9 +348,9 @@ public class EditItemFragment extends Fragment {
                             imageUrls.add(uri.toString());
                         }
 
-                        System.out.println("line 326, url size:::: " + imageUrls.size());
+                        Log.d("DEBUG", "line 326, url size:::: " + imageUrls.size());
 
-                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, imageUrls);
+                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", imageUrls);
                         itemViewModel.editItem(key, newItem);
 
                         // Navigate back to the home fragment
@@ -376,18 +359,20 @@ public class EditItemFragment extends Fragment {
 
                         ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
                                 makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+
                     }).addOnFailureListener(exception -> {
                         // Handle failure
-                        System.out.println("One or more image uploads failed");
+                        Log.d("DEBUG", "One or more image uploads failed");
                     });
                 }
+
                 // if there are no pics to add
                 else {
-                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, null);
+                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", null);
                     // Add the new item to the shared ViewModel
                     itemViewModel.editItem(key, newItem);
 
-                    System.out.println("Just after edit item is called");
+                    Log.d("DEBUG", "Just after edit item is called");
 
                     // Navigate back to the home fragment
                     NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
@@ -396,7 +381,8 @@ public class EditItemFragment extends Fragment {
                     ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
                             makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
                 }
-                // if user didn't populate the add item fields as expected
+
+            // if user didn't populate the add item fields as expected
             } else {
                 Toast.makeText(requireContext(), "Please fill in all fields correctly.", Toast.LENGTH_SHORT).show(); // A pop-up message to ensure validity of input
             }
@@ -491,7 +477,9 @@ public class EditItemFragment extends Fragment {
                                             // fetch relevant information about the object to form description
                                             String description = mainJsonObject.get("title").toString();
                                             // trim string so it can fit inside the description field
-                                            description = description.substring(0, 40);
+                                            if (description.length() > 40) {
+                                                description = description.substring(0, 40);
+                                            }
 
                                             // update the description text to match the new keywords
                                             ((EditText) binding.descriptionInput).setText(description);
@@ -537,8 +525,12 @@ public class EditItemFragment extends Fragment {
                                     public void onSuccess(Text visionText) {
                                         // fetch the text read and store it
                                         String resultText = visionText.getText();
+                                        // trim string so it can fit inside the field and skip other lines
                                         if (resultText.contains("\n")) {
                                             resultText = resultText.substring(0, resultText.indexOf("\n"));
+                                        }
+                                        if (resultText.length() > 20) {
+                                            resultText = resultText.substring(0, 20);
                                         }
                                         // update the description text to match the new keywords
                                         ((EditText) binding.serialNumberInput).setText(resultText);
@@ -738,7 +730,6 @@ public class EditItemFragment extends Fragment {
      * @param imageToDelete
      */
     void updateLocalImagePaths(int imageToDelete){
-
         if (imageToDelete >= 0 && imageToDelete < this.imagePaths.size()) {
             this.imagePaths.remove(imageToDelete);
         }
@@ -761,22 +752,22 @@ public class EditItemFragment extends Fragment {
 
             // Use Glide to load images asynchronously
             Glide.with(requireContext())
-                    .asBitmap()
-                    .load(imageUrl)
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
-                            // Process the loaded image
-                            String imagePath = imageUtility.saveImageLocally(bitmap, "image_" + System.currentTimeMillis() + ".jpg");
-                            imagePaths.add(imagePath);
+                .asBitmap()
+                .load(imageUrl)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
+                        // Process the loaded image
+                        String imagePath = imageUtility.saveImageLocally(bitmap, "image_" + System.currentTimeMillis() + ".jpg");
+                        imagePaths.add(imagePath);
 
-                            // Display images after all are loaded
-                            if (imagePaths.size() == imageUrls.size()) {
-                                System.out.println("After picture download:: " + imagePaths.size());
-                                displayImages(imagePaths.size());
-                            }
+                        // Display images after all are loaded
+                        if (imagePaths.size() == imageUrls.size()) {
+                            System.out.println("After picture download:: " + imagePaths.size());
+                            displayImages(imagePaths.size());
                         }
-                    });
+                    }
+                });
         }
     }
 

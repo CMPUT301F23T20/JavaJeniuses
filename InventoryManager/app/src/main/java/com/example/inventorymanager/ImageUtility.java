@@ -1,28 +1,17 @@
 package com.example.inventorymanager;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.UUID;
 
 
 /**
@@ -32,16 +21,13 @@ import java.util.UUID;
  * @see com.example.inventorymanager.ui.editItem.EditItemFragment
  */
 public class ImageUtility {
-
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_CAMERA = 2;
     private static final int REQUEST_GALLERY = 3;
     private Fragment fragment;
-
     public ImageUtility(Fragment fragment) {
         this.fragment = fragment;
     }
-
 
     /**
      * Displays a dialog fragment for selecting image options, such as choosing from the gallery
@@ -75,13 +61,12 @@ public class ImageUtility {
      */
     public void handleCameraIntent(){
         try {
-
             if (ContextCompat.checkSelfPermission(fragment.requireContext(), android.Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(fragment.requireActivity(), new String[]{
                         Manifest.permission.CAMERA
                 }, REQUEST_CAMERA_PERMISSION);
-            }else {
+            } else {
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 fragment.startActivityForResult(cameraIntent, REQUEST_CAMERA);
             }
@@ -91,8 +76,6 @@ public class ImageUtility {
             e.printStackTrace(); // Log the exception for debugging purposes.
         }
     }
-
-
 
     /**
      * Handles the gallery intent by launching the gallery to allow the user to select from the
@@ -141,7 +124,5 @@ public class ImageUtility {
             return ""; // Return an empty string if there's an error
         }
     }
-
-
 }
 

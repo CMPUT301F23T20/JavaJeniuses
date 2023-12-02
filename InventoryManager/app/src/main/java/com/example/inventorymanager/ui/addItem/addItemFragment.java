@@ -20,6 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,6 +34,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -41,6 +45,9 @@ import com.example.inventorymanager.ImageUtility;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
+import com.example.inventorymanager.TagAdapter;
+import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
 
@@ -70,6 +77,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -109,6 +117,10 @@ public class addItemFragment extends Fragment {
     private static final int REQUEST_GALLERY = 3;
     private String SCAN_MODE = "";
     private static final int REQUEST_CODE = 22;
+    private ArrayAdapter<String> adapterTags;
+    private Observer<ArrayList<Tag>> dataObserver;
+    private String selectedItem;
+    private Tag selectedTag;
 
     /**
      * Generates the user interface of the fragment.
@@ -143,6 +155,7 @@ public class addItemFragment extends Fragment {
         EditText serialNumberInput = binding.serialNumberInput;
         EditText estimatedValueInput = binding.estimatedValueInput;
         EditText commentInput = binding.commentInput;
+        AutoCompleteTextView autoCompleteTextView = binding.autocompleteTextviewInAddItem;
         Button addItemButton = binding.addItemButton;
 
         // enforcing a maximum of 3 images per item
@@ -226,6 +239,28 @@ public class addItemFragment extends Fragment {
                 return true;
             }
             return false;
+        });
+
+        // create a listener so that the tags being displayed automatically load from the database
+        dataObserver = new Observer<ArrayList<Tag>>() {
+            @Override
+            public void onChanged(ArrayList<Tag> updatedTags) {
+                adapterTags = new TagAdapter(root.getContext(), R.layout.tag_list_item, updatedTags);
+                autoCompleteTextView.setAdapter(adapterTags);
+            }
+        };
+
+        // Create an instance of the shared ViewModel that manages the list of items
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        tagViewModel.getTagsLiveData().observe(getViewLifecycleOwner(), dataObserver);
+
+        // Set a listener on the AutoCompleteTextView to handle tag selection
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedItem = parent.getItemAtPosition(position).toString();
+                selectedTag = findTagByName(selectedItem);
+            }
         });
 
         // Users are crazy, and will often try unconventional things like adding a pic to the second image placeholder before the first
@@ -336,10 +371,14 @@ public class addItemFragment extends Fragment {
                             imageUrls.add(uri.toString());
                         }
 
+                        String tag = "";
+                        if (selectedTag != null && !selectedTag.equals("")) {
+                            tag = selectedTag.getText() + "," + selectedTag.getColour() + ";";
+                        }
+
                         // All images are uploaded successfully
                         // Now you can create the item
-                        // TODO: add ability to add tags here
-                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", imageUrls);
+                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, tag, imageUrls);
                         itemViewModel.addItem(newItem);
 
                         // Navigate back to the home fragment
@@ -357,7 +396,12 @@ public class addItemFragment extends Fragment {
 
                 // if user didn't add any images
                 else {
-                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", null);
+                    String tag = "";
+                    if (selectedTag != null && !selectedTag.equals("")) {
+                        tag = selectedTag.getText() + "," + selectedTag.getColour() + ";";
+                    }
+
+                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, tag, null);
                     // Add the new item to the shared ViewModel
                     itemViewModel.addItem(newItem);
 
@@ -720,6 +764,22 @@ public class addItemFragment extends Fragment {
             addImage2Button.setVisibility(View.GONE);
             deleteImage2Button.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Finds a tag by its name.
+     * @param tagName The name of the tag to find.
+     * @return The Tag object if found, or null otherwise.
+     */
+    private Tag findTagByName(String tagName) {
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        ArrayList<Tag> myTags = tagViewModel.getTagsLiveData().getValue();
+        for (Tag tag : myTags) {
+            if (tag.getText().equals(tagName)) {
+                return tag;
+            }
+        }
+        return null; // Return null if tag not found
     }
 
     /**

@@ -29,8 +29,8 @@ import java.util.List;
  * @see addTagFragment
  */
 public class TagViewModel extends ViewModel {
-    private static MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static final MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference publicTagsRef;
 
     /**

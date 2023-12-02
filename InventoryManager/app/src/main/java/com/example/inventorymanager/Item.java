@@ -35,10 +35,10 @@ public class Item implements Parcelable {
     private String serialNumber;
     private double estimatedValue;
     private String comment;
-    private ArrayList<Tag> tags, itemTags;
+    private ArrayList<Tag> tags;
     private static final String TAG = "PrivateAddTag";
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private ArrayList<String> imageUrls;
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private ArrayList<String> imageUrls, tagTexts;
 
     /**
      * Creates an Item() object with the fields passed in.
@@ -243,10 +243,7 @@ public class Item implements Parcelable {
         this.comment = comment;
     }
 
-    /**
-     * Retrieves the tags representing an item.
-     * @return The tag's representing the item.
-     */
+
     public String getTags() {
         // build string by combining all text in all tags
         String tagsString = "";
@@ -275,8 +272,8 @@ public class Item implements Parcelable {
     }
 
     /**
-     * Retrieves the item's tags in a non-String format (DIFFERENT FROM THE OTHERS).
-     * @return The item's tags.
+     * Retrieves the item's tags.
+     * @return tags An ArrayList of the item's tags
      */
     public ArrayList<Tag> getTagsArray() {
         return this.tags;

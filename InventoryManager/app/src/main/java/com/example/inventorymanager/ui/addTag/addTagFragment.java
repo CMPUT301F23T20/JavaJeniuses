@@ -48,8 +48,8 @@ public class addTagFragment extends Fragment {
     private FragmentAddTagBinding binding;
     private AutoCompleteTextView autoCompleteTextView;
     private ArrayAdapter<String> adapterTags;
-    private static MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
-    private static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static final MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
+    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Tag selectedTag;
     private Observer<ArrayList<Tag>> dataObserver;
 

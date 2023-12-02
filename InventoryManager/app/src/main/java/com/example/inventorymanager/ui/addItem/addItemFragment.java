@@ -94,8 +94,8 @@ import org.json.JSONObject;
  */
 public class addItemFragment extends Fragment {
     private FragmentAddItemBinding binding;
-    private ArrayList<String> localImagePaths = new ArrayList<String>();
-    private ArrayList<String> imageUrls = new ArrayList<String>();
+    private final ArrayList<String> localImagePaths = new ArrayList<String>();
+    private final ArrayList<String> imageUrls = new ArrayList<String>();
     private ImageUtility imageUtility;
     private ImageView imageView0;
     private Button addImage0Button;
@@ -191,7 +191,7 @@ public class addItemFragment extends Fragment {
             // published August 2016, accessed November 2023
             // https://stackoverflow.com/questions/5107901/better-way-to-format-currency-input-edittext
         estimatedValueInput.addTextChangedListener(new TextWatcher() {
-            private String current = "";
+            private final String current = "";
             @Override
             public void afterTextChanged(Editable charSequence) {
                 // nothing to do
@@ -494,7 +494,7 @@ public class addItemFragment extends Fragment {
                                         String searchResults = searchResultsBuilder.toString();
 
                                         // parse the JSON object returned from the API
-                                        JSONObject originalJsonObject = new JSONObject(searchResults.toString());
+                                        JSONObject originalJsonObject = new JSONObject(searchResults);
                                         // retrieve the array of products, which is all that is inside the original objects
                                         JSONArray jsonArray = originalJsonObject.getJSONArray("products");
                                         // only the first object in this array matters (usually length 1 anyways)
@@ -507,7 +507,7 @@ public class addItemFragment extends Fragment {
                                         }
 
                                         // update the description text to match the new keywords
-                                        ((EditText) binding.descriptionInput).setText(description);
+                                        binding.descriptionInput.setText(description);
                                         // inform user of successful operation
                                         Toast.makeText(requireContext(), "Description keywords automatically entered successfully.", Toast.LENGTH_SHORT).show();
 
@@ -558,7 +558,7 @@ public class addItemFragment extends Fragment {
                                             resultText = resultText.substring(0, 20);
                                         }
                                         // update the description text to match the new keywords
-                                        ((EditText) binding.serialNumberInput).setText(resultText);
+                                        binding.serialNumberInput.setText(resultText);
                                         // inform user of successful operation
                                         Toast.makeText(requireContext(), "Serial number automatically entered successfully.", Toast.LENGTH_SHORT).show();
                                     }

@@ -1,5 +1,6 @@
 package com.example.inventorymanager;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -46,10 +47,10 @@ public class ItemTest {
     public void testItemName() {
         // ensure that getter works properly on original data
         Item item = defaultItem();
-        assertTrue(item.getItemName().equals(itemName1));
+        assertEquals(itemName1, item.getItemName());
         // ensure that setter works on new value based on prior confirmed assumption that getter works
         item.setItemName(itemName2);
-        assertTrue(item.getItemName().equals(itemName2));
+        assertEquals(itemName2, item.getItemName());
     }
 
     /**
@@ -59,10 +60,10 @@ public class ItemTest {
     public void testPurchaseDate() {
         // ensure that getter works properly on original data
         Item item = defaultItem();
-        assertTrue(item.getPurchaseDate().equals(purchaseDate1));
+        assertEquals(purchaseDate1, item.getPurchaseDate());
         // ensure that setter works on new value based on prior confirmed assumption that getter works
         item.setPurchaseDate(purchaseDate2);
-        assertTrue(item.getPurchaseDate().equals(purchaseDate2));
+        assertEquals(purchaseDate2, item.getPurchaseDate());
     }
 
     /**
@@ -72,10 +73,10 @@ public class ItemTest {
     public void testDescription() {
         // ensure that getter works properly on original data
         Item item = defaultItem();
-        assertTrue(item.getDescription().equals(description1));
+        assertEquals(description1, item.getDescription());
         // ensure that setter works on new value based on prior confirmed assumption that getter works
         item.setDescription(description2);
-        assertTrue(item.getDescription().equals(description2));
+        assertEquals(description2, item.getDescription());
     }
 
     /**
@@ -85,10 +86,10 @@ public class ItemTest {
     public void testModel() {
         // ensure that getter works properly on original data
         Item item = defaultItem();
-        assertTrue(item.getModel().equals(model1));
+        assertEquals(model1, item.getModel());
         // ensure that setter works on new value based on prior confirmed assumption that getter works
         item.setModel(model2);
-        assertTrue(item.getModel().equals(model2));
+        assertEquals(model2, item.getModel());
     }
 
     /**
@@ -98,10 +99,10 @@ public class ItemTest {
     public void testMake() {
         // ensure that getter works properly on original data
         Item item = defaultItem();
-        assertTrue(item.getMake().equals(make1));
+        assertEquals(make1, item.getMake());
         // ensure that setter works on new value based on prior confirmed assumption that getter works
         item.setMake(make2);
-        assertTrue(item.getMake().equals(make2));
+        assertEquals(make2, item.getMake());
     }
 
     /**
@@ -111,10 +112,10 @@ public class ItemTest {
     public void testSerialNumber() {
         // ensure that getter works properly on original data
         Item item = defaultItem();
-        assertTrue(item.getSerialNumber().equals(serialNumber1));
+        assertEquals(serialNumber1, item.getSerialNumber());
         // ensure that setter works on new value based on prior confirmed assumption that getter works
         item.setSerialNumber(serialNumber2);
-        assertTrue(item.getSerialNumber().equals(serialNumber2));
+        assertEquals(serialNumber2, item.getSerialNumber());
     }
 
     /**
@@ -125,27 +126,27 @@ public class ItemTest {
     public void testEstimatedValue() {
         // ensure that getter works properly on original data
         Item item = defaultItem();
-        assertTrue(item.getEstimatedValue().equals(estimatedValue1));
+        assertEquals(estimatedValue1, item.getEstimatedValue());
         // ensure that setter works on new value based on prior confirmed assumption that getter works
         item.setEstimatedValue(estimatedValue2);
-        assertTrue(item.getEstimatedValue().equals(estimatedValue2));
+        assertEquals(estimatedValue2, item.getEstimatedValue());
 
         // test additional extraneous cases of monetary input
         // these cases should never occur based on ItemUtility(), but worth testing just in case
         item.setEstimatedValue("0");
-        assertTrue(item.getEstimatedValue().equals("$0.00"));
+        assertEquals("$0.00", item.getEstimatedValue());
         item.setEstimatedValue("100");
-        assertTrue(item.getEstimatedValue().equals("$100.00"));
+        assertEquals("$100.00", item.getEstimatedValue());
         item.setEstimatedValue("10000");
-        assertTrue(item.getEstimatedValue().equals("$10,000.00"));
+        assertEquals("$10,000.00", item.getEstimatedValue());
         item.setEstimatedValue("1000000");
-        assertTrue(item.getEstimatedValue().equals("$1,000,000.00"));
+        assertEquals("$1,000,000.00", item.getEstimatedValue());
         item.setEstimatedValue("0.1");
-        assertTrue(item.getEstimatedValue().equals("$0.10"));
+        assertEquals("$0.10", item.getEstimatedValue());
         item.setEstimatedValue("099.990");
-        assertTrue(item.getEstimatedValue().equals("$99.99"));
+        assertEquals("$99.99", item.getEstimatedValue());
         item.setEstimatedValue("0.99999");
-        assertTrue(item.getEstimatedValue().equals("$1.00"));
+        assertEquals("$1.00", item.getEstimatedValue());
     }
 
     /**
@@ -155,10 +156,10 @@ public class ItemTest {
     public void testComment() {
         // ensure that getter works properly on original data
         Item item = defaultItem();
-        assertTrue(item.getComment().equals(comment1));
+        assertEquals(comment1, item.getComment());
         // ensure that setter works on new value based on prior confirmed assumption that getter works
         item.setComment(comment2);
-        assertTrue(item.getComment().equals(comment2));
+        assertEquals(comment2, item.getComment());
     }
 
     /**
@@ -170,14 +171,14 @@ public class ItemTest {
         // ensure that the document is accurate to original data
         Item item = defaultItem();
         HashMap<String, String> document = item.getDocument();
-        assertTrue(item.getItemName().equals(document.get("name")));
-        assertTrue(item.getPurchaseDate().equals(document.get("date")));
-        assertTrue(item.getDescription().equals(document.get("description")));
-        assertTrue(item.getModel().equals(document.get("model")));
-        assertTrue(item.getMake().equals(document.get("make")));
-        assertTrue(item.getSerialNumber().equals(document.get("number")));
-        assertTrue(item.getEstimatedValue().equals(document.get("value")));
-        assertTrue(item.getComment().equals(document.get("comment")));
+        assertEquals(item.getItemName(), document.get("name"));
+        assertEquals(item.getPurchaseDate(), document.get("date"));
+        assertEquals(item.getDescription(), document.get("description"));
+        assertEquals(item.getModel(), document.get("model"));
+        assertEquals(item.getMake(), document.get("make"));
+        assertEquals(item.getSerialNumber(), document.get("number"));
+        assertEquals(item.getEstimatedValue(), document.get("value"));
+        assertEquals(item.getComment(), document.get("comment"));
 
         // ensure that the document is accurate to data changes
         item.setItemName(itemName2);
@@ -189,13 +190,13 @@ public class ItemTest {
         item.setEstimatedValue(estimatedValue2);
         item.setComment(comment2);
         document = item.getDocument();
-        assertTrue(item.getItemName().equals(document.get("name")));
-        assertTrue(item.getPurchaseDate().equals(document.get("date")));
-        assertTrue(item.getDescription().equals(document.get("description")));
-        assertTrue(item.getModel().equals(document.get("model")));
-        assertTrue(item.getMake().equals(document.get("make")));
-        assertTrue(item.getSerialNumber().equals(document.get("number")));
-        assertTrue(item.getEstimatedValue().equals(document.get("value")));
-        assertTrue(item.getComment().equals(document.get("comment")));
+        assertEquals(item.getItemName(), document.get("name"));
+        assertEquals(item.getPurchaseDate(), document.get("date"));
+        assertEquals(item.getDescription(), document.get("description"));
+        assertEquals(item.getModel(), document.get("model"));
+        assertEquals(item.getMake(), document.get("make"));
+        assertEquals(item.getSerialNumber(), document.get("number"));
+        assertEquals(item.getEstimatedValue(), document.get("value"));
+        assertEquals(item.getComment(), document.get("comment"));
     }
 }

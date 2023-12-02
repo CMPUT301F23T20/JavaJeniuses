@@ -89,6 +89,7 @@ public class PhotoTesting {
     }
 
     /**
+     * Tests the add Item page (with a focus on the photos feature)
      * Creates an item and adds three photos to it
      */
     private void addPhotos(UiDevice uiDevice) {
@@ -126,6 +127,7 @@ public class PhotoTesting {
         // Set the item's comment
         onView(withId(R.id.commentInput)).perform(typeText("No comment"));
         onView(withId(R.id.commentInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
+
 
         // Beginning of image tests
         onView(withId(R.id.addImage0Button)).perform(click());
@@ -165,7 +167,8 @@ public class PhotoTesting {
     }
 
     /**
-     * Views the item and tests the image view to ensure they are not null
+     * Tests viewing images of an item functionality
+     * Views the item added nd confirms it has 3 photos attached
      */
     private void viewPhotoItem (UiDevice uiDevice) {
         onView(withText("PhotoTest")).perform(scrollTo());
@@ -195,8 +198,9 @@ public class PhotoTesting {
     }
 
     /**
-     * Edits the item made in addPhotos()
-     * It also views the changes
+     * Tests editing photos of an item functionality
+     * The item used here was made in this.addPhotos()
+     * User items are
      */
     private void editPhotoItem(UiDevice uiDevice) {
         onView(withText("PhotoTest")).perform(scrollTo());
@@ -260,6 +264,7 @@ public class PhotoTesting {
     }
 
     /**
+     * Tests the delete image of an item functionality
      * Delete a particular item in the database; specifically, the one made by addPhotos().
      */
     private void deletePhotoItem(UiDevice uiDevice) {

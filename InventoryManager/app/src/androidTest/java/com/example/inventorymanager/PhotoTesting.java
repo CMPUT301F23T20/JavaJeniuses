@@ -38,6 +38,8 @@ import org.junit.runner.RunWith;
  * Ensures the user is able to add, view, edit and delete the photos properly.
  * Tests US 4.1, 4.2, and 4.3.
  * Important Note: All tests should be run on Pixel 6 API 34.
+ * Important Note: Users must manually take a picture and add it into their gallery before running this test.
+ * This means opening the Camera app on the phone and clicking the camera icon button.
  * @author Kareem Assaf, David Onchuru
  */
 @RunWith(AndroidJUnit4.class)
@@ -353,6 +355,8 @@ public class PhotoTesting {
      * This is the main function for this testing class
      * Test that the user can add photos to their items
      * Tests US 4.1, 4.2, and 4.3.
+     * Important Note: Users must manually take a picture and add it into their gallery before running this test.
+     * This means opening the Camera app on the phone and clicking the camera icon button.
      */
     @Test
     public void testPhotos() {

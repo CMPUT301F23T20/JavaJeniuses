@@ -85,6 +85,10 @@ public class createTagFragment extends Fragment {
                 tagNameInput.setError("This field is required");
             } else if (tagName.length() >= 11) {
                 tagNameInput.setError("Up to 10 characters");
+            } else if (tagName.contains(",")) {
+                tagNameInput.setError("Commas are illegal");
+            } else if (tagName.contains(";")) {
+                tagNameInput.setError("Semicolons are illegal");
             } else {
                 tagViewModel.addTag(new Tag(tagName, tagColour));
 

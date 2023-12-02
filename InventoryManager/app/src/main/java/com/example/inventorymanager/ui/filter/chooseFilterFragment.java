@@ -1,7 +1,5 @@
 package com.example.inventorymanager.ui.filter;
 
-import static com.google.common.collect.Iterables.size;
-
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -11,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,13 +20,11 @@ import com.example.inventorymanager.R;
 import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.ChooseFilterBinding;
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 /**

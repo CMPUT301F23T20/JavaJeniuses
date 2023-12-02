@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -15,13 +14,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import org.checkerframework.checker.units.qual.A;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Arrays;
 import java.util.List;
+
 
 /**
  * The means by which the system interacts with the backend database.
@@ -43,7 +40,6 @@ public class ItemViewModel extends ViewModel {
     private static MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference itemsDB;
-
     public FirebaseStorage storage = FirebaseStorage.getInstance();
 
     /**
@@ -105,6 +101,7 @@ public class ItemViewModel extends ViewModel {
                                 }
                             }
 
+                            // map these fields to an item object
                             Item cleanedItem = new Item(
                                     (String) rawItem.get("name"),
                                     (String) rawItem.get("date"),
@@ -114,10 +111,11 @@ public class ItemViewModel extends ViewModel {
                                     (String) rawItem.get("number"),
                                     (String) rawItem.get("value"),
                                     (String) rawItem.get("comment"),
-                                    imageUrls
-                            );
+                                    (String) rawItem.get("tags"),
+                                    imageUrls);
                             items.add(cleanedItem);
                         }
+
                         // update the items being shown to the what was fetched
                         itemsLiveData.setValue(items);
                     }
@@ -143,7 +141,7 @@ public class ItemViewModel extends ViewModel {
         }
 
         // should never ever be reached
-        return new Item("Error", "", "", "", "", "", "", "", null);
+        return new Item("Error", "", "", "", "", "", "", "", "", null);
     }
 
     /**

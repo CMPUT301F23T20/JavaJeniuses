@@ -6,19 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
 import com.example.inventorymanager.databinding.FragmentImageSelectionBinding;
 
 
 public class ImageSelectionFragment extends DialogFragment {
-
     private FragmentImageSelectionBinding binding;
     private OnImageOptionClickListener optionClickListener;
-
     public static final int CHOICE_GALLERY = 1;
     public static final int CHOICE_CAMERA = 2;
 
@@ -27,10 +23,8 @@ public class ImageSelectionFragment extends DialogFragment {
      * Interface definition for a callback to be invoked when an image selection option is clicked.
      */
     public interface OnImageOptionClickListener {
-
         /**
          * Helper method that is called when an image selection option is clicked.
-         *
          * @param choice The choice made by the user to take a picture or select from gallery
          */
         void onOptionClick(int choice);
@@ -47,7 +41,6 @@ public class ImageSelectionFragment extends DialogFragment {
      * from a previous saved state as given here.
      * @return the root of the view.
      */
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -91,10 +84,8 @@ public class ImageSelectionFragment extends DialogFragment {
 
     /**
      * Sets the OnImageOptionClickListener for this fragment to manage click events
-     *
      * @param listener The listener to set
      */
-
     public void setOnImageOptionClickListener(OnImageOptionClickListener listener) {
         this.optionClickListener = listener;
     }

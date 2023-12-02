@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.addTag.addTagFragment">
+
+    <TextView
+        android:id="@+id/add_tag_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Tag"
+        android:fontFamily="sans-serif-black"
+        android:textSize="25sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/tag_text_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tag Text"
+        android:fontFamily="sans-serif-black"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/black"/>
+
+    <EditText
+        android:id="@+id/tagEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="Enter the tag text" />
+
+    <TextView
+        android:id="@+id/tag_text_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Max 10 characters"
+        android:textSize="12sp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/tag_colour_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tag Colour"
+        android:fontFamily="sans-serif-black"
+        android:textSize="20sp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/black"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/red_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/red"
+            android:text="Red"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/blue_button"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Blue"
+            android:backgroundTint="@color/blue"/>
+
+        <Button
+            android:id="@+id/green_button"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Green"
+            android:backgroundTint="@color/green"/>
+
+        <Button
+            android:id="@+id/yellow_button"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Yellow"
+            android:backgroundTint="@color/yellow"/>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="226dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="150dp"
+            android:height="60dp"
+            android:text="@string/save_button_text"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/cancelButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginTop="50dp" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="150dp"
+            android:height="60dp"
+            android:text="Cancel"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/saveButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginTop="50dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

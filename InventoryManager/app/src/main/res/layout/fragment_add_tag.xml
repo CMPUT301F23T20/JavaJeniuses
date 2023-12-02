@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.addTag.addTagFragment">
+
+    <TextView
+        android:id="@+id/create_tag_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Tag"
+        android:fontFamily="sans-serif-black"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/black"/>
+
+    <Button
+        android:id="@+id/create_tag_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:text="Create tag"/>
+
+    <TextView
+        android:id="@+id/add_tag_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Existing Tag"
+        android:fontFamily="sans-serif-black"
+        android:textSize="20sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/black"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="247dp"
+        android:layout_margin="16dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <AutoCompleteTextView
+            android:id="@+id/autocomplete_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/add_tag_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add tag"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

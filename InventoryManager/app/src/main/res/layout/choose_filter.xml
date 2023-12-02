@@ -59,6 +59,24 @@
         android:layout_marginBottom="10sp"
         android:hint="Enter make" />
 
+    <TextView
+        android:id="@+id/type_tag_textView"
+        android:text="Tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-black"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/tag_keyword_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10sp"
+        android:hint="Enter tag" />
+
 
     <TextView
         android:id="@+id/start_date_textView"

@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.ChooseFilterBinding;
 
 import java.lang.reflect.Array;
@@ -60,6 +61,7 @@ public class chooseFilterFragment extends Fragment {
         // Bind UI elements to variables
         EditText descriptionKeywordEditText = binding.descriptionKeywordEditText;
         EditText makeKeywordEditText = binding.makeKeywordEditText;
+        EditText tagKeywordEditText = binding.tagKeywordEditText;
         EditText startDateEditText = binding.startDateEditText;
         EditText endDateEditText = binding.endDateEditText;
         Button searchButton = binding.searchButton;
@@ -73,6 +75,7 @@ public class chooseFilterFragment extends Fragment {
             // fetch keywords
             String description = (descriptionKeywordEditText.getText().toString()).toLowerCase();
             String make = makeKeywordEditText.getText().toString().toLowerCase();
+            String tag = tagKeywordEditText.getText().toString().toLowerCase();
             String startDate = startDateEditText.getText().toString();
             String endDate = endDateEditText.getText().toString();
 
@@ -90,6 +93,12 @@ public class chooseFilterFragment extends Fragment {
             // if user selects description keyword
             if (!description.isEmpty()) {
                 items = findItemsWithDescriptionKeyword(description, items);
+            }
+
+            // if user selects tag keyword
+            if (!tag.isEmpty()) {
+                items = findItemsWithTag(tag, items);
+                // if item not already in list, add item to filtered item list
             }
 
             // pack list of filtered items
@@ -155,6 +164,26 @@ public class chooseFilterFragment extends Fragment {
             }
         }
         return itemsWithMake;
+    }
+
+    /**
+     * Populate a new list with all items containing the desired tag.
+     */
+    public ArrayList<Item> findItemsWithTag(String tag, ArrayList<Item> itemsToFilter) {
+        ArrayList<Item> itemsWithTag = new ArrayList<>();
+        for (Item item : itemsToFilter) {
+            if (item.hasTag()) {
+                ArrayList<Tag> itemTags = new ArrayList<>();
+                itemTags = item.getTags();
+                for (Tag itemTag : itemTags) {
+                    if (itemTag.getText().toLowerCase().contains(tag.toLowerCase())) {
+                        itemsWithTag.add(item);
+                        break;
+                    }
+                }
+            }
+        }
+        return itemsWithTag;
     }
 
     /**

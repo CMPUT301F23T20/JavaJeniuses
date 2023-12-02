@@ -1,16 +1,12 @@
 package com.example.inventorymanager.ui.addItem;
 
 import static android.app.Activity.RESULT_OK;
-
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -28,25 +24,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import android.Manifest;
-import com.example.inventorymanager.ImageSelectionFragment;
 import com.example.inventorymanager.ImageUtility;
 import com.example.inventorymanager.ItemUtility;
 import com.example.inventorymanager.ItemViewModel;
-import android.Manifest;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentAddItemBinding;
 import com.example.inventorymanager.Item;
@@ -55,34 +44,24 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.gson.Gson;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import com.google.mlkit.vision.codescanner.GmsBarcodeScanner;
-import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions;
-import com.google.mlkit.vision.codescanner.GmsBarcodeScanning;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
@@ -106,7 +85,6 @@ import org.json.JSONObject;
  * @see ItemViewModel
  */
 public class addItemFragment extends Fragment {
-
     private FragmentAddItemBinding binding;
     private ArrayList<String> localImagePaths = new ArrayList<String>();
     private ArrayList<String> imageUrls = new ArrayList<String>();
@@ -164,11 +142,9 @@ public class addItemFragment extends Fragment {
         imageView0 = binding.itemImage0;
         imageView1 = binding.itemImage1;
         imageView2 = binding.itemImage2;
-
         addImage0Button = binding.addImage0Button;
         addImage1Button = binding.addImage1Button;
         addImage2Button = binding.addImage2Button;
-
         deleteImage0Button = binding.deleteImage0Button;
         deleteImage1Button = binding.deleteImage1Button;
         deleteImage2Button = binding.deleteImage2Button;
@@ -249,7 +225,6 @@ public class addItemFragment extends Fragment {
         // we're gonna ENFORCE sequential image input
         addImage1Button.setVisibility(View.GONE);
         addImage2Button.setVisibility(View.GONE);
-
         deleteImage0Button.setVisibility(View.GONE);
         deleteImage1Button.setVisibility(View.GONE);
         deleteImage2Button.setVisibility(View.GONE);
@@ -316,13 +291,11 @@ public class addItemFragment extends Fragment {
                     for (int i = 0; i < this.localImagePaths.size(); i++) {
                         // fetch the path to the image
                         String localPath = this.localImagePaths.get(i);
-
                         // Create a unique name for each image
                         String imageName = "firebase_" + itemName + "_image" + i + ".jpg";
 
                         // Create a new StorageReference for each image
                         StorageReference imageRef = imagesRef.child(imageName);
-
                         UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localPath)));
 
                         // Register the task to the list
@@ -347,7 +320,8 @@ public class addItemFragment extends Fragment {
 
                         // All images are uploaded successfully
                         // Now you can create the item
-                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, imageUrls);
+                        // TODO: add ability to add tags here
+                        Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", imageUrls);
                         itemViewModel.addItem(newItem);
 
                         // Navigate back to the home fragment
@@ -356,15 +330,16 @@ public class addItemFragment extends Fragment {
 
                         ItemUtility.clearTextFields(itemNameInput, purchaseDateInput, descriptionInput,
                                 makeInput, modelInput, serialNumberInput, estimatedValueInput, commentInput);
+
                     }).addOnFailureListener(exception -> {
                         // Handle failure
-                        System.out.println("One or more image uploads failed");
+                        Log.d("DEBUG", "One or more image uploads failed");
                     });
                 }
 
                 // if user didn't add any images
                 else {
-                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, null);
+                    Item newItem = new Item(itemName, purchaseDate, description, model, make, serialNumber, estimateValue, comment, "", null);
                     // Add the new item to the shared ViewModel
                     itemViewModel.addItem(newItem);
 
@@ -385,11 +360,9 @@ public class addItemFragment extends Fragment {
         deleteImage0Button.setOnClickListener( v -> {
             updateLocalImagePaths(0);
         });
-
         deleteImage1Button.setOnClickListener( v -> {
             updateLocalImagePaths(1);
         });
-
         deleteImage2Button.setOnClickListener( v -> {
             updateLocalImagePaths(2);
         });
@@ -405,11 +378,9 @@ public class addItemFragment extends Fragment {
         if (imageToDelete >= 0 && imageToDelete < localImagePaths.size()) {
             localImagePaths.remove(imageToDelete);
         }
-
         // Determine the appropriate ImageView to update based on the counter
         displayImages(localImagePaths.size());
     }
-
 
     /**
      * Performs operations on the image returned from the camera activity.
@@ -487,7 +458,9 @@ public class addItemFragment extends Fragment {
                                         // fetch relevant information about the object to form description
                                         String description = mainJsonObject.get("title").toString();
                                         // trim string so it can fit inside the description field
-                                        description = description.substring(0, 40);
+                                        if (description.length() > 40) {
+                                            description = description.substring(0, 40);
+                                        }
 
                                         // update the description text to match the new keywords
                                         ((EditText) binding.descriptionInput).setText(description);
@@ -533,8 +506,12 @@ public class addItemFragment extends Fragment {
                                     public void onSuccess(Text visionText) {
                                         // fetch the text read and store it
                                         String resultText = visionText.getText();
+                                        // trim string so it can fit inside the field and skip other lines
                                         if (resultText.contains("\n")) {
                                             resultText = resultText.substring(0, resultText.indexOf("\n"));
+                                        }
+                                        if (resultText.length() > 20) {
+                                            resultText = resultText.substring(0, 20);
                                         }
                                         // update the description text to match the new keywords
                                         ((EditText) binding.serialNumberInput).setText(resultText);
@@ -661,9 +638,9 @@ public class addItemFragment extends Fragment {
 
         // ENFORCING sequential image input
         // and accounting for the case where the user opens the camera page and cancels without actually taking the pic
-        System.out.println("local image paths size: " + localImagePaths.size());
+        Log.d("DEBUG", "local image paths size: " + localImagePaths.size());
         for (String i : localImagePaths){
-            System.out.print(i);
+            Log.d("DEBUG", i);
         }
         displayImages(localImagePaths.size());
     }

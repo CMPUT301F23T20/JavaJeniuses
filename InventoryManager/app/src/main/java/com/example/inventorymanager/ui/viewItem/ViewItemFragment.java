@@ -1,28 +1,31 @@
 package com.example.inventorymanager.ui.viewItem;
 
 import androidx.lifecycle.ViewModelProvider;
-
+import android.graphics.Color;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
+import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.FragmentViewItemBinding;
-
+import java.util.ArrayList;
 import com.bumptech.glide.Glide;
+
 
 /**
  * Shows the details of a single item.
@@ -33,8 +36,8 @@ import com.bumptech.glide.Glide;
  * @see com.example.inventorymanager.ui.editItem.EditItemFragment
  */
 public class ViewItemFragment extends Fragment {
-
     private FragmentViewItemBinding binding;
+    private ArrayList<Tag> tags;
 
     /**
      * Provides the user interface of the fragment.
@@ -60,12 +63,11 @@ public class ViewItemFragment extends Fragment {
         Item item = itemViewModel.getItem(key);
 
         // DEBUG statements
-        System.out.println("item name" + item.getItemName());
-        System.out.println("Image urls size" + item.getImageUrls().size());
+        Log.d("DEBUG", "item name" + item.getItemName());
+        Log.d("DEBUG", "Image urls size" + item.getImageUrls().size());
 
         // Bind UI elements to variables
         ScrollView viewItemScrollView = binding.ViewItemScrollView;
-
         TextView itemNameValue = binding.itemNameValue;
         TextView purchaseDateValue = binding.purchaseDateValue;
         TextView descriptionValue = binding.descriptionValue;
@@ -74,13 +76,12 @@ public class ViewItemFragment extends Fragment {
         TextView serialNumberValue = binding.serialNumberValue;
         TextView estimatedValueValue = binding.estimatedValueValue;
         TextView commentValue = binding.commentValue;
-
         ImageView imageView0 = binding.itemImage0;
         ImageView imageView1 = binding.itemImage1;
         ImageView imageView2 = binding.itemImage2;
-
         Button editButton = binding.editButton;
         Button deleteButton = binding.deleteButton;
+        LinearLayout tagList = binding.tagList;
 
         // set the text view to show the values that item already has
         itemNameValue.setText(item.getItemName());
@@ -92,17 +93,32 @@ public class ViewItemFragment extends Fragment {
         estimatedValueValue.setText(item.getEstimatedValue());
         commentValue.setText(item.getComment());
 
-        System.out.println("Image urls size" + item.getImageUrls().size());
+        // retrieve the list of tags associated with the item
+        tags = item.getTags();
+        if (tags != null) {
+            // loop through each tag in the list
+            for (int i = 0; i < tags.size(); i++) {
+                // create a new TextView for each tag and customize
+                TextView tagTextView = new TextView(getContext());
+                tagTextView.setTextSize(20);
+                SpannableString tagName = new SpannableString(" " + tags.get(i).getText() + " ");
+                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColourCode())),
+                        0, tagName.length(), 0);
+                tagTextView.setText(tagName);
+                tagTextView.setPadding(15, 10, 15, 10);
+                tagList.addView(tagTextView);
+            }
+        }
+
+        Log.d("DEBUG", "Image urls size" + item.getImageUrls().size());
 
         // Use Glide API to fetch, resize and embed the picture into the imageView
         if (item.getImageUrls().size() >= 1) {
             Glide.with(this).load(item.getImageUrls().get(0)).into(imageView0);
         }
-
         if (item.getImageUrls().size() >= 2) {
             Glide.with(this).load(item.getImageUrls().get(1)).into(imageView1);
         }
-
         if (item.getImageUrls().size() >= 3) {
             Glide.with(this).load(item.getImageUrls().get(2)).into(imageView2);
         }

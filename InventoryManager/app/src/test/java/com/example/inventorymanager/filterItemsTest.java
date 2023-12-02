@@ -1,14 +1,10 @@
 package com.example.inventorymanager;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
-
 import com.example.inventorymanager.ui.filter.chooseFilterFragment;
-import com.example.inventorymanager.Item;
-
 import java.util.ArrayList;
+
 
 /**
  * Tests the functionality of the filtering functions in chooseFilterFragment
@@ -20,7 +16,6 @@ public class filterItemsTest {
     private final String itemName1 = "Computer";
     private final String itemName2 = "Laptop";
     private final String itemName3 = "Tablet";
-
     private final String purchaseDate1 = "2023-01-01";
     private final String purchaseDate2 = "2023-08-20";
     private final String description1 = "PC used for gaming.";
@@ -45,9 +40,9 @@ public class filterItemsTest {
     private ArrayList<Item> defaultList() {
         ArrayList<Item> items = new ArrayList<Item>();
 
-        Item item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, null, null);
-        Item item2 = new Item(itemName2, purchaseDate2, description1, model1, make2, serialNumber1, estimatedValue1, comment1, null, null);
-        Item item3 = new Item(itemName3, purchaseDate1, description3, model1, make1, serialNumber1, estimatedValue1, comment1, null, null);
+        Item item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1,"", null);
+        Item item2 = new Item(itemName2, purchaseDate2, description1, model1, make2, serialNumber1, estimatedValue1, comment1, "", null);
+        Item item3 = new Item(itemName3, purchaseDate1, description3, model1, make1, serialNumber1, estimatedValue1, comment1, "", null);
 
         items.add(item1);
         items.add(item2);
@@ -66,7 +61,7 @@ public class filterItemsTest {
         assertEquals(2, filteredItems.size());
 
         // Test case: description doesn't exist within items
-        ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsWithMake("empty", items);
+        ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsWithDescriptionKeyword("empty", items);
         assertEquals(filteredItems_empty.size(), 0);
     }
 

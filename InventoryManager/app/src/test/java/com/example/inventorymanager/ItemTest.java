@@ -2,15 +2,14 @@ package com.example.inventorymanager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
-
 import java.util.HashMap;
+
 
 /**
  * Tests the functionality of the Item() class.
  * Ensures that all getters and setters work properly and that the item can be properly transformed into a database document.
- * @author Isaac Joffe
+ * @author Isaac Joffe, David Onchuru
  * @see Item
  */
 public class ItemTest {
@@ -37,7 +36,7 @@ public class ItemTest {
      * @return The main item to be used by other tests.
      */
     private Item defaultItem() {
-        return new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1);
+        return new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, "", null);
     }
 
     /**
@@ -170,15 +169,15 @@ public class ItemTest {
     public void testGetDocument() {
         // ensure that the document is accurate to original data
         Item item = defaultItem();
-        HashMap<String, String> document = item.getDocument();
-        assertEquals(item.getItemName(), document.get("name"));
-        assertEquals(item.getPurchaseDate(), document.get("date"));
-        assertEquals(item.getDescription(), document.get("description"));
-        assertEquals(item.getModel(), document.get("model"));
-        assertEquals(item.getMake(), document.get("make"));
-        assertEquals(item.getSerialNumber(), document.get("number"));
-        assertEquals(item.getEstimatedValue(), document.get("value"));
-        assertEquals(item.getComment(), document.get("comment"));
+        HashMap<String, Object> document = item.getDocument();
+        assertTrue(item.getItemName().equals(document.get("name")));
+        assertTrue(item.getPurchaseDate().equals(document.get("date")));
+        assertTrue(item.getDescription().equals(document.get("description")));
+        assertTrue(item.getModel().equals(document.get("model")));
+        assertTrue(item.getMake().equals(document.get("make")));
+        assertTrue(item.getSerialNumber().equals(document.get("number")));
+        assertTrue(item.getEstimatedValue().equals(document.get("value")));
+        assertTrue(item.getComment().equals(document.get("comment")));
 
         // ensure that the document is accurate to data changes
         item.setItemName(itemName2);

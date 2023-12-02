@@ -2,8 +2,8 @@ package com.example.inventorymanager;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
-
 import java.util.ArrayList;
+
 
 /**
  * Adapter class for displaying tags in a ListView or similar view components within an Android application.

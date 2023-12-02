@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:orientation="vertical"
@@ -20,6 +21,32 @@
         android:textSize="20sp"
         android:textStyle="bold"
         />
+
+    <TextView
+        android:id="@+id/type_tag_textView"
+        android:text="Tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-black"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <AutoCompleteTextView
+            android:id="@+id/autocomplete_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/type_description_textView"
@@ -58,24 +85,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10sp"
         android:hint="Enter make" />
-
-    <TextView
-        android:id="@+id/type_tag_textView"
-        android:text="Tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="sans-serif-black"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/tag_keyword_editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10sp"
-        android:hint="Enter tag" />
 
 
     <TextView
@@ -132,4 +141,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="Search" />
+
 </LinearLayout>

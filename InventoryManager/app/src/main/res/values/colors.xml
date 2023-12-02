@@ -9,8 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="celadon">#A1E8AF</color>
     <color name="red">#FF8986</color>
-    <color name="blue">#a8e4ef</color>
-    <color name="green">#a6eca8</color>
+    <color name="orange">#FAC898</color>
     <color name="yellow">#fcfc99</color>
+    <color name="blue">#a8e4ef</color>
+    <color name="purple">#C3B1E1</color>
+    <color name="pink">#F8C8DC</color>
 
 </resources>

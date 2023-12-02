@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -13,9 +12,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
+
 
 /**
  * The means by which the system interacts with the backend database.
@@ -37,6 +40,7 @@ public class ItemViewModel extends ViewModel {
     private static MutableLiveData<ArrayList<Item>> itemsLiveData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static CollectionReference itemsDB;
+    public FirebaseStorage storage = FirebaseStorage.getInstance();
 
     /**
      * Creates an ItemViewModel() object synced to the global application database.
@@ -67,7 +71,7 @@ public class ItemViewModel extends ViewModel {
 
     /**
      * Fetches the entire list of items being tracked inside the database.
-     * Updates the local copy of the entire set of objects being tracked for speed and use across all of the application.
+     * Updates the local copy of the entire set of objects being tracked for speed and use across the whole application.
      */
     public void fetchItems() {
         // query database to get all items indiscriminately
@@ -84,6 +88,20 @@ public class ItemViewModel extends ViewModel {
                         for (int i = 0; i < cleanedData.size(); i++) {
                             DocumentSnapshot rawItem = cleanedData.get(i);
                             // translate database format to the Item class
+
+                            ArrayList<String> imageUrls = new ArrayList<String>();
+                            if (rawItem.get("imageUrls") != null){
+                                if (rawItem.get("imageUrls") instanceof ArrayList) {
+                                    imageUrls = (ArrayList<String>) rawItem.get("imageUrls");
+                                } else if (rawItem.get("imageUrls") instanceof String) {
+                                    // Split the string into individual URLs
+                                    String rawImageUrls = (String) rawItem.get("imageUrls");
+                                    String[] urlsArray = rawImageUrls.split(", ");
+                                    imageUrls.addAll(Arrays.asList(urlsArray));
+                                }
+                            }
+
+                            // map these fields to an item object
                             Item cleanedItem = new Item(
                                     (String) rawItem.get("name"),
                                     (String) rawItem.get("date"),
@@ -92,9 +110,12 @@ public class ItemViewModel extends ViewModel {
                                     (String) rawItem.get("make"),
                                     (String) rawItem.get("number"),
                                     (String) rawItem.get("value"),
-                                    (String) rawItem.get("comment"));
+                                    (String) rawItem.get("comment"),
+                                    (String) rawItem.get("tags"),
+                                    imageUrls);
                             items.add(cleanedItem);
                         }
+
                         // update the items being shown to the what was fetched
                         itemsLiveData.setValue(items);
                     }
@@ -120,7 +141,7 @@ public class ItemViewModel extends ViewModel {
         }
 
         // should never ever be reached
-        return new Item("Error", "", "", "", "", "", "", "");
+        return new Item("Error", "", "", "", "", "", "", "", "", null);
     }
 
     /**
@@ -129,11 +150,14 @@ public class ItemViewModel extends ViewModel {
      * @param item The item to be added to the database.
      */
     public void addItem(Item item) {
-        // get the current items being tracked
+        // get items currently on home page
         fetchItems();
         ArrayList<Item> items = getItemsLiveData().getValue();
-        // add the new item locally and to the database
+
+        // item added locally
         items.add(item);
+
+        // item added to database
         itemsDB.document(item.getItemName()).set(item.getDocument());
         // save the new state of items being tracked
         itemsLiveData.setValue(items);
@@ -177,9 +201,11 @@ public class ItemViewModel extends ViewModel {
         // get the current items being tracked
         fetchItems();
         ArrayList<Item> items = getItemsLiveData().getValue();
+
         // find and delete the item corresponding to the given search key
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).getItemName().equals(key)) {
+                deleteImagesFromFirebase(items.get(i).getImageUrls());
                 // remove item locally and from the database
                 items.remove(i);
                 itemsDB.document(key).delete();
@@ -190,6 +216,25 @@ public class ItemViewModel extends ViewModel {
             }
         }
     }
+
+    /**
+     * Nonblocking method that deletes all the references of the deleted item's image from Firebase Cloud Storage
+     * It exploits Firebase asynchronicity by deleting the references in a separate process
+     * @param imageUris URIs of the images to be deleted
+     */
+    void deleteImagesFromFirebase(ArrayList<String> imageUris){
+        for (String uri : imageUris){
+            // convert the URI to a StorageReference
+            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(uri);
+
+            storageRef.delete().addOnSuccessListener(aVoid -> {
+                System.out.println(uri + " deleted successfully");
+            }).addOnFailureListener(exception -> {
+                System.out.println(uri + " delete unsuccessful");
+            });
+        }
+    }
+
 
     /**
      * Checks whether a proposed item name is legal or not.

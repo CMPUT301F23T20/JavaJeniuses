@@ -1,19 +1,15 @@
 package com.example.inventorymanager.ui.addTag;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,38 +17,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.ToggleButton;
-
 import com.example.inventorymanager.Item;
-import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.TagAdapter;
+import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.FragmentAddTagBinding;
-import com.example.inventorymanager.databinding.FragmentSortOptionsBinding;
-import com.example.inventorymanager.ui.filter.filteredItemsFragment;
-import com.example.inventorymanager.ui.sort.sortedItemsFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.HashMap;
+
 
 /**
  * Fragment used for adding tags to items within an inventory management system. This fragment provides functionalities including:
@@ -64,24 +39,19 @@ import java.util.Locale;
  * </ul>
  * This fragment interacts with Firebase to fetch and update tag data, ensuring that the displayed information is current.
  * It uses LiveData to observe changes in tag data and ArrayAdapter to handle the display of tags in the UI.
- *
- * @author Sumaiya Salsabil, Tomasz Ayobahan
+ * @author Sumaiya Salsabil, Tomasz Ayobahan, Isaac Joffe
  * @see com.example.inventorymanager.ui.home.HomeFragment
  */
 public class addTagFragment extends Fragment {
-
     private ArrayList<Item> items;
-    private ArrayList<String> tagItems = new ArrayList<>();
     private String selectedItem;
     private FragmentAddTagBinding binding;
     private AutoCompleteTextView autoCompleteTextView;
     private ArrayAdapter<String> adapterTags;
     private static MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private ArrayList<Tag> allTags = new ArrayList<>();
     private Tag selectedTag;
     private Observer<ArrayList<Tag>> dataObserver;
-
 
     /**
      * Called to have the fragment instantiate its user interface view.
@@ -92,11 +62,9 @@ public class addTagFragment extends Fragment {
      * @return Return the View for the fragment's UI, or null.
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         binding = FragmentAddTagBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
 
         // unpack all items sent to this fragment
         if (getArguments() != null) {
@@ -104,9 +72,7 @@ public class addTagFragment extends Fragment {
         }
 
         Button createTagButton = binding.createTagButton;
-
         createTagButton.setOnClickListener( v -> {
-
             // send bundle with the list of items
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("items", items);
@@ -116,8 +82,7 @@ public class addTagFragment extends Fragment {
         });
 
         autoCompleteTextView = binding.autocompleteTextview;
-
-        // create a listener so that the items being displayed automatically update based on database changes
+        // create a listener so that the tags being displayed automatically load from the database
         dataObserver = new Observer<ArrayList<Tag>>() {
             @Override
             public void onChanged(ArrayList<Tag> updatedTags) {
@@ -126,13 +91,9 @@ public class addTagFragment extends Fragment {
             }
         };
 
-        // create default empty list on first time creating
-        ArrayList<Tag> emptyTags = new ArrayList<>();
-        tagsLiveData.setValue(emptyTags);
-
-        getTagsLiveData().observe(getViewLifecycleOwner(), dataObserver);
-
-        getTags();
+        // Create an instance of the shared ViewModel that manages the list of items
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        tagViewModel.getTagsLiveData().observe(getViewLifecycleOwner(), dataObserver);
 
         return root;
     }
@@ -148,7 +109,11 @@ public class addTagFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Fetch the latest tags from the database
-        getTags();
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        tagViewModel.fetchTags();
+
+        // Create an instance of the shared ViewModel that manages the list of items
+        ItemViewModel itemViewModel = new ViewModelProvider(requireActivity()).get(ItemViewModel.class);
 
         // Set a listener on the AutoCompleteTextView to handle tag selection
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -156,7 +121,6 @@ public class addTagFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedItem = parent.getItemAtPosition(position).toString();
                 selectedTag = findTagByName(selectedItem);
-
             }
         });
 
@@ -167,7 +131,12 @@ public class addTagFragment extends Fragment {
             if (items != null && selectedItem != null) {
                 // Loop through each selected item and add the chosen tag
                 for (Item item : items) {
-                    item.addTag(selectedTag);
+                    // update the tags string that the item currently has
+                    HashMap<String, Object> mapping = item.getDocument();
+                    String currentTags = (String) mapping.get("tags");
+                    currentTags += selectedTag.getText() + "," + selectedTag.getColour() + ";";
+                    mapping.put("tags", currentTags);
+                    itemViewModel.editItem(item.getItemName(), new Item(mapping));
             }}
 
             // Navigate back to the home fragment after adding tags
@@ -178,30 +147,13 @@ public class addTagFragment extends Fragment {
     }
 
     /**
-     * Retrieves the data from the database that is currently being stored locally.
-     * @return A list of the current tags being tracked.
-     */
-    public LiveData<ArrayList<Tag>> getTagsLiveData() {
-        return tagsLiveData;
-    }
-
-    /**
-     * Adds a tag to the global list if it's not already present.
-     * @param tag The Tag to be added.
-     */
-    private void addTagToGlobalList(Tag tag) {
-        if (!allTags.contains(tag)) {
-            allTags.add(tag);
-        }
-    }
-
-    /**
      * Finds a tag by its name.
      * @param tagName The name of the tag to find.
      * @return The Tag object if found, or null otherwise.
      */
     private Tag findTagByName(String tagName) {
-        ArrayList<Tag> myTags= getTagsLiveData().getValue();
+        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
+        ArrayList<Tag> myTags = tagViewModel.getTagsLiveData().getValue();
         for (Tag tag : myTags) {
             if (tag.getText().equals(tagName)) {
                 return tag;
@@ -209,61 +161,6 @@ public class addTagFragment extends Fragment {
         }
         return null; // Return null if tag not found
     }
-
-    /**
-     * Fetches the tags from the Firebase database and updates LiveData.
-     */
-    public void fetchTags() {
-        // get the user from firebase
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        // set the tags database accessed to be for this one user
-        CollectionReference tagsDB = db.collection("users")
-                .document(user.getEmail().substring(0, user.getEmail().indexOf('@')))
-                .collection("tags");
-
-        // query database to get all items indiscriminately
-        tagsDB.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // fetch the results of the blank query
-                            QuerySnapshot rawData = task.getResult();
-                            List<DocumentSnapshot> cleanedData = rawData.getDocuments();
-                            // iterate through fetched documents and make an item for each
-                            ArrayList<Tag> tags = new ArrayList<>();
-                            for (int i = 0; i < cleanedData.size(); i++) {
-                                DocumentSnapshot rawTag = cleanedData.get(i);
-                                // translate database format to the Item class
-                                Tag cleanedTag = new Tag(
-                                        rawTag.getString("name"),
-                                        rawTag.getString("colour")
-                                        );
-                                tags.add(cleanedTag);
-                            }
-                            // update the items being shown to the what was fetched
-                            tagsLiveData.setValue(tags);
-                        }
-                    }
-                });
-    }
-
-    /**
-     * Gets the list of tags and updates the global list and tagItems.
-     */
-    public void getTags() {
-        fetchTags();
-
-        ArrayList<Tag> tags = getTagsLiveData().getValue();
-        // check which item corresponds to the given key and return it
-        for (int i = 0; i < tags.size(); i++) {
-            addTagToGlobalList(tags.get(i));
-            tagItems.add(tags.get(i).getText());
-        }
-    }
-
 
     /**
      * Destroys the fragment.

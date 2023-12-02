@@ -4,24 +4,18 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.BackgroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 /**
  * Displays the items being tracked by the inventory manager to the user.
@@ -39,8 +33,6 @@ import java.util.HashMap;
 public class ItemAdapter extends ArrayAdapter{
     private final Context context;
     private ArrayList<Item> items;
-    private ArrayList<Tag> tags;
-    private Tag tag;
     private HashMap<String, Boolean> isChecked;
 
     /**
@@ -80,19 +72,21 @@ public class ItemAdapter extends ArrayAdapter{
         TextView description = view.findViewById(R.id.descriptionTextView);
         TextView estimateValue = view.findViewById(R.id.estimateValueTextView);
         TextView purchaseDate = view.findViewById(R.id.purchaseDateTextView);
-//        TextView itemTag = view.findViewById(R.id.itemTag);
         LinearLayout tagList = view.findViewById(R.id.tagList);
-//        ListView tagList = view.findViewById(R.id.tagList);
         CheckBox checkBox = view.findViewById(R.id.checkBox);
+
+        // apply algorithm to ensure item description is not too long
+        String descriptionText = item.getDescription();
+        if (descriptionText.length() > 25) {
+            descriptionText = descriptionText.substring(0, 20).strip() + "...";
+        }
 
         // display the most relevant fields for each item
         itemName.setText(item.getItemName());
-        description.setText(item.getDescription());
+        description.setText(descriptionText);
         estimateValue.setText(item.getEstimatedValue());
         purchaseDate.setText(item.getPurchaseDate());
         checkBox.setChecked(isChecked.get(item.getItemName()));
-
-
 
         // add effect of clicking on checkbox (toggling whether the item is selected)
         checkBox.setOnClickListener(v -> {
@@ -101,17 +95,21 @@ public class ItemAdapter extends ArrayAdapter{
             isChecked.put(item.getItemName(), Boolean.logicalXor(Boolean.TRUE, isChecked.get(item.getItemName())));
         });
 
-        tags = item.getTags();
+        // programmatically generate the tags to be displayed
+        ArrayList<Tag> tags = item.getTagsArray();
         if (tags != null) {
+            // delete the previous tags shown
             tagList.removeAllViews();
             for (int i = 0; i < tags.size(); i++) {
-                Log.d("DEBUG", tags.get(0).getText());
+                // generate a new text view for each tag
                 TextView tagTextView = new TextView(getContext());
                 tagTextView.setTextSize(15);
+                // set this text view to display the text with spaces for padding, and the proper colour
                 SpannableString tagName = new SpannableString(" " + tags.get(i).getText() + " ");
-                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColour())), 0, tagName.length(), 0);
+                tagName.setSpan(new BackgroundColorSpan(Color.parseColor(tags.get(i).getColourCode())), 0, tagName.length(), 0);
                 tagTextView.setText(tagName);
                 tagTextView.setPadding(0, 10, 0, 10);
+                // add text view to the scrollable interface
                 tagList.addView(tagTextView);
             }
         }

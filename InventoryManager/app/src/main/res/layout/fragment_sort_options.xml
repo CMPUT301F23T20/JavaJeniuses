@@ -91,7 +91,6 @@
         android:textOn="DESCENDING"
         android:background="@color/celadon"/>
 
-
     <Button
         android:id="@+id/sort_done"
         android:layout_width="wrap_content"

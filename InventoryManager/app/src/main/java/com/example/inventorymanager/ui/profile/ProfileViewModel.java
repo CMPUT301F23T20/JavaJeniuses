@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseUser;
 /**
  * A view model to manage the data for the profile fragment.
  * Not used very much for the initial functionality of the project.
- * @author Kareem Assaf, Tomasz Ayobahan, Tyler Hoekstra, Isaac Joffe, David Onchuru, Sumaiya Salsabil
+ * @author Tomasz Ayobahan
  * @see ProfileFragment
  */
 public class ProfileViewModel extends ViewModel {

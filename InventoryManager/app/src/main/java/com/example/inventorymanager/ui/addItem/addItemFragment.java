@@ -83,6 +83,7 @@ import org.json.JSONObject;
  * There are eight total fields that a user can edit: the item name, the purchase date of the item,
  * the description of the item, the make of the item, the model of the item, the serial number of the
  * item, the estimated price of the value, and a comment.
+ * Additionally, users can add one tag and attach up to three pictures for each new item.
  * Once all required fields are filled the user may add the item to the item view which is displayed
  * in the home view.
  * @author Kareem Assaf, Tyler Hoekstra, Isaac Joffe, David Onchuru, Tomasz Ayobahan
@@ -93,8 +94,7 @@ import org.json.JSONObject;
  */
 public class addItemFragment extends Fragment {
     private FragmentAddItemBinding binding;
-    private final ArrayList<String> localImagePaths = new ArrayList<String>();
-    private final ArrayList<String> imageUrls = new ArrayList<String>();
+    private final ArrayList<String> localImagePaths = new ArrayList<>();
     private ImageUtility imageUtility;
     private ImageView imageView0;
     private Button addImage0Button;
@@ -607,7 +607,7 @@ public class addItemFragment extends Fragment {
             Log.d("DEBUG", String.format("Request Code: %1$d, Result Code: %2$d", requestCode, resultCode));
         }
 
-        SCAN_MODE = "";
+        SCAN_MODE = "";    // back to no scanning task needed
     }
 
     /**
@@ -764,6 +764,7 @@ public class addItemFragment extends Fragment {
      * @return The Tag object if found, or null otherwise.
      */
     private Tag findTagByName(String tagName) {
+        // find more data about the tag based on its unique name
         TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
         ArrayList<Tag> myTags = tagViewModel.getTagsLiveData().getValue();
         for (Tag tag : myTags) {

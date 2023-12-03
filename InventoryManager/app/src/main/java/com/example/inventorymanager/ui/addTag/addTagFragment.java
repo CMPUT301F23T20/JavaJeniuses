@@ -1,7 +1,6 @@
 package com.example.inventorymanager.ui.addTag;
 
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -48,8 +47,6 @@ public class addTagFragment extends Fragment {
     private FragmentAddTagBinding binding;
     private AutoCompleteTextView autoCompleteTextView;
     private ArrayAdapter<String> adapterTags;
-    private static final MutableLiveData<ArrayList<Tag>> tagsLiveData = new MutableLiveData<>();
-    private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Tag selectedTag;
     private Observer<ArrayList<Tag>> dataObserver;
 
@@ -71,6 +68,7 @@ public class addTagFragment extends Fragment {
             items = getArguments().getParcelableArrayList("items");
         }
 
+        // add functionality for when the create tag button is clicked
         Button createTagButton = binding.createTagButton;
         createTagButton.setOnClickListener( v -> {
             // send bundle with the list of items
@@ -152,6 +150,7 @@ public class addTagFragment extends Fragment {
      * @return The Tag object if found, or null otherwise.
      */
     private Tag findTagByName(String tagName) {
+        // find more data about the tag based on its unique name
         TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
         ArrayList<Tag> myTags = tagViewModel.getTagsLiveData().getValue();
         for (Tag tag : myTags) {

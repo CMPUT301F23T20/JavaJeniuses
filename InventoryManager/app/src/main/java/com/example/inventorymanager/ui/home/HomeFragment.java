@@ -124,7 +124,6 @@ public class HomeFragment extends Fragment {
             navController.navigate(R.id.sortOptionsFragment, bundle);
         });
 
-
         // add effect of clicking on a filter icon
         Button filterButton = root.findViewById(R.id.filter_button);
         // show filter dialog when filter icon clicked

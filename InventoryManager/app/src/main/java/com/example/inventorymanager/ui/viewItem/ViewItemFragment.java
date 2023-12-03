@@ -42,7 +42,7 @@ public class ViewItemFragment extends Fragment {
     /**
      * Provides the user interface of the fragment.
      * Receives an item label from the calling fragment and queries the database to obtain detailed information about the item.
-     * Displays this item information.
+     * Displays this item information, including information about tags.
      * Provides buttons for the user to choose to edit the details of this item or to delete this item.
      * @param inflater The object used to inflate views as required.
      * @param container The parent view of the fragment.

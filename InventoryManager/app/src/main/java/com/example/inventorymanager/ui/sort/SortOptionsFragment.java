@@ -1,35 +1,24 @@
 package com.example.inventorymanager.ui.sort;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ToggleButton;
-
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
-import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.databinding.FragmentSortOptionsBinding;
-import com.example.inventorymanager.ui.filter.filteredItemsFragment;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+
 
 /**
  * Manages the screen that enables users to choose sorting conditions.
@@ -38,9 +27,7 @@ import java.util.Locale;
  * @see sortedItemsFragment
  */
 public class SortOptionsFragment extends Fragment {
-
     private ArrayList<Item> items, sortedItems;
-
     private FragmentSortOptionsBinding binding;
     private boolean ascending;
 
@@ -53,7 +40,6 @@ public class SortOptionsFragment extends Fragment {
      * @return The root of the view.
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
         binding = FragmentSortOptionsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -122,7 +108,6 @@ public class SortOptionsFragment extends Fragment {
 
         // handle done button click
         doneButton.setOnClickListener( v -> {
-
             // sort items
             sortItems(sortList);
 
@@ -141,11 +126,9 @@ public class SortOptionsFragment extends Fragment {
      * Sorts the items in the `sortedItems` list based on the provided sort criteria.
      * The function first creates a list of comparators based on the `sortBys` list,
      * and then creates a composite comparator to perform multi-sorting.
-     *
      * @param sortBys An ArrayList of strings representing the sorting criteria.
      */
     public void sortItems(ArrayList<String> sortBys) {
-
         // create a list of comparators based on sortBys
         ArrayList<Comparator<Item>> comparators = new ArrayList<>();
         for (int i = 0; i < sortBys.size(); i++) {
@@ -172,7 +155,6 @@ public class SortOptionsFragment extends Fragment {
      * Creates a comparator based on the given sorting criteria and sorting order (ascending or descending).
      * The sorting criteria can be "Date," "Description," "Make," or "Value," and the sorting order
      * can be specified by the `ascending` parameter.
-     *
      * @param sortBy     A string representing the sorting criteria ("Date," "Description," "Make," or "Value").
      * @param ascending  A boolean value indicating whether the sorting order is ascending (true) or descending (false).
      * @return A comparator function for the specified sorting criteria and order.

@@ -25,6 +25,11 @@ public class ImageUtility {
     private static final int REQUEST_CAMERA = 2;
     private static final int REQUEST_GALLERY = 3;
     private final Fragment fragment;
+
+    /**
+     * Basic constructor of class.
+     * @param fragment The fragment that the class in instantiated within.
+     */
     public ImageUtility(Fragment fragment) {
         this.fragment = fragment;
     }
@@ -125,4 +130,3 @@ public class ImageUtility {
         }
     }
 }
-

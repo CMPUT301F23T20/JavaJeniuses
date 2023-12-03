@@ -2,7 +2,11 @@ package com.example.inventorymanager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.example.inventorymanager.Item;
@@ -32,13 +36,28 @@ public class ItemTest {
     private final String estimatedValue2 = "$1,399.99";
     private final String comment1 = "Uses high-speed M1 chip.";
     private final String comment2 = "Uses medium-speed Intel chip.";
+    private final String tags1 = "Tag1,blue;Tag2,orange;Tag3,pink;";
+    private final String tags2 = "Tag4,purple;";
+    private final ArrayList<String> photos1 = new ArrayList<>();
+    private final ArrayList<String> photos2 = new ArrayList<>();
+
+    /**
+     * Initialize the image URLs to have some data.
+     */
+    @Before
+    public void setupPhotos() {
+        photos1.add("oneImage");
+        photos1.add("twoImage");
+        photos1.add("threeImage");
+        photos2.add("fourImage");
+    }
 
     /**
      * Creates an item with default fields to be used by the other tests.
      * @return The main item to be used by other tests.
      */
     private Item defaultItem() {
-        return new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, null, null);
+        return new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, tags1, photos1);
     }
 
     /**
@@ -164,6 +183,34 @@ public class ItemTest {
     }
 
     /**
+     * Tests that the tags field of an Item has proper getters and setters.
+     */
+    @Test
+    public void testTags() {
+        // ensure that getter works properly on original data
+        Item item = defaultItem();
+        assertEquals(tags1, item.getTags());
+        assertTrue(item.hasTag());
+        // ensure that setter works on new value based on prior confirmed assumption that getter works
+        item.setTags(tags2);
+        assertEquals(tags2, item.getTags());
+        assertTrue(item.hasTag());
+    }
+
+    /**
+     * Tests that the photos field of an Item has proper getters and setters.
+     */
+    @Test
+    public void testPhotos() {
+        // ensure that getter works properly on original data
+        Item item = defaultItem();
+        assertEquals(photos1, item.getImageUrls());
+        // ensure that setter works on new value based on prior confirmed assumption that getter works
+        item.setImageUrls(photos2);
+        assertEquals(photos2, item.getImageUrls());
+    }
+
+    /**
      * Tests that the document translation feature of an Item works properly.
      * This is crucial to ensuring that the database can be used safely.
      */
@@ -172,14 +219,16 @@ public class ItemTest {
         // ensure that the document is accurate to original data
         Item item = defaultItem();
         HashMap<String, Object> document = item.getDocument();
-        assertTrue(item.getItemName().equals(document.get("name")));
-        assertTrue(item.getPurchaseDate().equals(document.get("date")));
-        assertTrue(item.getDescription().equals(document.get("description")));
-        assertTrue(item.getModel().equals(document.get("model")));
-        assertTrue(item.getMake().equals(document.get("make")));
-        assertTrue(item.getSerialNumber().equals(document.get("number")));
-        assertTrue(item.getEstimatedValue().equals(document.get("value")));
-        assertTrue(item.getComment().equals(document.get("comment")));
+        assertEquals(item.getItemName(), document.get("name"));
+        assertEquals(item.getPurchaseDate(), document.get("date"));
+        assertEquals(item.getDescription(), document.get("description"));
+        assertEquals(item.getModel(), document.get("model"));
+        assertEquals(item.getMake(), document.get("make"));
+        assertEquals(item.getSerialNumber(), document.get("number"));
+        assertEquals(item.getEstimatedValue(), document.get("value"));
+        assertEquals(item.getComment(), document.get("comment"));
+        assertEquals(item.getTags(), document.get("tags"));
+        assertEquals(item.getImageUrls(), document.get("imageUrls"));
 
         // ensure that the document is accurate to data changes
         item.setItemName(itemName2);
@@ -190,6 +239,7 @@ public class ItemTest {
         item.setSerialNumber(serialNumber2);
         item.setEstimatedValue(estimatedValue2);
         item.setComment(comment2);
+        item.setImageUrls(photos2);
         document = item.getDocument();
         assertEquals(item.getItemName(), document.get("name"));
         assertEquals(item.getPurchaseDate(), document.get("date"));
@@ -199,5 +249,11 @@ public class ItemTest {
         assertEquals(item.getSerialNumber(), document.get("number"));
         assertEquals(item.getEstimatedValue(), document.get("value"));
         assertEquals(item.getComment(), document.get("comment"));
+        assertEquals(item.getTags(), document.get("tags"));
+        assertEquals(item.getImageUrls(), document.get("imageUrls"));
+
+        // ensure that document constructor works properly
+        Item item2 = new Item(document);
+        assertEquals(document, item2.getDocument());
     }
 }

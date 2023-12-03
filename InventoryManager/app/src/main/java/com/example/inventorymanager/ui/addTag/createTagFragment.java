@@ -24,7 +24,6 @@ import java.util.ArrayList;
  * A fragment for creating a new tag within the inventory management system.
  * This fragment allows the user to input a tag name and select a color for the tag.
  * It provides UI elements for the user to enter tag details and save or cancel the operation.
- *
  * @author Sumaiya Salsabil, Tomasz Ayobahan, Isaac Joffe
  * @see addTagFragment
  */

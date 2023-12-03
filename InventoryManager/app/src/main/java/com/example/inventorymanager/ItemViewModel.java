@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Arrays;
 import java.util.List;
 
@@ -262,5 +261,3 @@ public class ItemViewModel extends ViewModel {
         return false;
     }
 }
-
-

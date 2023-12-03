@@ -85,7 +85,7 @@ import java.util.UUID;
  * Shows the details of a single item and allows a user to edit these details.
  * Each field of the item is labelled and displayed in an editable format.
  * Users may choose to save the new details of this item or to delete this item.
- * @author Isaac Joffe, Tomasz Ayobahan, David Onchuru
+ * @author Isaac Joffe, Tomasz Ayobahan, David Onchuru, Sumaiya Salsabil
  * @see com.example.inventorymanager.ui.home.HomeFragment
  * @see com.example.inventorymanager.ui.viewItem.ViewItemFragment
  */

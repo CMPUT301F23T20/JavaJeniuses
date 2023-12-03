@@ -27,7 +27,7 @@ import java.util.HashMap;
  *     <li>the date that the item was purchased,</li>
  *     <li>and an indicator of whether this item is selected.</li>
  * </ul>
- * @author Kareem Assaf, Isaac Joffe
+ * @author Kareem Assaf, Isaac Joffe, Sumaiya Salsabil
  * @see com.example.inventorymanager.ui.home.HomeFragment
  */
 public class ItemAdapter extends ArrayAdapter{

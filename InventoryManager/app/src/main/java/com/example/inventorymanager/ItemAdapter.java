@@ -25,7 +25,8 @@ import java.util.HashMap;
  *     <li>a brief description of the item,</li>
  *     <li>estimated monetary value of the item,</li>
  *     <li>the date that the item was purchased,</li>
- *     <li>and an indicator of whether this item is selected.</li>
+ *     <li>an indicator of whether this item is selected, and</li>
+ *     <li>a scrollable list of the tags associated with an item.</li>
  * </ul>
  * @author Kareem Assaf, Isaac Joffe, Sumaiya Salsabil
  * @see com.example.inventorymanager.ui.home.HomeFragment

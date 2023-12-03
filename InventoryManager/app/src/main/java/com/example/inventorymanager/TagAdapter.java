@@ -15,7 +15,6 @@ import java.util.ArrayList;
  *     <li>and the list of items associated with the tag.</li>
  * </ul>
  * This adapter uses the Android ArrayAdapter as its base to leverage the handling of list-based data.
- *
  * @author Tomasz Ayobahan
  * @see com.example.inventorymanager.ui.home.HomeFragment
  */

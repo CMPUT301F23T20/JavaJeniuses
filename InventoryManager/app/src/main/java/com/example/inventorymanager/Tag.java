@@ -18,7 +18,6 @@ import java.util.List;
  * Implements the Parcelable interface to enable passing between fragments in Android applications,
  * particularly useful for managing the associations between items and tags in the UI.
  * This class includes methods for managing the tag properties as well as adding or removing item associations.
- *
  * @author Sumaiya Salsabil, Tomasz Ayobahan
  * @see TagViewModel
  */

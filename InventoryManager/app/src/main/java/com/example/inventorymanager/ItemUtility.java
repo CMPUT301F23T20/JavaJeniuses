@@ -10,7 +10,7 @@ import android.widget.EditText;
  *     <li>The date purchased is mandatory, must follow YYYY-MM-DD format, and must be in the past.</li>
  *     <li>The description is optional and must be no longer than 20 characters.</li>
  *     <li>The make is mandatory.</li>
- *     <li>The make ismandatory.</li>
+ *     <li>The make is mandatory.</li>
  *     <li>The serial number is optional and must be no longer than 20 characters.</li>
  *     <li>The estimated value is mandatory and must follow a monetary format (i.e., "$NNN,NNN.NN")</li>
  *     <li>The comment is optional and must be no longer than 20 characters.</li>
@@ -23,7 +23,6 @@ import android.widget.EditText;
 public class ItemUtility {
     /**
      * Validates the input fields for an item, ensuring that mandatory and optional fields meet specific criteria.
-     *
      * @param itemNameInput       The EditText for the item name.
      * @param purchaseDateInput   The EditText for the purchase date.
      * @param descriptionInput    The EditText for the item description.

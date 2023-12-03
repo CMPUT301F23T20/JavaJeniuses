@@ -3,7 +3,6 @@ package com.example.inventorymanager;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
-import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.text.NumberFormat;
@@ -20,7 +19,9 @@ import java.text.NumberFormat;
  *     <li>the make of the item,</li>
  *     <li>the serial number of the item,</li>
  *     <li>the estimated monetary value of the item,</li>
- *     <li>and a comment about the item.</li>
+ *     <li>a comment about the item,</li>
+ *     <li>the tags associated with the item, and</li>
+ *     <li> the images associated with the item.</li>
  * </ul>
  * Implements the Parcelable interface to be able to be passed between fragments, as required for filtering items.
  * @author Kareem Assaf, Isaac Joffe, David Onchuru, Sumaiya Salsabil, Tomasz Ayobahan
@@ -36,7 +37,7 @@ public class Item implements Parcelable {
     private double estimatedValue;
     private String comment;
     private ArrayList<Tag> tags;
-    private ArrayList<String> imageUrls, tagTexts;
+    private ArrayList<String> imageUrls;
 
     /**
      * Creates an Item() object with the fields passed in.
@@ -50,7 +51,8 @@ public class Item implements Parcelable {
      * @param serialNumber The serial number of the item to be created.
      * @param estimatedValue The estimated monetary value of the item to be created.
      * @param comment A brief comment about the item to be created.
-     * @param imageUrls URLs to pictures of items stored in Firebase Cloud Storage
+     * @param tags A string representing the tags of the item to be created.
+     * @param imageUrls URLs to pictures of items stored in Firebase Cloud Storage.
      */
     public Item(String itemName, String purchaseDate, String description, String model, String make, String serialNumber, String estimatedValue, String comment, String tags, ArrayList<String> imageUrls) {
         this.setItemName(itemName);
@@ -63,8 +65,11 @@ public class Item implements Parcelable {
         this.setComment(comment);
         this.setTags(tags);
         // store empty array if item doesn't have urls
-        if (imageUrls != null){ this.setImageUrls(imageUrls); }
-        else{ this.setImageUrls(new ArrayList<>()); }
+        if (imageUrls != null) {
+            this.setImageUrls(imageUrls);
+        } else {
+            this.setImageUrls(new ArrayList<>());
+        }
     }
 
     /**
@@ -322,7 +327,6 @@ public class Item implements Parcelable {
     }
 
     /**
-     * TODO: Update tests because hashmap mapping has changed from <String, String> to <String, Object>. That's what's causing the related problems warning
      * Retrieves a dictionary representation of the original item.
      * The mapping returned is in the proper format for storage in the database.
      * Each field is represented as a String key associated with a String value.

@@ -42,7 +42,7 @@
         android:layout_marginRight="10dp">
 
         <AutoCompleteTextView
-            android:id="@+id/autocomplete_textview"
+            android:id="@+id/autocomplete_textview_in_choose_filter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none" />

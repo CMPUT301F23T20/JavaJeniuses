@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * A view model to manage the data for the addTagFragment.
  * Not used very much for the initial functionality of the project.
- * @author Tomasz Ayobahan, Sumaiya Salsabil
+ * @author Tomasz Ayobahan
  * @see addTagFragment
  */
 public class TagViewModel extends ViewModel {

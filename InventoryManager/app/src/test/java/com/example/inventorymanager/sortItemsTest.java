@@ -19,12 +19,14 @@ public class sortItemsTest {
     // defines realistic test data to be used for two different items
     private final String itemName1 = "Computer";
     private final String itemName2 = "Laptop";
+    private final String itemName3 = "Tablet";
 
     private final String purchaseDate1 = "2023-01-01";
     private final String purchaseDate2 = "2023-08-20";
 
     private final String description1 = "PC used for gaming.";
     private final String description2 = "Laptop used for school.";
+    private final String description3 = "Tablet used for school.";
 
     private final String model1 = "iMac";
     private final String model2 = "Surface Pro";
@@ -41,7 +43,7 @@ public class sortItemsTest {
     private final String comment1 = "Uses high-speed M1 chip.";
     private final String comment2 = "Uses medium-speed Intel chip.";
 
-    private Item item1, item2;
+    private Item item1, item2, item3;
     SortOptionsFragment sortOptionsFragment = new SortOptionsFragment();
 
     /**
@@ -51,8 +53,9 @@ public class sortItemsTest {
     private ArrayList<Item> defaultList() {
         ArrayList<Item> items = new ArrayList<Item>();
 
-        item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, null, null);
-        item2 = new Item(itemName2, purchaseDate2, description2, model2, make2, serialNumber2, estimatedValue2, comment2, null, null);
+        item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, "aTag,blue;", null);
+        item2 = new Item(itemName2, purchaseDate2, description2, model2, make2, serialNumber2, estimatedValue2, comment2, "bTag,pink;", null);
+        item3 = new Item(itemName3, purchaseDate1, description3, model1, make1, serialNumber1, estimatedValue1, comment1, null, null);
 
         items.add(item1);
         items.add(item2);
@@ -163,6 +166,36 @@ public class sortItemsTest {
         sortedItems.clear();
         sortedItems.add(item1);
         sortedItems.add(item2);
+
+        assertEquals(sortedItems,items);
+
+    }
+
+    /**
+     * Tests that the sort by tag feature works as expected
+     */
+    @Test
+    public void testSortByTag() {
+        ArrayList<Item> items = defaultList();
+        items.add(item3);
+
+        // test if sorted in ascending order
+        Comparator<Item> comparator = SortOptionsFragment.createComparator("Tag", true);
+        items.sort(comparator);
+        ArrayList<Item> sortedItems = new ArrayList<Item>();
+        sortedItems.add(item3);
+        sortedItems.add(item1);
+        sortedItems.add(item2);
+
+        assertEquals(sortedItems,items);
+
+        // test if sorted in descending order
+        comparator = SortOptionsFragment.createComparator("Tag", false);
+        items.sort(comparator);
+        sortedItems.clear();
+        sortedItems.add(item2);
+        sortedItems.add(item1);
+        sortedItems.add(item3);
 
         assertEquals(sortedItems,items);
 

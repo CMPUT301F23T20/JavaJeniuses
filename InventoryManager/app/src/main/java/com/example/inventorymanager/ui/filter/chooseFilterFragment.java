@@ -65,7 +65,7 @@ public class chooseFilterFragment extends Fragment {
         // Bind UI elements to variables
         EditText descriptionKeywordEditText = binding.descriptionKeywordEditText;
         EditText makeKeywordEditText = binding.makeKeywordEditText;
-        AutoCompleteTextView autoCompleteTextView = binding.autocompleteTextview;
+        AutoCompleteTextView autoCompleteTextView = binding.autocompleteTextviewInChooseFilter;
         EditText startDateEditText = binding.startDateEditText;
         EditText endDateEditText = binding.endDateEditText;
         Button searchButton = binding.searchButton;

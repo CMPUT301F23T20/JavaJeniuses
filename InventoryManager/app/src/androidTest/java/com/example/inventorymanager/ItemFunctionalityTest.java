@@ -623,7 +623,7 @@ public class ItemFunctionalityTest {
 
 
     /**
-     * Test that the uer can login to the application properly.
+     * Test that the user can login to the application properly.
      * Tests US 6.1.
      */
     @Test

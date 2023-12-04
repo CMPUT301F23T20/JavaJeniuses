@@ -81,7 +81,7 @@ public class ViewItemFragment extends Fragment {
         ImageView imageView2 = binding.itemImage2;
         Button editButton = binding.editButton;
         Button deleteButton = binding.deleteButton;
-        LinearLayout tagList = binding.tagList;
+        LinearLayout tagList = binding.tagListInViewItem;
 
         // set the text view to show the values that item already has
         itemNameValue.setText(item.getItemName());

@@ -205,7 +205,7 @@
                 app:layout_marginBaseline="10dp">
 
                 <LinearLayout
-                    android:id="@+id/tagList"
+                    android:id="@+id/tagListInViewItem"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"

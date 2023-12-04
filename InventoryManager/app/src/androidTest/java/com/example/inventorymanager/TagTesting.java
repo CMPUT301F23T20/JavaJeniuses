@@ -650,6 +650,7 @@ public class TagTesting {
      * @param SNumber The serial number of the item to be added.
      * @param EValue The estimated value of the item to be added.
      * @param Comment A comment for the item to be added.
+     * @param tagText The text for the tag to be added to the item.
      */
     private void addItem(String Name, @Nullable String currentDateString, String Description, String Make, String Model, String SNumber, String EValue, String
             Comment, String tagText) {

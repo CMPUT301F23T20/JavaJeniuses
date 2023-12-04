@@ -131,10 +131,10 @@ import java.util.Date;
 
 /**
  * Conducts comprehensive UI testing on item tags.
- * Verifies that tags can be ____
+ * Verifies that tags can be created, added to items, used to sort and filter items, and deleted.
  * Tests US 3.1, 3.2, 3.3, 3.4, 3.5
  * All tests should be run on Pixel 6 API 34.
- * @author Sumaiya Salsabil
+ * @author Sumaiya Salsabil, Tomasz Ayobahan
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest

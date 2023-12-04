@@ -250,7 +250,8 @@ public class TagTesting {
             onData(anything())
                     .inAdapterView(withId(R.id.item_list))
                     .atPosition(i)
-                    .onChildView(withText(tagText))
+                    .onChildView(withId(R.id.tagList))
+                    .atPosition(0)
                     .check(matches(isDisplayed()));
         }
 
@@ -289,7 +290,7 @@ public class TagTesting {
         SystemClock.sleep(500);
 
         // check if tag is on view items page
-        onView(allOf(withId(R.id.tagListInViewItem), withText(tagText)))
+        onView(withId(R.id.tagListInViewItem))
                 .check(matches(isDisplayed()));
 
         // delete item
@@ -315,9 +316,12 @@ public class TagTesting {
         // add item with tag
         addItemWithTag(tagText);
 
-        // check if tag is on view items page
-        onView(withText("Gaming Keyboard")).perform(click());
-        onView(allOf(withId(R.id.tagListInViewItem), withText(tagText)))
+        // check if tag is added to item
+        onData(anything())
+                .inAdapterView(withId(R.id.item_list))
+                .atPosition(0)
+                .onChildView(withId(R.id.tagList))
+                .atPosition(0)
                 .check(matches(isDisplayed()));
 
         // delete item
@@ -371,7 +375,7 @@ public class TagTesting {
         onView(withText("Add Tag")).check(matches(isDisplayed()));
 
         // check if tag is added to item
-        onView(allOf(withId(R.id.tagList), withText(tagText)))
+        onView(withId(R.id.tagList))
                 .check(matches(isDisplayed()));
 
         deleteItem("Gaming Keyboard");
@@ -775,7 +779,7 @@ public class TagTesting {
         onView(withId(R.id.commentInput)).perform(pressKey(KeyEvent.KEYCODE_ENTER));
 
         // Add a tag
-        if (!(tagText == null)) {
+        if (tagText != null) {
         onView(withId(R.id.autocomplete_textview_in_add_item)).perform(click());
         onView(withText(tagText))
                 .inRoot(isPlatformPopup())

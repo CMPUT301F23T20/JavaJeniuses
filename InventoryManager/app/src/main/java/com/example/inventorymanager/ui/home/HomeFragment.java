@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * Shows the list of items being tracked by the application.
  * A brief summary of each item is displayed.
  * Users may choose to view the details of an item, delete items, filter items, or sort items.
- * @author Kareem Assaf, Tyler Hoekstra, Isaac Joffe, David Onchuru
+ * @author Kareem Assaf, Tyler Hoekstra, Isaac Joffe, David Onchuru, Sumaiya Salsabil
  * @see Item
  * @see ItemViewModel
  */
@@ -123,7 +123,6 @@ public class HomeFragment extends Fragment {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.sortOptionsFragment, bundle);
         });
-
 
         // add effect of clicking on a filter icon
         Button filterButton = root.findViewById(R.id.filter_button);

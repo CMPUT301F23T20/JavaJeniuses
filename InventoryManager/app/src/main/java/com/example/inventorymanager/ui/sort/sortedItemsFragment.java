@@ -5,24 +5,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentSortedItemsBinding;
-
 import java.util.ArrayList;
+
 
 /**
  * Manages the screen that displays the list of items sorted by the requested conditions.
@@ -31,7 +28,6 @@ import java.util.ArrayList;
  * @see SortOptionsFragment
  */
 public class sortedItemsFragment extends Fragment {
-
     private FragmentSortedItemsBinding binding;
     private ItemAdapter adapter;
     private ArrayList<Item> items;
@@ -45,7 +41,6 @@ public class sortedItemsFragment extends Fragment {
      * @return The root of the view.
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         binding = FragmentSortedItemsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         // Bind the listview that displays our items
@@ -109,7 +104,6 @@ public class sortedItemsFragment extends Fragment {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.chooseFilterFragment, bundle);
         });
-
 
         return root;
     }

@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -18,15 +17,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.Tag;
 import com.example.inventorymanager.TagAdapter;
 import com.example.inventorymanager.TagViewModel;
 import com.example.inventorymanager.databinding.ChooseFilterBinding;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,9 +30,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+
 /**
  * Manages the screen that enables users to choose filtering conditions.
  * Users may choose filters based on the date the item was purchased, the make of the item, or keywords from the item's description.
+ * Also, users can choose to filter by the presence of a single tag.
  * @author Isaac Joffe, David Onchuru, Sumaiya Salsabil
  * @see filteredItemsFragment
  */
@@ -106,7 +104,6 @@ public class chooseFilterFragment extends Fragment {
             // fetch keywords
             String description = (descriptionKeywordEditText.getText().toString()).toLowerCase();
             String make = makeKeywordEditText.getText().toString().toLowerCase();
-//            String tag = tagKeywordEditText.getText().toString().toLowerCase();
             String startDate = startDateEditText.getText().toString();
             String endDate = endDateEditText.getText().toString();
 
@@ -150,7 +147,6 @@ public class chooseFilterFragment extends Fragment {
      * @param dateEditText The View associated with the data corresponding to this calendar.
      */
     public void showCalendar(EditText dateEditText) {
-
         // create a Calendar instance for the current date
         Calendar selectedDate = Calendar.getInstance();
         int year = selectedDate.get(Calendar.YEAR);
@@ -240,22 +236,6 @@ public class chooseFilterFragment extends Fragment {
         }
 
         return itemsBetweenDates;
-    }
-
-    /**
-     * Finds a tag by its name.
-     * @param tagName The name of the tag to find.
-     * @return The Tag object if found, or null otherwise.
-     */
-    private Tag findTagByName(String tagName) {
-        TagViewModel tagViewModel = new ViewModelProvider(requireActivity()).get(TagViewModel.class);
-        ArrayList<Tag> myTags = tagViewModel.getTagsLiveData().getValue();
-        for (Tag tag : myTags) {
-            if (tag.getText().equals(tagName)) {
-                return tag;
-            }
-        }
-        return null; // Return null if tag not found
     }
 
     /**

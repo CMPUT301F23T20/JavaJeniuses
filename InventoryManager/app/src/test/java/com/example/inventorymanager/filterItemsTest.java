@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Tests the functionality of the filtering functions in chooseFilterFragment
  * Ensures the items are properly filtered on basis of the user's input
- * @author David Onchuru
+ * @author David Onchuru, Sumaiya Salsabil
  */
 public class filterItemsTest {
     // defines realistic test data to be used for two different items
@@ -40,8 +40,8 @@ public class filterItemsTest {
     private ArrayList<Item> defaultList() {
         ArrayList<Item> items = new ArrayList<Item>();
 
-        Item item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1,null, null);
-        Item item2 = new Item(itemName2, purchaseDate2, description1, model1, make2, serialNumber1, estimatedValue1, comment1, null, null);
+        Item item1 = new Item(itemName1, purchaseDate1, description1, model1, make1, serialNumber1, estimatedValue1, comment1, "aTag,blue;", null);
+        Item item2 = new Item(itemName2, purchaseDate2, description1, model1, make2, serialNumber1, estimatedValue1, comment1, "bTag,pink;", null);
         Item item3 = new Item(itemName3, purchaseDate1, description3, model1, make1, serialNumber1, estimatedValue1, comment1, null, null);
 
         items.add(item1);
@@ -92,5 +92,20 @@ public class filterItemsTest {
         ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsBetweenDates("2023-02-15", "2023-02-25", items);
         assertEquals(filteredItems_empty.size(), 0);
     }
+
+    /**
+     * Tests that the filter by tag feature works as expected
+     */
+    @Test
+    public void testFilterByTag() {
+        ArrayList<Item> items = defaultList();
+        ArrayList<Item> filteredItems = chooseFilterFragment.findItemsWithTag("aTag", items);
+        assertEquals(filteredItems.size(), 1);
+
+        // Test case: tag doesn't exist
+        ArrayList<Item> filteredItems_empty = chooseFilterFragment.findItemsWithTag("hello", items);
+        assertEquals(filteredItems_empty.size(), 0);
+    }
+
 
 }

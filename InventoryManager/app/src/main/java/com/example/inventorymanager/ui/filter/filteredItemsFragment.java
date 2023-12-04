@@ -9,21 +9,19 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.example.inventorymanager.Item;
 import com.example.inventorymanager.ItemAdapter;
 import com.example.inventorymanager.ItemViewModel;
 import com.example.inventorymanager.R;
 import com.example.inventorymanager.databinding.FragmentFilteredItemsBinding;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
+
 
 /**
  * Manages the screen that displays the list of items filtered by the requested conditions.

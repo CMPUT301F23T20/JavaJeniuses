@@ -85,14 +85,13 @@ import java.util.UUID;
  * Shows the details of a single item and allows a user to edit these details.
  * Each field of the item is labelled and displayed in an editable format.
  * Users may choose to save the new details of this item or to delete this item.
- * @author Isaac Joffe, Tomasz Ayobahan, David Onchuru
+ * @author Isaac Joffe, Tomasz Ayobahan, David Onchuru, Sumaiya Salsabil
  * @see com.example.inventorymanager.ui.home.HomeFragment
  * @see com.example.inventorymanager.ui.viewItem.ViewItemFragment
  */
 public class EditItemFragment extends Fragment {
     private FragmentEditItemBinding binding;
     private final ArrayList<String> imagePaths = new ArrayList<>(); // local paths
-    private final ArrayList<String> tempList = new ArrayList<>(); // A temporary list to store our generated urls
     private ImageUtility imageUtility;
     private ImageView imageView0;
     private Button addImage0Button;
@@ -290,7 +289,6 @@ public class EditItemFragment extends Fragment {
                 selectedTagDelete = findTagByName(selectedItemDelete);
             }
         });
-
 
         // IMAGE FUNCTIONALITY
         // when you click the respective Add Image button, choose if you're gonna add from gallery or take a pic with camera
@@ -643,7 +641,7 @@ public class EditItemFragment extends Fragment {
             Log.d("DEBUG", String.format("Request Code: %1$d, Result Code: %2$d", requestCode, resultCode));
         }
 
-        SCAN_MODE = "";
+        SCAN_MODE = "";    // back to no scanning task needed
     }
 
     /**
@@ -741,7 +739,6 @@ public class EditItemFragment extends Fragment {
     /**
      * Processes the result of selecting or capturing an image. Handles the flow of which
      * imageView to insert the photo and handles the saving locally of the images
-     *
      * @param photo The Bitmap representing the selected or captured image.
      */
     private void processImageResult(Bitmap photo) {
